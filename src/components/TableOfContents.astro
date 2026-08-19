@@ -1,0 +1,83 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  /** `sidebar` on wide screens, `mobile` renders a collapsible <details>. */
+  variant: 'sidebar' | 'mobile';
+  maxDepth?: number;
+}
+
+const { headings, variant, maxDepth = 3 } = Astro.props;
+
+interface Node extends MarkdownHeading {
+  children: Node[];
+}
+
+/** Nest h2/h3 (…up to maxDepth) into a tree, ignoring the h1 page title. */
+function nest(items: MarkdownHeading[]): Node[] {
+  const root: Node[] = [];
+  const stack: Node[] = [];
+  for (const heading of items) {
+    if (heading.depth < 2 || heading.depth > maxDepth) continue;
+    const node: Node = { ...heading, children: [] };
+    while (stack.length > 0 && stack[stack.length - 1]!.depth >= node.depth) {
+      stack.pop();
+    }
+    if (stack.length === 0) {
+      root.push(node);
+    } else {
+      stack[stack.length - 1]!.children.push(node);
+    }
+    stack.push(node);
+  }
+  return root;
+}
+
+const tree = nest(headings);
+---
+
+{
+  tree.length > 1 &&
+    (variant === 'mobile' ? (
+      <details class="toc toc--mobile">
+        <summary class="toc__label">Contents</summary>
+        <ol>
+          {tree.map((node) => (
+            <li>
+              <a href={`#${node.slug}`}>{node.text}</a>
+              {node.children.length > 0 && (
+                <ol>
+                  {node.children.map((child) => (
+                    <li>
+                      <a href={`#${child.slug}`}>{child.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </details>
+    ) : (
+      <nav class="toc toc--sidebar" aria-label="Table of contents">
+        <span class="toc__label">Contents</span>
+        <ol>
+          {tree.map((node) => (
+            <li>
+              <a href={`#${node.slug}`}>{node.text}</a>
+              {node.children.length > 0 && (
+                <ol>
+                  {node.children.map((child) => (
+                    <li>
+                      <a href={`#${child.slug}`}>{child.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    ))
+}

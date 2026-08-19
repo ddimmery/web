@@ -1,0 +1,37 @@
+---
+import { slugifyCategory } from '../lib/posts';
+
+interface Props {
+  categories: string[];
+  /** Slug of the category currently being browsed, if any. */
+  active?: string;
+  linked?: boolean;
+}
+
+const { categories, active, linked = true } = Astro.props;
+---
+
+{
+  categories.length > 0 && (
+    <ul class="pills">
+      {categories.map((category) => {
+        const slug = slugifyCategory(category);
+        return (
+          <li>
+            {linked ? (
+              <a
+                class="pill"
+                href={`/blog/category/${slug}/`}
+                aria-current={active === slug ? 'page' : undefined}
+              >
+                {category}
+              </a>
+            ) : (
+              <span class="pill">{category}</span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  )
+}

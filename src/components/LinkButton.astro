@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+
+interface Props {
+  href: string;
+  icon: IconName;
+  label: string;
+}
+
+const { href, icon, label } = Astro.props;
+const external = /^https?:/.test(href);
+---
+
+<a
+  class="btn"
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+>
+  <Icon name={icon} />
+  <span>{label}</span>
+</a>

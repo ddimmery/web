@@ -1,0 +1,27 @@
+---
+import { nav, site } from '../lib/site';
+
+const path = Astro.url.pathname;
+
+function isCurrent(href: string): boolean {
+  if (href === '/') return path === '/' || path === '';
+  // Individual posts live at /posts/<slug>/ but belong to the Blog section.
+  if (href === '/blog/' && path.startsWith('/posts/')) return true;
+  return path === href || path.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="site-title" href="/">{site.title}</a>
+    <nav class="site-nav" aria-label="Main">
+      {
+        nav.map((item) => (
+          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>

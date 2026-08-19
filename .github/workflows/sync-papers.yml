@@ -1,0 +1,78 @@
+name: Sync papers from Semantic Scholar
+
+# Weekly check for new publications. Anything new is appended to
+# src/data/papers.yaml with `visible: false` and proposed as a pull request,
+# so nothing appears on the site until it has been reviewed.
+#
+# Optional secret: SEMANTIC_SCHOLAR_API_KEY (raises the API rate limit).
+
+on:
+  schedule:
+    # Mondays, 06:15 UTC.
+    - cron: '15 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync papers
+        id: sync
+        env:
+          SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+        run: |
+          npm run sync-papers 2>&1 | tee sync-output.txt
+          if git diff --quiet -- src/data/papers.yaml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo 'summary<<SYNC_EOF'
+            cat sync-output.txt
+            echo 'SYNC_EOF'
+          } >> "$GITHUB_OUTPUT"
+          rm -f sync-output.txt
+
+      - name: Open a pull request
+        if: steps.sync.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          title: New papers from Semantic Scholar
+          branch: chore/sync-papers
+          delete-branch: true
+          commit-message: 'data: add new papers from Semantic Scholar'
+          add-paths: src/data/papers.yaml
+          labels: papers
+          body: |
+            Semantic Scholar reported publications that were not yet in
+            `src/data/papers.yaml`. They have been appended with
+            `visible: false`.
+
+            **To publish a paper:** check the metadata (authors, venue, year,
+            links — `me` marks Drew in the author list) and set `visible: true`.
+            Leave `visible: false` for anything that should stay hidden.
+
+            <details>
+            <summary>Sync output</summary>
+
+            ```
+            ${{ steps.sync.outputs.summary }}
+            ```
+
+            </details>

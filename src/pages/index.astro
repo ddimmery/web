@@ -1,0 +1,118 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SocialRow from '../components/SocialRow.astro';
+import { formatDate, getPosts, postUrl } from '../lib/posts';
+import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import { site } from '../lib/site';
+import headshot from '../assets/headshot.webp';
+
+const posts = (await getPosts()).slice(0, 3);
+
+const papers = (await getCollection('papers', ({ data }) => data.visible))
+  .map((entry) => entry.data)
+  .filter((paper) => Boolean(paper.published_url))
+  .sort((a, b) => Number(yearOf(b)) - Number(yearOf(a)))
+  .slice(0, 4);
+---
+
+<Base title={site.title} description={site.description}>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero__bio">
+        <h1 class="hero__name">Drew Dimmery</h1>
+        <p class="hero__tagline">
+          Methods in causal inference, data science and social science
+        </p>
+        <p>
+          I am the <a
+            href="https://www.hertie-school.org/en/research/faculty-and-researchers/profile/person/dimmery"
+            >Professor of Data Science for the Common Good</a
+          > at the <a href="https://www.hertie-school.org/en/">Hertie School</a>'s <a
+            href="https://www.hertie-school.org/en/datasciencelab">Data Science Lab</a
+          >.
+        </p>
+        <p>
+          I previously worked on the Adaptive Experimentation team at Facebook Core Data
+          Science in New York, and at the Research Network Data Science at the University
+          of Vienna.
+        </p>
+        <p>
+          My research focuses on the intersection of machine learning and causal inference.
+          I work a lot on experimental design and I think hard about how experimentation
+          can be better and more efficient. I'm also interested in better applying the
+          machinery of machine learning to observational causal inference. I'm most
+          interested in methodological research useful for the study of social phenomena.
+        </p>
+        <SocialRow class="hero__socials" />
+      </div>
+      <Image
+        class="hero__portrait"
+        src={headshot}
+        width={368}
+        height={460}
+        loading="eager"
+        alt="Drew Dimmery"
+      />
+    </section>
+
+    <div class="section section--split">
+      {
+        posts.length > 0 && (
+          <section>
+            <div class="rule-heading">
+              <h2 class="eyebrow">Recent posts</h2>
+            </div>
+            <ul class="teaser-list">
+              {posts.map((post) => (
+                <li>
+                  <p class="teaser__title">
+                    <a href={postUrl(post)}>{post.data.title}</a>
+                  </p>
+                  <p class="teaser__meta">
+                    <time datetime={post.data.date.toISOString()}>
+                      {formatDate(post.data.date)}
+                    </time>
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <a class="more-link" href="/blog/">All posts</a>
+          </section>
+        )
+      }
+
+      {
+        papers.length > 0 && (
+          <section>
+            <div class="rule-heading">
+              <h2 class="eyebrow">Selected papers</h2>
+            </div>
+            <ul class="teaser-list">
+              {papers.map((paper) => {
+                const url = bestUrl(paper);
+                return (
+                  <li>
+                    <p class="teaser__title">
+                      {url ? <a href={url}>{paper.title}</a> : paper.title}
+                    </p>
+                    <p class="teaser__meta">
+                      {authorSegments(paper.authors).map((part) =>
+                        part.me ? <strong>{part.text}</strong> : part.text,
+                      )}
+                      {' · '}
+                      {yearOf(paper)}
+                      {paper.venue && <span>{' · '}<em>{paper.venue}</em></span>}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+            <a class="more-link" href="/research/">All research</a>
+          </section>
+        )
+      }
+    </div>
+  </div>
+</Base>

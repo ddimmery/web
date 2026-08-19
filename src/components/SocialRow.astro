@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import { socials } from '../lib/site';
+
+interface Props {
+  class?: string;
+  size?: number;
+}
+
+const { class: className, size = 17 } = Astro.props;
+---
+
+<nav class:list={['icon-row', className]} aria-label="Elsewhere">
+  {
+    socials.map((social) => (
+      <a
+        class="icon-link"
+        href={social.href}
+        rel="me noopener noreferrer"
+        target={social.href.startsWith('http') ? '_blank' : undefined}
+        aria-label={social.label}
+        title={social.label}
+      >
+        <Icon name={social.icon} size={size} />
+      </a>
+    ))
+  }
+</nav>

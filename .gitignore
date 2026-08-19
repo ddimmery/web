@@ -1,0 +1,17 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# vendored at build time from the katex package (see scripts/vendor-katex.mjs)
+public/katex/
+
+# env & tooling
+.env
+.env.production
+.DS_Store
+*.log
+.vercel
+.netlify

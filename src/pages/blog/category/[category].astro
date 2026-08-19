@@ -1,0 +1,51 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../layouts/Base.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { categoriesOf, getPosts, slugifyCategory, type Post } from '../../../lib/posts';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPosts();
+  return categoriesOf(posts).map((category) => ({
+    params: { category: category.slug },
+    props: {
+      name: category.name,
+      posts: posts.filter((post) =>
+        post.data.categories.some((c) => slugifyCategory(c) === category.slug),
+      ),
+    },
+  }));
+};
+
+interface Props {
+  name: string;
+  posts: Post[];
+}
+
+const { name, posts } = Astro.props;
+const { category } = Astro.params;
+---
+
+<Base
+  title={`Posts in “${name}”`}
+  description={`Blog posts by Drew Dimmery in the category ${name}.`}
+>
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:0.4rem">Category</p>
+    <h1 class="page-title">{name}</h1>
+
+    <p style="margin-bottom:var(--space-l)">
+      <a class="more-link" href="/blog/" style="margin-top:0">All posts</a>
+    </p>
+
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li>
+            <PostCard post={post} activeCategory={category} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

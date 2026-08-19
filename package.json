@@ -1,0 +1,32 @@
+{
+  "name": "ddimmery-web",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal website of Drew Dimmery — ddimmery.com",
+  "scripts": {
+    "dev": "node scripts/vendor-katex.mjs && astro dev",
+    "start": "npm run dev",
+    "build": "node scripts/vendor-katex.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sync-papers": "node scripts/sync-papers.mjs",
+    "vendor-katex": "node scripts/vendor-katex.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "7.2.4",
+    "@astrojs/mdx": "7.0.7",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.3",
+    "astro": "7.2.4",
+    "katex": "0.18.4",
+    "rehype-katex": "7.0.1",
+    "remark-math": "6.0.0",
+    "sharp": "0.35.3",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "typescript": "6.0.3"
+  }
+}

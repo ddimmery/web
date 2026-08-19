@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import { site, socials } from '../lib/site';
+
+const year = new Date().getFullYear();
+const footerSocials = socials.filter((s) =>
+  ['bluesky', 'github', 'scholar', 'email'].includes(s.icon),
+);
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <p style="margin:0">
+      © {year} Drew Dimmery ·{' '}
+      <a href={site.repo} rel="noopener noreferrer">source</a>
+    </p>
+    <div class="footer-links">
+      {
+        footerSocials.map((s) => (
+          <a href={s.href} rel="me noopener noreferrer" aria-label={s.label}>
+            <Icon name={s.icon} size={15} />
+          </a>
+        ))
+      }
+      <a href={site.feed} aria-label="RSS feed"><Icon name="rss" size={15} /></a>
+    </div>
+  </div>
+</footer>

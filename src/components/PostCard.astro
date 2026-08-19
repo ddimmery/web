@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import CategoryPills from './CategoryPills.astro';
+import { formatDate, postUrl, type Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+  activeCategory?: string;
+}
+
+const { post, activeCategory } = Astro.props;
+const { title, description, date, categories, image } = post.data;
+const href = postUrl(post);
+---
+
+<article class:list={['card', image && 'card--with-thumb']}>
+  {
+    image && (
+      <a href={href} tabindex="-1" aria-hidden="true">
+        <Image
+          class="card__thumb"
+          src={image}
+          width={400}
+          height={250}
+          loading="lazy"
+          decoding="async"
+          alt=""
+        />
+      </a>
+    )
+  }
+  <div class="card__body">
+    <h3 class="card__title"><a href={href}>{title}</a></h3>
+    <p class="card__meta">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    </p>
+    {description && <p class="card__description">{description}</p>}
+    <CategoryPills categories={categories} active={activeCategory} />
+  </div>
+</article>

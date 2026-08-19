@@ -1,0 +1,249 @@
+/* =========================================================================
+   Long-form content. Applied to `.prose` (blog posts, rendered markdown
+   descriptions). Kept deliberately narrow in scope so page furniture is
+   unaffected.
+   ========================================================================= */
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > * + * {
+  margin-top: var(--flow);
+}
+
+.prose > * + :where(h2) {
+  margin-top: 2.2em;
+}
+
+.prose > * + :where(h3, h4, h5, h6) {
+  margin-top: 1.75em;
+}
+
+.prose > :where(h2, h3, h4, h5, h6) + * {
+  margin-top: 0.55em;
+}
+
+.prose :where(h2) {
+  padding-bottom: 0.15em;
+  border-bottom: 1px solid var(--rule);
+}
+
+.prose :where(h3, h4) {
+  color: var(--ink-soft);
+}
+
+/* ---------- lists -------------------------------------------------------- */
+.prose :where(ul, ol) {
+  padding-left: 1.4rem;
+}
+
+.prose :where(li) + :where(li) {
+  margin-top: 0.3em;
+}
+
+.prose :where(li) > :where(ul, ol) {
+  margin-top: 0.3em;
+}
+
+/* ---------- blockquote --------------------------------------------------- */
+.prose blockquote {
+  margin-inline: 0;
+  padding: 0.15rem 0 0.15rem 1.15rem;
+  border-left: 2px solid var(--accent);
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.prose blockquote > * + * {
+  margin-top: 0.7em;
+}
+
+.prose blockquote cite,
+.prose blockquote footer {
+  display: block;
+  font-style: normal;
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+}
+
+/* ---------- figures & images -------------------------------------------- */
+.prose :where(img, video) {
+  display: block;
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+
+.prose figure {
+  margin: var(--space-m) 0;
+}
+
+.prose figcaption {
+  margin-top: 0.5rem;
+  font-family: var(--font-heading-stack);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  color: var(--ink-muted);
+  text-align: left;
+  border-left: 2px solid var(--rule);
+  padding-left: 0.7rem;
+}
+
+/* ---------- tables ------------------------------------------------------- */
+.prose .table-scroll,
+.table-scroll {
+  overflow-x: auto;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.prose :where(th, td) {
+  padding: 0.45em 0.7em;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.prose thead th {
+  font-family: var(--font-heading-stack);
+  font-weight: 700;
+  border-bottom: 2px solid var(--rule-strong);
+  white-space: nowrap;
+}
+
+.prose tbody tr:last-child :where(th, td) {
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+/* ---------- details ------------------------------------------------------ */
+.prose details {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  background: var(--paper-raised);
+}
+
+.prose details > summary {
+  cursor: pointer;
+  font-family: var(--font-heading-stack);
+  font-weight: 700;
+  font-size: var(--step--1);
+}
+
+.prose details[open] > summary {
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---------- inline code ------------------------------------------------- */
+.prose :not(pre) > code {
+  padding: 0.1em 0.32em;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+.prose a > code {
+  color: inherit;
+}
+
+/* ---------- footnotes ---------------------------------------------------- */
+/* GFM footnotes land in `<section data-footnotes>`; render them as a quiet,
+   small-type apparatus set off by a hairline rule. */
+.prose [data-footnotes] {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.prose [data-footnotes] > h2 {
+  font-family: var(--font-heading-stack);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  border: 0;
+  padding: 0;
+  margin-bottom: var(--space-s);
+}
+
+.prose [data-footnotes] ol {
+  padding-left: 1.3rem;
+}
+
+.prose [data-footnotes] li {
+  margin-top: 0.45em;
+}
+
+.prose [data-footnotes] li::marker {
+  color: var(--ink-muted);
+  font-family: var(--font-heading-stack);
+}
+
+.prose [data-footnotes] p {
+  margin: 0;
+}
+
+.prose [data-footnotes] p + p {
+  margin-top: 0.4em;
+}
+
+.prose [data-footnote-backref] {
+  margin-left: 0.35em;
+  text-decoration: none;
+  font-family: var(--font-heading-stack);
+}
+
+/* Footnote reference markers in the text. */
+.prose [data-footnote-ref] {
+  font-family: var(--font-heading-stack);
+  font-size: 0.78em;
+  font-weight: 700;
+  text-decoration: none;
+  padding-inline: 0.12em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+/* Highlight the footnote (or any anchor target) you just jumped to. */
+.prose :target {
+  background: var(--accent-wash);
+  border-radius: 2px;
+  scroll-margin-top: 5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- KaTeX ------------------------------------------------------- */
+/* The KaTeX stylesheet itself is only loaded on posts with `math: true`;
+   these are just fit-and-finish tweaks that are harmless without it. */
+.prose .katex {
+  font-size: 1.04em;
+}
+
+.prose .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.35rem;
+}

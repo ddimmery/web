@@ -1,0 +1,29 @@
+---
+import { icons, type IconName } from '../lib/icons';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  /** Provide when the icon is the only content of its link/button. */
+  title?: string;
+}
+
+const { name, size = 16, class: className, title } = Astro.props;
+const icon = icons[name];
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={icon.viewBox}
+  width={size}
+  height={size}
+  fill="currentColor"
+  class={className}
+  aria-hidden={title ? undefined : 'true'}
+  role={title ? 'img' : undefined}
+  focusable="false"
+>
+  {title && <title>{title}</title>}
+  <Fragment set:html={icon.body} />
+</svg>

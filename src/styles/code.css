@@ -1,0 +1,50 @@
+/* =========================================================================
+   Shiki code blocks. Astro is configured with two themes and
+   `defaultColor: false`, so Shiki emits `--shiki-light` / `--shiki-dark`
+   custom properties on every token instead of committing to one palette.
+   Swapping the two here means syntax colours follow the OS colour scheme
+   with zero JavaScript.
+   ========================================================================= */
+
+pre.astro-code,
+pre.astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+
+@media (prefers-color-scheme: dark) {
+  pre.astro-code,
+  pre.astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+    font-style: var(--shiki-dark-font-style);
+    font-weight: var(--shiki-dark-font-weight);
+    text-decoration: var(--shiki-dark-text-decoration);
+  }
+}
+
+pre.astro-code {
+  padding: var(--space-m);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-size: var(--step--1);
+  line-height: 1.55;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+pre.astro-code code {
+  display: block;
+  font-size: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+/* `wrap: true` is set in the Shiki config; make sure long lines behave. */
+pre.astro-code code .line {
+  min-height: 1em;
+}

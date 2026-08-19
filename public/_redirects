@@ -1,0 +1,6 @@
+# The Quarto site published its feed at /blog.xml, which the Astro build keeps.
+# These cover the other feed paths a reader might have saved.
+/index.xml   /blog.xml   301
+/feed        /blog.xml   301
+/rss.xml     /blog.xml   301
+/blog/blog.xml /blog.xml 301

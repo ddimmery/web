@@ -1,0 +1,112 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CategoryPills from '../../components/CategoryPills.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import NewsletterCallout from '../../components/NewsletterCallout.astro';
+import { formatDate, getPosts, postUrl, type Post } from '../../lib/posts';
+import '../../styles/prose.css';
+import '../../styles/code.css';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      // posts[] is newest-first: the *next* index is the older post.
+      newer: index > 0 ? posts[index - 1] : undefined,
+      older: index < posts.length - 1 ? posts[index + 1] : undefined,
+    },
+  }));
+};
+
+interface Props {
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
+const { title, description, date, updated, categories, image, math, draft } = post.data;
+const { Content, headings } = await render(post);
+---
+
+<Base
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={date}
+  modifiedTime={updated}
+  math={math}
+  noindex={draft}
+>
+  <div class="wrap">
+    <div class="post-shell">
+      <article class="prose">
+        <header class="post-header">
+          <h1 class="post-header__title">{title}</h1>
+          <div class="post-header__meta">
+            <time datetime={date.toISOString()}>{formatDate(date)}</time>
+            {updated && (
+              <span>
+                Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+              </span>
+            )}
+            {draft && <span style="color:var(--accent)">Draft</span>}
+            <CategoryPills categories={categories} />
+          </div>
+          {description && <p class="post-header__description">{description}</p>}
+        </header>
+
+        {
+          image && (
+            <figure class="post-cover">
+              <Image
+                src={image}
+                width={1200}
+                loading="eager"
+                decoding="sync"
+                fetchpriority="high"
+                alt=""
+              />
+            </figure>
+          )
+        }
+
+        <TableOfContents headings={headings} variant="mobile" />
+
+        <Content />
+      </article>
+
+      <TableOfContents headings={headings} variant="sidebar" />
+    </div>
+
+    <div class="prose-width" style="margin-top:var(--space-xl)">
+      <NewsletterCallout />
+    </div>
+
+    {
+      (newer || older) && (
+        <nav class="post-nav" aria-label="More posts">
+          {older ? (
+            <a class="post-nav__item post-nav__prev" href={postUrl(older)}>
+              <span class="post-nav__dir">← Previous</span>
+              <span class="post-nav__title">{older.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {newer && (
+            <a class="post-nav__item post-nav__next" href={postUrl(newer)}>
+              <span class="post-nav__dir">Next →</span>
+              <span class="post-nav__title">{newer.data.title}</span>
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </div>
+</Base>

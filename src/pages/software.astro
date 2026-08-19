@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import Base from '../layouts/Base.astro';
+import LinkButton from '../components/LinkButton.astro';
+import '../styles/prose.css';
+import '../styles/code.css';
+
+// software.yaml descriptions are markdown; render them at build time with the
+// same unified pipeline the rest of the site uses.
+const markdown = await createMarkdownProcessor({ gfm: true, smartypants: true });
+
+const entries = await getCollection('software');
+// The YAML file is maintained oldest-first; show newest work first.
+const software = await Promise.all(
+  entries
+    .map((entry) => entry.data)
+    .sort((a, b) => b.order - a.order)
+    .map(async (item) => ({
+      ...item,
+      html: (await markdown.render(item.description)).code,
+    })),
+);
+---
+
+<Base
+  title="Software"
+  description="Open-source R packages and tools by Drew Dimmery: rdd, regweight and tidyhte."
+>
+  <div class="wrap">
+    <h1 class="page-title">Software</h1>
+
+    {
+      software.map((item) => (
+        <section class="software-entry" id={item.title}>
+          <h2 class="software-entry__title">
+            <code>{item.title}</code>
+          </h2>
+          <div class="prose" style="margin-top:var(--space-s)" set:html={item.html} />
+          <div class="btn-row">
+            {item.website && (
+              <LinkButton href={item.website} icon="info" label="Website" />
+            )}
+            {item.github && <LinkButton href={item.github} icon="github" label="Github" />}
+            {item.package && (
+              <LinkButton href={item.package} icon="package" label="Package" />
+            )}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>
