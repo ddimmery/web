@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import mdxRenderer from '@astrojs/mdx/server.js';
 import { render } from 'astro:content';
-import { getPosts, postUrl } from '../lib/posts';
+import { getPosts, plainText, postUrl } from '../lib/posts';
 import { site } from '../lib/site';
 
 /**
@@ -29,7 +29,7 @@ export const GET: APIRoute = async (context) => {
       }
       return {
         title: post.data.title,
-        description: post.data.description ?? '',
+        description: post.data.description ? plainText(post.data.description) : '',
         pubDate: post.data.date,
         link: postUrl(post),
         categories: post.data.categories,

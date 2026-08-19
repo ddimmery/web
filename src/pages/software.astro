@@ -18,7 +18,9 @@ const software = await Promise.all(
     .sort((a, b) => b.order - a.order)
     .map(async (item) => ({
       ...item,
-      html: (await markdown.render(item.description)).code,
+      // YAML descriptions separate their paragraphs with single newlines, which
+      // markdown would turn into `<br>` — promote them to real paragraphs.
+      html: (await markdown.render(item.description.replace(/\n(?!\n)/g, '\n\n'))).code,
     })),
 );
 ---

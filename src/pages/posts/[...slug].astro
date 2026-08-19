@@ -6,7 +6,14 @@ import Base from '../../layouts/Base.astro';
 import CategoryPills from '../../components/CategoryPills.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import NewsletterCallout from '../../components/NewsletterCallout.astro';
-import { formatDate, getPosts, postUrl, type Post } from '../../lib/posts';
+import {
+  formatDate,
+  getPosts,
+  inlineMarkdown,
+  plainText,
+  postUrl,
+  type Post,
+} from '../../lib/posts';
 import '../../styles/prose.css';
 import '../../styles/code.css';
 
@@ -36,7 +43,8 @@ const { Content, headings } = await render(post);
 
 <Base
   title={title}
-  description={description}
+  description={description && plainText(description)}
+  image={image?.src}
   type="article"
   publishedTime={date}
   modifiedTime={updated}
@@ -58,7 +66,11 @@ const { Content, headings } = await render(post);
             {draft && <span style="color:var(--accent)">Draft</span>}
             <CategoryPills categories={categories} />
           </div>
-          {description && <p class="post-header__description">{description}</p>}
+          {
+            description && (
+              <p class="post-header__description" set:html={inlineMarkdown(description)} />
+            )
+          }
         </header>
 
         {

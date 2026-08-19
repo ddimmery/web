@@ -315,6 +315,12 @@
   font-style: italic;
 }
 
+/* The mono face has no italic, so an italicised code span would be a synthetic
+   slant. Keep code upright inside the italic standfirst. */
+.post-header__description code {
+  font-style: normal;
+}
+
 .post-cover {
   margin: var(--space-m) 0 var(--space-l);
 }

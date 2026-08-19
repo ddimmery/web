@@ -102,6 +102,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Inside a horizontal scroller a table must be allowed to exceed the column:
+   `width: 100%` would squeeze a wide table until its cells overflowed their
+   own box and got clipped instead of scrolling. */
+.prose .table-scroll > table,
+.prose div[style*='overflow'] > table {
+  width: auto;
+  min-width: 100%;
+}
+
 .prose :where(th, td) {
   padding: 0.45em 0.7em;
   text-align: left;
@@ -121,21 +130,23 @@
 }
 
 /* ---------- details ------------------------------------------------------ */
-.prose details {
+/* `:not(.toc)` keeps the collapsible table of contents — which lives inside the
+   article element — out of the boxed `<details>` treatment. */
+.prose details:not(.toc) {
   border: 1px solid var(--rule);
   border-radius: var(--radius);
   padding: 0.6rem 0.9rem;
   background: var(--paper-raised);
 }
 
-.prose details > summary {
+.prose details:not(.toc) > summary {
   cursor: pointer;
   font-family: var(--font-heading-stack);
   font-weight: 700;
   font-size: var(--step--1);
 }
 
-.prose details[open] > summary {
+.prose details:not(.toc)[open] > summary {
   margin-bottom: 0.6rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--rule);
@@ -166,7 +177,17 @@
   color: var(--ink-soft);
 }
 
+/* remark-gfm hides the section label from sighted readers (`.sr-only`); this
+   apparatus deserves a visible heading, so undo that here only. */
 .prose [data-footnotes] > h2 {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
   font-family: var(--font-heading-stack);
   font-size: var(--step--2);
   font-weight: 700;
@@ -195,8 +216,15 @@
   margin: 0;
 }
 
-.prose [data-footnotes] p + p {
-  margin-top: 0.4em;
+/* A footnote can hold more than one block — a second paragraph, a quotation,
+   a short list. Space siblings generically so those do not run together. */
+.prose [data-footnotes] li > * + * {
+  margin-top: 0.45em;
+}
+
+.prose [data-footnotes] blockquote {
+  padding-left: 0.85rem;
+  border-left-width: 1px;
 }
 
 .prose [data-footnote-backref] {
@@ -240,6 +268,12 @@
    these are just fit-and-finish tweaks that are harmless without it. */
 .prose .katex {
   font-size: 1.04em;
+}
+
+/* Inline formulae are short here (a couple of logos and words set in math);
+   letting them break mid-expression tears glyphs apart across lines. */
+.prose :not(.katex-display) > .katex {
+  white-space: nowrap;
 }
 
 .prose .katex-display {

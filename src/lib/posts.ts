@@ -60,3 +60,40 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 export function formatDate(date: Date): string {
   return dateFormatter.format(date);
 }
+
+/* ---------- descriptions -------------------------------------------------
+   Post descriptions are one-line frontmatter strings, but they are written in
+   markdown (a few contain links or inline code). They appear in three places
+   with different needs: as HTML in the post header and listing cards, and as
+   plain text inside `<meta name="description">` / RSS. Rendering them through
+   the full markdown pipeline would wrap them in a `<p>`, so this handles the
+   small inline subset instead. */
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/** Render the inline markdown subset (links, code, emphasis) to HTML. */
+export function inlineMarkdown(text: string): string {
+  return escapeHtml(text)
+    .replace(
+      /\[([^\]]+)\]\((https?:[^\s)]+)\)/g,
+      (_m, label, href) => `<a href="${href}">${label}</a>`,
+    )
+    .replace(/`([^`]+)`/g, (_m, code) => `<code>${code}</code>`)
+    .replace(/(^|[\s(])\*\*([^*]+)\*\*/g, (_m, pre, body) => `${pre}<strong>${body}</strong>`)
+    .replace(/(^|[\s(])\*([^*]+)\*/g, (_m, pre, body) => `${pre}<em>${body}</em>`);
+}
+
+/** Strip the same inline markdown down to plain text, for meta tags. */
+export function plainText(text: string): string {
+  return text
+    .replace(/\[([^\]]+)\]\((?:https?:[^\s)]+)\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1');
+}

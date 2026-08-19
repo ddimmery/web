@@ -3,14 +3,38 @@ import type { CollectionEntry } from 'astro:content';
 export type Paper = CollectionEntry<'papers'>;
 export type PaperData = Paper['data'];
 
+/**
+ * Author names arrive from the Semantic Scholar sync and occasionally carry
+ * stray HTML (e.g. a consortium name wrapped in `<strong>`). Astro escapes
+ * markup in text nodes, so anything left in would render as visible tags.
+ */
+function cleanName(name: string): string {
+  return name
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export interface AuthorSegmentOptions {
+  /** Truncate to this many names, followed by "et al." (used on teasers). */
+  max?: number;
+}
+
 /** "a and b" / "a, b, and c" — matching the old Quarto site's readable_list. */
 export function authorSegments(
   authors: string[],
+  options: AuthorSegmentOptions = {},
 ): Array<{ text: string; me: boolean }> {
+  const { max } = options;
+  const truncated = typeof max === 'number' && authors.length > max;
+  const shown = truncated ? authors.slice(0, max) : authors;
   const parts: Array<{ text: string; me: boolean }> = [];
-  authors.forEach((author, index) => {
+
+  shown.forEach((author, index) => {
     if (index > 0) {
-      if (authors.length < 3) {
+      if (truncated) {
+        parts.push({ text: ', ', me: false });
+      } else if (authors.length < 3) {
         parts.push({ text: ' and ', me: false });
       } else if (index === authors.length - 1) {
         parts.push({ text: ', and ', me: false });
@@ -19,9 +43,13 @@ export function authorSegments(
       }
     }
     parts.push(
-      author === 'me' ? { text: 'Drew Dimmery', me: true } : { text: author, me: false },
+      author === 'me'
+        ? { text: 'Drew Dimmery', me: true }
+        : { text: cleanName(author), me: false },
     );
   });
+
+  if (truncated) parts.push({ text: ' et al.', me: false });
   return parts;
 }
 

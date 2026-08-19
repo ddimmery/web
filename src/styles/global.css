@@ -222,6 +222,15 @@ small {
   max-width: var(--measure);
 }
 
+/* Pages that are a *list* — CV rows, the publication list — put their dates and
+   venues on the right edge of the column. At the full 74rem shell width that
+   leaves a lawn of empty space in the middle of every row, so those pages run
+   in a narrower column. The shell keeps its full width so the left edge still
+   lines up with the masthead; only the blocks inside it are narrowed. */
+.wrap--column > * {
+  max-width: 56rem;
+}
+
 main {
   flex: 1 0 auto;
   padding-block: clamp(2rem, 5vw, 3.75rem) var(--space-xl);
@@ -535,6 +544,7 @@ a.pill:hover {
 
 .cv-entry__meta {
   font-size: var(--step--1);
+  line-height: 1.35;
   color: var(--ink-muted);
   font-variant-numeric: oldstyle-nums;
   text-align: right;

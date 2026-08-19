@@ -6,10 +6,22 @@
    with zero JavaScript.
    ========================================================================= */
 
+/* Shiki's own backgrounds are pure #fff (light) and a cool blue-grey (dark),
+   both of which sit badly on this site's warm paper. Only the *token* colours
+   are taken from the themes; the surface comes from the site palette. */
+:root {
+  --code-surface: #f4efe4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --code-surface: #23201a;
+  }
+}
+
 pre.astro-code,
 pre.astro-code span {
   color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
   font-style: var(--shiki-light-font-style);
   font-weight: var(--shiki-light-font-weight);
   text-decoration: var(--shiki-light-text-decoration);
@@ -19,7 +31,6 @@ pre.astro-code span {
   pre.astro-code,
   pre.astro-code span {
     color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
     font-style: var(--shiki-dark-font-style);
     font-weight: var(--shiki-dark-font-weight);
     text-decoration: var(--shiki-dark-text-decoration);
@@ -28,6 +39,7 @@ pre.astro-code span {
 
 pre.astro-code {
   padding: var(--space-m);
+  background-color: var(--code-surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
   font-size: var(--step--1);
@@ -42,9 +54,20 @@ pre.astro-code code {
   background: none;
   border: 0;
   padding: 0;
+  /* Shiki separates its `.line` spans with literal newlines. Making the spans
+     blocks (below) would let each of those newlines add a second, empty line
+     box; zeroing the line height of the container collapses them. */
+  line-height: 0;
 }
 
-/* `wrap: true` is set in the Shiki config; make sure long lines behave. */
+/* `wrap: true` is set in the Shiki config, so long lines fold rather than
+   scroll. Hang the continuation so a folded line reads as part of the line
+   above it instead of as a new statement at column zero. */
+
 pre.astro-code code .line {
+  display: block;
   min-height: 1em;
+  line-height: 1.55;
+  padding-left: 1.7em;
+  text-indent: -1.7em;
 }

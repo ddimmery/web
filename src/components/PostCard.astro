@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import CategoryPills from './CategoryPills.astro';
-import { formatDate, postUrl, type Post } from '../lib/posts';
+import { formatDate, inlineMarkdown, postUrl, type Post } from '../lib/posts';
 
 interface Props {
   post: Post;
@@ -34,7 +34,7 @@ const href = postUrl(post);
     <p class="card__meta">
       <time datetime={date.toISOString()}>{formatDate(date)}</time>
     </p>
-    {description && <p class="card__description">{description}</p>}
+    {description && <p class="card__description" set:html={inlineMarkdown(description)} />}
     <CategoryPills categories={categories} active={activeCategory} />
   </div>
 </article>

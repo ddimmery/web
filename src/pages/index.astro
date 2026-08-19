@@ -8,7 +8,7 @@ import { authorSegments, bestUrl, yearOf } from '../lib/papers';
 import { site } from '../lib/site';
 import headshot from '../assets/headshot.webp';
 
-const posts = (await getPosts()).slice(0, 3);
+const posts = (await getPosts()).slice(0, 5);
 
 const papers = (await getCollection('papers', ({ data }) => data.visible))
   .map((entry) => entry.data)
@@ -98,7 +98,7 @@ const papers = (await getCollection('papers', ({ data }) => data.visible))
                       {url ? <a href={url}>{paper.title}</a> : paper.title}
                     </p>
                     <p class="teaser__meta">
-                      {authorSegments(paper.authors).map((part) =>
+                      {authorSegments(paper.authors, { max: 3 }).map((part) =>
                         part.me ? <strong>{part.text}</strong> : part.text,
                       )}
                       {' · '}
