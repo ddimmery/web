@@ -1,0 +1,123 @@
+---
+/* =========================================================================
+   HOME VARIANT F — "letterhead"
+
+   Formal and symmetric, like the first page of a printed CV: a centred
+   identity block (small round portrait, name in letterspaced caps, tagline
+   between hairlines, socials centred), a short centred statement, then the
+   substance as dense two-column structured lists under centred eyebrows.
+   Narrower column than the other variants on purpose — it is a document.
+
+   To activate: change the `Home` import in src/pages/index.astro to this file.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import HomeBio from '../components/HomeBio.astro';
+import SocialRow from '../components/SocialRow.astro';
+import { formatDate, postUrl } from '../lib/posts';
+import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import headshot from '../assets/headshot.webp';
+import type { HomeProps } from './home-props';
+import '../styles/home-variant-f.css';
+
+const { posts, papers } = Astro.props as HomeProps;
+---
+
+<div class="wrap f-page">
+  <header class="f-head">
+    {/* 9rem = 144px, circular; the ladder stops at 288 for 2x. */}
+    <Image
+      class="f-head__portrait"
+      src={headshot}
+      widths={[144, 216, 288]}
+      sizes="9rem"
+      width={600}
+      height={800}
+      loading="eager"
+      decoding="sync"
+      fetchpriority="high"
+      alt="Drew Dimmery"
+    />
+    <h1 class="f-head__name">Drew Dimmery</h1>
+    <p class="f-head__tagline">
+      Methods in causal inference, data science and social science
+    </p>
+    <p class="f-head__affil">
+      Professor of Data Science for the Common Good · Hertie School Data Science
+      Lab · Berlin
+    </p>
+    <SocialRow class="f-head__socials" />
+  </header>
+
+  <div class="f-bio">
+    <HomeBio />
+  </div>
+
+  <div class="f-cols">
+    {
+      posts.length > 0 && (
+        <section class="f-block">
+          <h2 class="f-block__title">Recent posts</h2>
+          <ul class="f-list">
+            {posts.map((post) => (
+              <li>
+                <p class="f-list__title">
+                  <a href={postUrl(post)}>{post.data.title}</a>
+                </p>
+                <p class="f-list__meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {formatDate(post.data.date)}
+                  </time>
+                  {post.data.categories?.[0] && (
+                    <span>
+                      {' · '}
+                      {post.data.categories[0]}
+                    </span>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <a class="more-link" href="/blog/">
+            All posts
+          </a>
+        </section>
+      )
+    }
+
+    {
+      papers.length > 0 && (
+        <section class="f-block">
+          <h2 class="f-block__title">Recent papers</h2>
+          <ul class="f-list">
+            {papers.map((paper) => {
+              const url = bestUrl(paper);
+              return (
+                <li>
+                  <p class="f-list__title">
+                    {url ? <a href={url}>{paper.title}</a> : paper.title}
+                  </p>
+                  <p class="f-list__meta">
+                    {authorSegments(paper.authors, { max: 3 }).map((part) =>
+                      part.me ? <strong>{part.text}</strong> : part.text,
+                    )}
+                    {' · '}
+                    {yearOf(paper)}
+                    {paper.venue && (
+                      <span>
+                        {' · '}
+                        <em>{paper.venue}</em>
+                      </span>
+                    )}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+          <a class="more-link" href="/research/">
+            All research
+          </a>
+        </section>
+      )
+    }
+  </div>
+</div>

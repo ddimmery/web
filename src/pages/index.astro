@@ -6,9 +6,10 @@ import { yearOf } from '../lib/papers';
 import { site } from '../lib/site';
 
 /* ── HOME LAYOUT VARIANT ────────────────────────────────────────────────────
-   Three interchangeable layouts live in `src/design-variants/` (outside
+   Six interchangeable layouts live in `src/design-variants/` (outside
    `src/pages/`, so they create no routes). Swap the import below to change the
-   home page; every variant takes the same props.
+   home page; every variant takes the same props (see `home-props.ts`) and
+   imports its own stylesheet, so the inactive ones ship no CSS.
 
      HomeVariantA — refined current: bio left, large portrait right,
                     two-column recents below a hairline.
@@ -16,6 +17,14 @@ import { site } from '../lib/site';
                     masthead row, recents as one wide ruled list.
      HomeVariantC — side-rail identity: sticky portrait/name/socials rail on
                     the left, content flowing to its right. ← active
+     HomeVariantD — full-bleed portrait rail: C pushed harder. The rail is a
+                    tinted panel running from the window edge to the footer,
+                    with the portrait bleeding across its full width.
+     HomeVariantE — typographic index: huge stacked "DREW / DIMMERY" masthead,
+                    one small portrait, recents as numbered wall-to-wall
+                    indexes with the date or venue on the right edge.
+     HomeVariantF — letterhead: centred identity block with a round portrait,
+                    a centred statement, then dense two-column lists.
    ───────────────────────────────────────────────────────────────────────── */
 import Home from '../design-variants/HomeVariantC.astro';
 
