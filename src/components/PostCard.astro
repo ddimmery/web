@@ -6,9 +6,16 @@ import { formatDate, inlineMarkdown, postUrl, type Post } from '../lib/posts';
 interface Props {
   post: Post;
   activeCategory?: string;
+  /**
+   * Set on the first card in a list. That thumbnail is above the fold and is
+   * the LCP element on /blog/ and the category pages, so it must not be
+   * lazy-loaded — lazy images are only discovered after layout, which pushed
+   * LCP out by ~2s. Every later card stays lazy.
+   */
+  eager?: boolean;
 }
 
-const { post, activeCategory } = Astro.props;
+const { post, activeCategory, eager = false } = Astro.props;
 const { title, description, date, categories, image } = post.data;
 const href = postUrl(post);
 ---
@@ -22,8 +29,9 @@ const href = postUrl(post);
           src={image}
           width={400}
           height={250}
-          loading="lazy"
-          decoding="async"
+          loading={eager ? 'eager' : 'lazy'}
+          decoding={eager ? 'sync' : 'async'}
+          fetchpriority={eager ? 'high' : undefined}
           alt=""
         />
       </a>

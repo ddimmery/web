@@ -3,9 +3,20 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# Hashed build assets (fonts, images, CSS, JS) are immutable.
+# Hashed build assets (fonts, images, CSS) are immutable. Everything Astro
+# emits under /_astro/ carries a content hash in its filename, so a changed
+# file is a changed URL and a year-long cache can never go stale.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
-/katex/*
-  Cache-Control: public, max-age=31536000, immutable
+# The MathJax container stylesheet is copied straight out of public/, so its
+# name has no content hash. Revalidate daily and serve stale while doing so.
+/mathjax/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Unhashed, rarely-changing site furniture.
+/favicon.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800
+
+/social-card.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800

@@ -22,10 +22,25 @@ const out = join(root, 'public', 'mathjax');
 const css = await mathjaxStyles();
 
 // MathJax colours links inside formulae bright blue; defer to the site palette.
+//
+// The second rule is an accessibility fix. MathJax hides its assistive-MathML
+// copy with BOTH `clip: rect(1px,1px,1px,1px)` and
+// `clip-path: polygon(0 0, 0 1px, 1px 1px, 1px 0)`. The clip-path collapses the
+// element to a degenerate area, which axe-core (and therefore Lighthouse)
+// treats as "hidden from screen readers" — so a link whose only content is a
+// formula, e.g. `[$\text{Neo-Euler}$](…)` in the website-refresh post, was
+// reported as a link with no accessible name. Dropping just the clip-path
+// leaves the classic, axe-recognised visually-hidden pattern (absolute
+// positioning + clip rect), which hides the MathML exactly as before while
+// keeping it nameable.
 const overrides = `
 mjx-container[jax="SVG"] > svg a {
   fill: currentColor;
   stroke: currentColor;
+}
+
+mjx-assistive-mml {
+  clip-path: none !important;
 }
 `.trim();
 

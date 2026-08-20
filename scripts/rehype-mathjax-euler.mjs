@@ -93,7 +93,42 @@ export default function rehypeMathjaxEuler() {
 
       replace(job, fromHtmlIsomorphic(html, { fragment: true }).children);
     }
+
+    nameMathOnlyLinks(tree);
   };
+}
+
+/**
+ * Give an accessible name to any link whose visible label is *only* a formula.
+ *
+ * MathJax marks the rendered `<svg>` `aria-hidden` and puts the readable copy in
+ * a visually hidden `<mjx-assistive-mml>` MathML subtree. Screen readers handle
+ * that, but the accessible *name* computation for the enclosing `<a>` does not
+ * reliably cross into MathML — axe-core reports such a link as having no
+ * accessible text, and Lighthouse's `link-name` audit fails. (`website-refresh`
+ * has one: `[$\text{Neo-Euler}$](…)`.)
+ *
+ * So: for every `<a>` that contains math, has no other visible text, and has no
+ * name of its own already, copy the formula's plain-text rendering onto an
+ * `aria-label`. Purely additive — nothing about the visual output changes.
+ */
+function nameMathOnlyLinks(tree) {
+  visitParents(tree, 'element', (element) => {
+    if (element.tagName !== 'a') return;
+    const props = (element.properties ??= {});
+    if (props.ariaLabel || props['aria-label'] || props.title) return;
+
+    let hasMath = false;
+    let textOutsideMath = '';
+    for (const child of element.children ?? []) {
+      if (child.type === 'element' && child.tagName === 'mjx-container') hasMath = true;
+      else textOutsideMath += toText(child, { whitespace: 'normal' });
+    }
+    if (!hasMath || textOutsideMath.trim() !== '') return;
+
+    const label = toText(element, { whitespace: 'normal' }).trim();
+    if (label) props.ariaLabel = label;
+  });
 }
 
 function replace({ parent, scope }, children) {

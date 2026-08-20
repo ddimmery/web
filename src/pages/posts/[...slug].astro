@@ -76,8 +76,14 @@ const { Content, headings } = await render(post);
         {
           image && (
             <figure class="post-cover">
+              {/* The cover is the LCP element. It renders at the prose
+                  measure (68ch, ~700px at most), so a lone 1200px source was
+                  3x oversized on a phone. `sizes` is the measure clamped by
+                  the viewport minus the page gutter. */}
               <Image
                 src={image}
+                widths={[400, 700, 1200]}
+                sizes="(min-width: 48rem) 700px, calc(100vw - 2.3rem)"
                 width={1200}
                 loading="eager"
                 decoding="sync"

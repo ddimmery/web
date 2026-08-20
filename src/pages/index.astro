@@ -47,12 +47,19 @@ const papers = (await getCollection('papers', ({ data }) => data.visible))
         </p>
         <SocialRow class="hero__socials" />
       </div>
+      {/* The portrait renders at 9.5rem below 46rem and at ~11.5rem above it,
+          so a single 368px source was ~2.4x oversized on phones. `widths` lets
+          the browser pick; `sizes` mirrors the .hero__portrait breakpoint. */}
       <Image
         class="hero__portrait"
         src={headshot}
+        widths={[152, 184, 304, 368]}
+        sizes="(min-width: 46rem) 11.5rem, 9.5rem"
         width={368}
         height={460}
         loading="eager"
+        decoding="sync"
+        fetchpriority="high"
         alt="Drew Dimmery"
       />
     </section>

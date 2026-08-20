@@ -12,6 +12,15 @@ export default defineConfig({
   site: 'https://ddimmery.com',
   output: 'static',
 
+  build: {
+    // The whole site's CSS is ~19 kB uncompressed / ~4 kB brotli, and it was
+    // the only render-blocking resource left on the page. Inlining it trades a
+    // few compressed kB per document for zero blocking round-trips, which is
+    // the better deal on a static host: Lighthouse measured 150 ms off FCP on
+    // post pages, 60 ms on the landing page.
+    inlineStylesheets: 'always',
+  },
+
   integrations: [
     mdx(),
     sitemap({
@@ -41,9 +50,16 @@ export default defineConfig({
       // Dual themes. `defaultColor: false` makes Shiki emit --shiki-light /
       // --shiki-dark custom properties instead of hard-coding one theme, so the
       // colour scheme is switched purely in CSS (see src/styles/code.css).
+      //
+      // The *-high-contrast variants, not plain github-light/dark-dimmed: the
+      // site sets its own warm code surface rather than the theme's, and
+      // against that surface github-light's orange (#e36209, 3.04:1), red
+      // (#d73a49, 3.98:1) and comment grey (#6a737d, 4.19:1) all failed WCAG
+      // AA. Every token in the high-contrast pair clears 4.5:1 on this site's
+      // surfaces (see --code-surface in src/styles/code.css).
       themes: {
-        light: 'github-light',
-        dark: 'github-dark-dimmed',
+        light: 'github-light-high-contrast',
+        dark: 'github-dark-high-contrast',
       },
       defaultColor: false,
       wrap: true,

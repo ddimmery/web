@@ -40,9 +40,9 @@ const { category } = Astro.params;
 
     <ul class="post-list">
       {
-        posts.map((post) => (
+        posts.map((post, index) => (
           <li>
-            <PostCard post={post} activeCategory={category} />
+            <PostCard post={post} activeCategory={category} eager={index === 0} />
           </li>
         ))
       }

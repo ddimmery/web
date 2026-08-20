@@ -10,7 +10,11 @@
    both of which sit badly on this site's warm paper. Only the *token* colours
    are taken from the themes; the surface comes from the site palette. */
 :root {
-  --code-surface: #f4efe4;
+  /* Nudged two steps lighter than the page's paper tone (#f4efe4) purely for
+     contrast: it is what lifts the dimmest token in
+     github-light-high-contrast (the comment grey #66707b) from 4.39:1 to
+     4.55:1, i.e. over the WCAG AA threshold. */
+  --code-surface: #f7f3ea;
 }
 
 @media (prefers-color-scheme: dark) {

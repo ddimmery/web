@@ -41,9 +41,9 @@ const categories = categoriesOf(posts);
         <p>No posts yet.</p>
       ) : (
         <ul class="post-list">
-          {posts.map((post) => (
+          {posts.map((post, index) => (
             <li>
-              <PostCard post={post} />
+              <PostCard post={post} eager={index === 0} />
             </li>
           ))}
         </ul>
