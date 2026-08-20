@@ -271,11 +271,9 @@ small {
 
 @media (min-width: 70rem) {
   .page-shell {
-    /* A tighter outline column and gap than the post sidebar uses: the paper
-       titles beside it are long single sentences, and the ~60px this returns to
-       the content column is the difference between a title setting on one line
-       and breaking for its last two words. */
-    grid-template-columns: minmax(0, 1fr) minmax(12rem, 14rem);
+    /* Outline first, content second — the same order and track sizes as a post
+       page's shell, so the two outlines sit in the same place on screen. */
+    grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
     gap: var(--space-xl) var(--space-l);
     align-items: start;
   }
@@ -407,8 +405,8 @@ main {
   font-weight: 700;
 }
 
-/* Nav links carry an accent rule that grows out from the centre on hover. The
-   current page keeps it drawn permanently; hovering it deepens the colour
+/* Nav links carry an accent rule that grows out from the center on hover. The
+   current page keeps it drawn permanently; hovering it deepens the color
    rather than re-animating something already there. */
 .site-nav a {
   position: relative;

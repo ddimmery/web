@@ -302,7 +302,7 @@
      track is `1fr` rather than the measure so the body actually uses the
      available width (capped by `.post-article`'s measure); posts without an
      outline (`.post-shell--toc` absent) drop the sidebar track entirely so the
-     article is not shoved off-centre by an empty column. */
+     article is not shoved off-center by an empty column. */
   .post-shell--toc {
     grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
     gap: var(--space-xl);
@@ -326,7 +326,7 @@
   margin-bottom: 0.3em;
 }
 
-/* Dateline and category pills on one line. `align-items: center` centres the
+/* Dateline and category pills on one line. `align-items: center` centers the
    pill row against the dateline; the pills themselves are baselined by the
    `.pills` rules in global.css, so a wrapped second row stays tidy. */
 .post-header__meta {
@@ -446,10 +446,11 @@
     overflow-y: auto;
   }
 
-  /* On post pages the outline runs down the *left* of the article, so its
-     hairline and text flip to the right edge of the column: the entries hug
-     the article they belong to. */
-  .post-shell > .toc--sidebar {
+  /* The outline runs down the *left* of the content (post pages and the
+     research index alike), so its hairline and text flip to the right edge of
+     the column: the entries hug the content they belong to. */
+  .post-shell > .toc--sidebar,
+  .page-shell > .toc--sidebar {
     text-align: right;
     padding-left: 0;
     padding-right: var(--space-m);
@@ -459,7 +460,8 @@
     overflow-x: hidden;
   }
 
-  .post-shell > .toc--sidebar ol ol {
+  .post-shell > .toc--sidebar ol ol,
+  .page-shell > .toc--sidebar ol ol {
     padding-left: 0;
     padding-right: 0.85rem;
   }
@@ -559,6 +561,83 @@
 
 .post-nav__item:hover .post-nav__title {
   color: var(--accent);
+}
+
+/* ---------- pagination --------------------------------------------------- */
+/* Listing footer: newer / older on the outside, numbered pages in the middle,
+   all in the heading face at the small uppercase size the site uses for
+   navigation furniture. */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s) var(--space-m);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-heading-stack);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pagination__step {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.pagination__step:hover {
+  color: var(--accent);
+}
+
+/* The unavailable direction keeps its slot so the numbers stay centered on
+   every page instead of sliding left on the first and right on the last. */
+.pagination__step--off {
+  color: var(--rule-strong);
+}
+
+.pagination__pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.pagination__page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2em;
+  padding: 0.25em 0.5em;
+  color: var(--ink-muted);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+
+a.pagination__page:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.pagination__page[aria-current='page'] {
+  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.pagination__gap {
+  color: var(--ink-muted);
+  padding-inline: 0.15em;
 }
 
 /* ---------- 404 ---------------------------------------------------------- */

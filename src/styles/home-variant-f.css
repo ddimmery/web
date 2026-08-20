@@ -5,7 +5,7 @@
    the built CSS unless variant F is the active home page.
    ========================================================================= */
 
-/* A document, not a dashboard: the whole page runs in one centred column that
+/* A document, not a dashboard: the whole page runs in one centered column that
    is narrower than the shell. Selector doubled so it beats `.wrap`'s own
    max-width regardless of stylesheet order. */
 .wrap.f-page {
@@ -16,7 +16,7 @@
   margin-top: var(--space-l);
 }
 
-/* ---------- centred identity block -------------------------------------- */
+/* ---------- centered identity block -------------------------------------- */
 .f-head {
   display: grid;
   justify-items: center;
@@ -76,8 +76,8 @@
 }
 
 /* ---------- the statement ------------------------------------------------ */
-/* The opening line is centred like the rest of the letterhead; the paragraphs
-   after it set flush left, because three centred paragraphs of running text is
+/* The opening line is centered like the rest of the letterhead; the paragraphs
+   after it set flush left, because three centered paragraphs of running text is
    a poster, not a document. */
 .f-bio {
   max-width: 64ch;

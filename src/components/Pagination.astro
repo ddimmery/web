@@ -1,0 +1,99 @@
+---
+/**
+ * Pagination for a paginated listing: previous / next plus numbered pages.
+ * No JS — every control is a plain link to a pre-rendered page.
+ *
+ * Takes Astro's `page` object and the listing's base path (`/blog`), and builds
+ * its own hrefs so page 1 is the bare base (`/blog/`) rather than `/blog/1/`,
+ * and every link ends in a slash like the rest of the site.
+ *
+ * Renders nothing when there is only one page, so any listing can drop it in
+ * unconditionally.
+ */
+import type { Page } from 'astro';
+
+interface Props {
+  page: Page<unknown>;
+  /** Listing root, no trailing slash — e.g. `/blog`. */
+  base: string;
+  /** For the aria-label: "Older <label>". */
+  label?: string;
+}
+
+const { page, base, label = 'posts' } = Astro.props;
+
+const href = (n: number) => (n === 1 ? `${base}/` : `${base}/${n}/`);
+
+/* Windowed page numbers: first, last, and the current page's neighbours, with
+   an ellipsis standing in for whatever is skipped. `null` marks a gap. */
+function pageWindow(current: number, last: number): Array<number | null> {
+  if (last <= 7) return Array.from({ length: last }, (_, i) => i + 1);
+  const keep = new Set([1, last, current, current - 1, current + 1]);
+  const out: Array<number | null> = [];
+  for (let n = 1; n <= last; n++) {
+    if (keep.has(n)) out.push(n);
+    else if (out[out.length - 1] !== null) out.push(null);
+  }
+  return out;
+}
+
+const numbers = pageWindow(page.currentPage, page.lastPage);
+---
+
+{
+  page.lastPage > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {page.currentPage > 1 ? (
+        <a
+          class="pagination__step"
+          href={href(page.currentPage - 1)}
+          rel="prev"
+          aria-label={`Newer ${label}, page ${page.currentPage - 1}`}
+        >
+          <span aria-hidden="true">←</span> Newer
+        </a>
+      ) : (
+        <span class="pagination__step pagination__step--off" aria-hidden="true">
+          <span>←</span> Newer
+        </span>
+      )}
+
+      <ol class="pagination__pages">
+        {numbers.map((n) =>
+          n === null ? (
+            <li class="pagination__gap" aria-hidden="true">
+              …
+            </li>
+          ) : (
+            <li>
+              {n === page.currentPage ? (
+                <span class="pagination__page" aria-current="page" aria-label={`Page ${n}`}>
+                  {n}
+                </span>
+              ) : (
+                <a class="pagination__page" href={href(n)} aria-label={`Page ${n}`}>
+                  {n}
+                </a>
+              )}
+            </li>
+          ),
+        )}
+      </ol>
+
+      {page.currentPage < page.lastPage ? (
+        <a
+          class="pagination__step"
+          href={href(page.currentPage + 1)}
+          rel="next"
+          aria-label={`Older ${label}, page ${page.currentPage + 1}`}
+        >
+          Older <span aria-hidden="true">→</span>
+        </a>
+      ) : (
+        <span class="pagination__step pagination__step--off" aria-hidden="true">
+          Older <span>→</span>
+        </span>
+      )}
+    </nav>
+  )
+}

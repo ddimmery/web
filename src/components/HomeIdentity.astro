@@ -5,11 +5,11 @@
  * one linked line each.
  *
  * Shared by every home-page layout variant so the facts live in one place.
- * Alignment is inherited (`text-align`), so a centred masthead can use it
+ * Alignment is inherited (`text-align`), so a centered masthead can use it
  * unchanged. Styles are scoped, so they ship only when a variant renders it.
  *
  * Small caps: the heading face is URW Classico, whose woff2 carries no GSUB
- * table at all — no `smcp`, so `font-variant-caps` would only ever synthesise.
+ * table at all — no `smcp`, so `font-variant-caps` would only ever synthesize.
  * The role line is therefore set as letterspaced uppercase one step down,
  * which is the effect the owner was after.
  */
@@ -20,13 +20,11 @@ interface Props {
 
 const { class: extraClass } = Astro.props;
 
-const affiliations = [
+/** `href` is optional: the city is plain text, not a link. */
+const affiliations: Array<{ text: string; href?: string }> = [
   { text: 'Data Science Lab', href: 'https://www.hertie-school.org/en/datasciencelab' },
   { text: 'Hertie School', href: 'https://www.hertie-school.org/en/' },
-  {
-    text: 'Berlin, DE',
-    href: 'https://www.openstreetmap.org/relation/62422',
-  },
+  { text: 'Berlin, DE' },
 ];
 ---
 
@@ -41,9 +39,7 @@ const affiliations = [
   <ul class="identity__affiliation">
     {
       affiliations.map(({ text, href }) => (
-        <li>
-          <a href={href}>{text}</a>
-        </li>
+        <li>{href ? <a href={href}>{text}</a> : text}</li>
       ))
     }
   </ul>

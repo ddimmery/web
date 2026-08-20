@@ -131,7 +131,7 @@ const TEXT_FLOOR = [
 
 /**
  * Faces that render code rather than prose get SHARED_FLOOR only. Matched as a
- * filename prefix; anything unrecognised falls back to the generous text floor,
+ * filename prefix; anything unrecognized falls back to the generous text floor,
  * so adding a face can only ever cost bytes, never correctness.
  */
 const MONO_FACE_PREFIXES = ['MonaspaceArgon'];

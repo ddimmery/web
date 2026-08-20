@@ -21,7 +21,7 @@ const out = join(root, 'public', 'mathjax');
 
 const css = await mathjaxStyles();
 
-// MathJax colours links inside formulae bright blue; defer to the site palette.
+// MathJax colors links inside formulae bright blue; defer to the site palette.
 //
 // The second rule is an accessibility fix. MathJax hides its assistive-MathML
 // copy with BOTH `clip: rect(1px,1px,1px,1px)` and
@@ -30,7 +30,7 @@ const css = await mathjaxStyles();
 // treats as "hidden from screen readers" — so a link whose only content is a
 // formula, e.g. `[$\text{Neo-Euler}$](…)` in the website-refresh post, was
 // reported as a link with no accessible name. Dropping just the clip-path
-// leaves the classic, axe-recognised visually-hidden pattern (absolute
+// leaves the classic, axe-recognized visually-hidden pattern (absolute
 // positioning + clip rect), which hides the MathML exactly as before while
 // keeping it nameable.
 const overrides = `

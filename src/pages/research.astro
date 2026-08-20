@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import LinkButton from '../components/LinkButton.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import { scrollSpy } from '../lib/scroll-spy';
 import {
   authorSegments,
   bestUrl,
@@ -56,6 +57,17 @@ function buttons(paper: PaperData) {
     <h1 class="page-title">Research</h1>
 
     <div class="page-shell">
+      {/* The outline runs down the *left* of the list on wide screens, its text
+          right-aligned so it hugs the content's left edge — the same treatment,
+          and the same scroll-spy, as a post page's outline. It comes first in
+          the DOM so the visual and reading orders agree. */}
+      <TableOfContents
+        items={outline}
+        variant="sidebar"
+        label="On this page"
+        class="toc--outline"
+      />
+
       <div class="page-shell__main">
         <TableOfContents
           items={outline}
@@ -124,13 +136,11 @@ function buttons(paper: PaperData) {
           ))
         }
       </div>
-
-      <TableOfContents
-        items={outline}
-        variant="sidebar"
-        label="On this page"
-        class="toc--outline"
-      />
     </div>
   </div>
+  {
+    /* Highlights the outline entry for the section in view — see
+       `lib/scroll-spy.ts`, shared with post pages. */
+    outline.length > 1 && <script is:inline set:html={scrollSpy} />
+  }
 </Base>

@@ -11,7 +11,7 @@
      and the content column re-adds that padding for itself. */
   --d-pad-top: clamp(2rem, 5vw, 3.75rem);
   /* Inner padding that lands the rail's content on the same left edge as the
-     site title above it: the shell's gutter, plus whatever the centred 80rem
+     site title above it: the shell's gutter, plus whatever the centered 80rem
      shell leaves outside itself. Measured in `cqw` — the width of this element,
      which spans <main> — rather than `vw`, so a scrollbar cannot shift the
      alignment, and unlike `%` it resolves against the same box everywhere. */

@@ -56,12 +56,12 @@ export default defineConfig({
     shikiConfig: {
       // Dual themes. `defaultColor: false` makes Shiki emit --shiki-light /
       // --shiki-dark custom properties instead of hard-coding one theme, so the
-      // colour scheme is switched purely in CSS (see src/styles/code.css).
+      // color scheme is switched purely in CSS (see src/styles/code.css).
       //
       // The *-high-contrast variants, not plain github-light/dark-dimmed: the
       // site sets its own warm code surface rather than the theme's, and
       // against that surface github-light's orange (#e36209, 3.04:1), red
-      // (#d73a49, 3.98:1) and comment grey (#6a737d, 4.19:1) all failed WCAG
+      // (#d73a49, 3.98:1) and comment gray (#6a737d, 4.19:1) all failed WCAG
       // AA. Every token in the high-contrast pair clears 4.5:1 on this site's
       // surfaces (see --code-surface in src/styles/code.css).
       themes: {

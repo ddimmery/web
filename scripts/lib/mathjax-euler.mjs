@@ -95,7 +95,7 @@ async function boot() {
   });
 }
 
-/** Resolve the shared, initialised MathJax instance. */
+/** Resolve the shared, initialized MathJax instance. */
 export function getMathJax() {
   pending ??= boot();
   return pending;

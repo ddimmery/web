@@ -6,7 +6,7 @@
  * packages and therefore no way to reach Neo-Euler, so this walks the tree
  * itself. Everything MathJax-specific lives in ./lib/mathjax-euler.mjs.
  *
- * Recognised nodes (the classes `mdast-util-math` puts on its hast output):
+ * Recognized nodes (the classes `mdast-util-math` puts on its hast output):
  *   <code class="language-math math-inline">      →  inline math
  *   <pre><code class="language-math math-display">  →  display math
  * A fenced ```math block also lands on the second form.

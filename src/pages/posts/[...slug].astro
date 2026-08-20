@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import CategoryPills from '../../components/CategoryPills.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import { hasOutline } from '../../lib/toc';
+import { scrollSpy } from '../../lib/scroll-spy';
 import NewsletterCallout from '../../components/NewsletterCallout.astro';
 import {
   formatDate,
@@ -42,34 +43,7 @@ const { Content, headings } = await render(post);
 /* Whether this post gets a sidebar outline — drives both the two-track grid
    and whether the scroll-spy script ships at all. */
 const showToc = hasOutline(headings);
-/* Inline scroll-spy for the sidebar outline — see the note where it is
-   rendered. Kept as a string so Astro emits it verbatim, and stripped of its
-   newlines on the way out. A rAF-throttled scroll listener rather than a bare
-   IntersectionObserver: an observer only reports *changes* in intersection, so
-   a jump — an in-page anchor, a restored scroll position, a fast flick — can
-   move several headings past the trigger band without firing at all. */
-const scrollSpy = `(function(){
-var t=document.querySelector('.post-shell>.toc--sidebar');
-if(!t)return;
-var m={},s=[];
-Array.prototype.forEach.call(t.querySelectorAll('a[href^="#"]'),function(a){
-var e=document.getElementById(decodeURIComponent(a.hash.slice(1)));
-if(e){m[e.id]=a;s.push(e)}});
-if(!s.length)return;
-var cur=null,queued=false;
-function u(){queued=false;
-var hit=null,line=window.innerHeight*0.28,i;
-for(i=0;i<s.length;i++){if(s[i].getBoundingClientRect().top<=line)hit=s[i]}
-var a=hit?m[hit.id]:null;
-if(a===cur)return;
-if(cur)cur.removeAttribute('aria-current');
-cur=a;
-if(a)a.setAttribute('aria-current','true')}
-function q(){if(queued)return;queued=true;requestAnimationFrame(u)}
-addEventListener('scroll',q,{passive:true});
-addEventListener('resize',q);
-addEventListener('hashchange',q);
-u()})();`.replace(/\n/g, '');
+
 
 ---
 
@@ -154,11 +128,9 @@ u()})();`.replace(/\n/g, '');
     }
   </div>
   {
-    /* ── Scroll-spy (the site's one deliberate exception to zero client JS) ──
-       Highlights the outline entry for the section in view. Progressive
-       enhancement: the outline works fully without it, and it ships only on
-       post pages that actually render a sidebar outline. Smooth scrolling is
-       CSS (`scroll-behavior`), already switched off under
+    /* Highlights the outline entry for the section in view — see
+       `lib/scroll-spy.ts`. Ships only on posts that render a sidebar outline.
+       Smooth scrolling is CSS (`scroll-behavior`), already switched off under
        prefers-reduced-motion, so there is no motion to gate here. */
     showToc && <script is:inline set:html={scrollSpy} />
   }

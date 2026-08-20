@@ -2,16 +2,16 @@
    Shiki code blocks. Astro is configured with two themes and
    `defaultColor: false`, so Shiki emits `--shiki-light` / `--shiki-dark`
    custom properties on every token instead of committing to one palette.
-   Swapping the two here means syntax colours follow the OS colour scheme
+   Swapping the two here means syntax colors follow the OS color scheme
    with zero JavaScript.
    ========================================================================= */
 
-/* Shiki's own backgrounds are pure #fff (light) and a cool blue-grey (dark),
-   neither of which matches this site's grounds. Only the *token* colours are
+/* Shiki's own backgrounds are pure #fff (light) and a cool blue-gray (dark),
+   neither of which matches this site's grounds. Only the *token* colors are
    taken from the themes; the surface comes from the site palette. */
 :root {
   /* Sits between --paper (#fcfcfd) and --paper-raised (#f1f2f4): light enough
-     that the dimmest token in github-light-high-contrast (the comment grey
+     that the dimmest token in github-light-high-contrast (the comment gray
      #66707b) clears WCAG AA at 4.70:1, dark enough to read as a surface. */
   --code-surface: #f6f7f9;
 }

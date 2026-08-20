@@ -65,7 +65,7 @@ scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
 | `/about/`                 | removed — redirected to `/` in `public/_redirects` |
 | `/research/`              | `src/pages/research.astro`            |
 | `/software/`              | `src/pages/software.astro`            |
-| `/blog/`                  | `src/pages/blog/index.astro`          |
+| `/blog/`, `/blog/2/` …    | `src/pages/blog/[...page].astro` (10 posts/page) |
 | `/blog/category/<cat>/`   | `src/pages/blog/category/[category].astro` |
 | `/posts/<slug>/`          | `src/pages/posts/[...slug].astro`     |
 | `/blog.xml`               | `src/pages/blog.xml.ts` (RSS, full post bodies) |
@@ -210,7 +210,7 @@ How it works:
    unused one costs a few hundred bytes: printable ASCII, Latin-1, Latin
    Extended-A/B/Additional, combining marks, typographic punctuation (curly
    quotes, dashes, ellipsis, † ‡ § ¶ •, guillemets), arrows including the `↩`
-   the footnote pipeline injects, sub/superscripts, a few maths operators, and
+   the footnote pipeline injects, sub/superscripts, a few math operators, and
    light box-drawing for tree output in code blocks.
 3. **Subset.** Each face is rewritten with [`subset-font`](https://github.com/papandreou/subset-font)
    (HarfBuzz compiled to wasm). Layout features are all preserved — `liga`,
@@ -237,7 +237,7 @@ content actually contains goes into every face; the speculative accent floor
 (Latin Extended-A and friends) is skipped for Monaspace, where it costs 24 kB
 instead of 7 kB because every glyph in a variable font carries `gvar` deltas,
 and where author names never render. Faces are classified by filename prefix
-(`MONO_FACE_PREFIXES`) and anything unrecognised falls back to the generous
+(`MONO_FACE_PREFIXES`) and anything unrecognized falls back to the generous
 prose set, so adding a face can only ever cost bytes, never correctness.
 
 Output is deterministic: the character set is sorted before subsetting and
@@ -349,14 +349,15 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
   including the URW Classico bold-italic the old site shipped but never
   registered. Every face is subset to the characters the site's own content
   needs, on every build — see [Fonts](#fonts).
-- **Colour.** Warm paper in light mode, warm ink in dark mode (never pure white or
-  black), with the Hertie red `#ba0020` as a single accent — lightened to
+- **Color.** Neutral grounds — a barely-off white in light mode, a neutral
+  near-black in dark, no warm cast either way (never pure white or black) — with the Hertie red `#ba0020` as a single accent — lightened to
   `#f2596d` in dark mode for contrast. Light and dark are pure CSS custom
   properties behind `prefers-color-scheme`; there is no theme toggle and no
   JavaScript.
-- **Layout.** One centred measure of ~68ch, a fluid `clamp()` type scale, hairline
-  rules instead of boxes and shadows. Mobile-first; the post table of contents is
-  a collapsible `<details>` on narrow screens and a sticky sidebar past 68rem.
+- **Layout.** An 80rem page shell and a measure of ~75ch, a fluid `clamp()` type
+  scale, hairline rules instead of boxes and shadows. Mobile-first; the table of
+  contents (post pages and the research index) is a collapsible `<details>` on
+  narrow screens and a sticky left-hand sidebar past 70rem.
 - **Performance.** No client JS besides the GA snippet. Per-route CSS (prose and
   code styles only load on pages that need them), the MathJax stylesheet only on
   posts with `math: true`, content-driven font subsets (~615 kB → ~333 kB), all

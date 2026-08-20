@@ -1,0 +1,96 @@
+---
+/**
+ * The blog listing, paginated ten posts to a page: `/blog/` is page 1, then
+ * `/blog/2/`, `/blog/3/` … (Astro's `paginate()` leaves the first page's rest
+ * param empty, which is why this route replaced `blog/index.astro`).
+ *
+ * RSS and the sitemap are unaffected — `blog.xml.ts` still lists every post.
+ *
+ * Category pages stay unpaginated for now (the largest has eight posts); when
+ * one outgrows a page, `blog/category/[category].astro` can adopt the same
+ * `paginate()` + `<Pagination>` pair, since the nav component takes nothing but
+ * a `page` object and a base path.
+ */
+import type { GetStaticPaths, Page } from 'astro';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import NewsletterCallout from '../../components/NewsletterCallout.astro';
+import Pagination from '../../components/Pagination.astro';
+import { categoriesOf, getPosts, type Post } from '../../lib/posts';
+
+export const POSTS_PER_PAGE = 10;
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+};
+
+interface Props {
+  page: Page<Post>;
+}
+
+const { page } = Astro.props as Props;
+/* Category counts are over *all* posts, not just this page's slice. */
+const categories = categoriesOf(await getPosts());
+const first = page.currentPage === 1;
+---
+
+<Base
+  title={first ? 'Blog' : `Blog — page ${page.currentPage}`}
+  description="Writing by Drew Dimmery on causal inference, experimentation, technology and the web."
+>
+  <div class="wrap wrap--column dense">
+    <h1 class="page-title">Blog</h1>
+
+    {
+      /* The newsletter pitch belongs on the page people land on; repeating it
+         on every archive page would be nagging. */
+      first && (
+        <div class="prose-width" style="margin-bottom:var(--space-l)">
+          <NewsletterCallout />
+        </div>
+      )
+    }
+
+    {
+      !first && (
+        <p class="eyebrow" style="margin-bottom:var(--space-l)">
+          Page {page.currentPage} of {page.lastPage}
+        </p>
+      )
+    }
+
+    {
+      categories.length > 0 && (
+        <nav aria-label="Categories" style="margin-bottom:var(--space-l)">
+          <p class="eyebrow" style="margin-bottom:0.5rem">Browse by category</p>
+          <ul class="pills">
+            {categories.map((category) => (
+              <li>
+                <a class="pill" href={`/blog/category/${category.slug}/`}>
+                  {category.name} ({category.count})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    {
+      page.data.length === 0 ? (
+        <p>No posts yet.</p>
+      ) : (
+        <ul class="post-list">
+          {page.data.map((post, index) => (
+            <li>
+              <PostCard post={post} eager={first && index === 0} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <Pagination page={page} base="/blog" />
+  </div>
+</Base>
