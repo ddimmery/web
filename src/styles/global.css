@@ -554,6 +554,10 @@ main {
 
 .btn svg {
   flex: none;
+  /* Flex centering aligns the boxes, but URW Classico's glyphs sit high in
+     their line box, so a geometrically centered icon reads low next to the
+     label. Nudge up to the text's optical center. */
+  transform: translateY(-0.08em);
 }
 
 /* ---------- category pills ---------------------------------------------- */

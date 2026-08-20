@@ -267,6 +267,18 @@
 
 .rail__socials {
   gap: 0.35rem;
+  /* On narrow screens the socials leave the two-column flow and sit as a
+     centered row spanning the full rail width, below portrait + identity. */
+  grid-column: 1 / -1;
+  justify-content: center;
+  margin-top: var(--space-s);
+}
+
+@media (min-width: 60rem) {
+  .rail__socials {
+    justify-content: flex-start;
+    margin-top: 0;
+  }
 }
 
 .rail__socials .icon-link {
