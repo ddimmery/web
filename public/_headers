@@ -15,7 +15,13 @@
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 # Unhashed, rarely-changing site furniture.
-/favicon.png
+/favicon.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800
+
+/favicon-*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800
+
+/apple-touch-icon.png
   Cache-Control: public, max-age=604800, stale-while-revalidate=604800
 
 /social-card.jpg

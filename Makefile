@@ -41,6 +41,11 @@ fonts:
 fonts-audit:
 	npm run subset-fonts:audit
 
+## brand: Regenerate favicons, touch icon and the default social card from the mark
+.PHONY: brand
+brand:
+	npm run brand
+
 ## clean: Remove build output and Astro caches
 .PHONY: clean
 clean:

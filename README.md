@@ -28,11 +28,13 @@ npm run dev      # http://localhost:4321
 | `npm run vendor-mathjax`| Regenerate `public/mathjax/mathjax.css` (runs on build).      |
 | `npm run subset-fonts`| Regenerate the woff2 subsets (runs on build — see [Fonts](#fonts)). |
 | `npm run subset-fonts:audit`| Check built HTML for characters missing from the subsets.  |
+| `npm run brand`       | Regenerate the favicons, touch icon and default social card.    |
 
 A `Makefile` wraps the common actions — run `make` (or `make help`) to list them:
 `make dev`, `make build`, `make preview`, `make check`, `make clean`,
 `make papers` (Semantic Scholar sync), `make categories` (tag tally),
-`make fonts` / `make fonts-audit` (font subsets), and
+`make fonts` / `make fonts-audit` (font subsets), `make brand` (icons and social
+card, see [Design notes](#design-notes)), and
 `make new-post SLUG=my-post-slug` to scaffold a draft post.
 
 ## Project layout
@@ -47,13 +49,17 @@ src/
   assets/fonts/*.woff2    Domitian, URW Classico, Monaspace Argon (pristine originals)
   assets/fonts/generated/ build-time content-driven subsets (gitignored)
   assets/headshot.webp
+  assets/mark/*.svg      the personal mark (transparent + tile) — see Design notes
   components/             Icon, buttons, cards, TOC, head, header, footer
   layouts/Base.astro      <html> shell: head, skip link, header, footer
   lib/                    site metadata, icon data, post/paper helpers
   pages/                  routes (see below)
   styles/                 global.css (+ blocks.css), prose.css, code.css
-public/                   favicon, social card, robots.txt, _headers, _redirects
+public/                   favicons + touch icon, social card, robots.txt,
+                          _headers, _redirects (icons and card are generated —
+                          see `make brand`)
 scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
+                          build-mark-assets.mjs, build-social-card.mjs,
                           rehype-mathjax-euler.mjs, lib/mathjax-euler.mjs
 ```
 
@@ -389,6 +395,28 @@ Nothing else reads or writes it.
   `#f2596d` in dark mode for contrast. Light and dark are CSS custom properties
   and follow `prefers-color-scheme` by default; a quiet header control can force
   either one. See [Theme](#theme).
+- **Mark.** A personal mark — two mirrored humanist `D` bowls sharing one flared
+  spine, thin where they meet it and swelling at the equator, drawn to match the
+  Optima-ish heading face rather than to shout. It appears in the accent red at
+  about the size of the surrounding type, twice: before the wordmark in the
+  header and before the copyright line in the footer. Nowhere else — it is a
+  printer's mark, not a logo. Source of truth is the hand-authored SVG in
+  [`src/assets/mark/`](src/assets/mark/) (`t-flare-mark.svg`, the mark on
+  transparent; `t-flare-tile.svg`, the same knocked out of a red rounded
+  square), and the geometry is transcribed once more into
+  [`src/components/Mark.astro`](src/components/Mark.astro) so the on-page copies
+  ship inline, take `currentColor`, and cost no request. Every derived asset is
+  generated from those sources by `make brand`:
+  [`scripts/build-mark-assets.mjs`](scripts/build-mark-assets.mjs) writes
+  `favicon.svg` (with an embedded `prefers-color-scheme: dark` rule, so the tab
+  glyph lightens to `#f2596d` on dark chrome), the `favicon-32.png` /
+  `favicon-16.png` fallback for browsers that ignore SVG favicons, and a
+  full-bleed `apple-touch-icon.png` from the tile treatment (iOS masks its own
+  corner radius and composites transparency badly);
+  [`scripts/build-social-card.mjs`](scripts/build-social-card.mjs) sets the
+  default `social-card.jpg` in the site's real woff2 faces by screenshotting an
+  HTML template in Chromium. Both are deterministic and run by hand, not on
+  every build; their outputs are committed.
 - **Layout.** An 80rem page shell and a measure of ~75ch, a fluid `clamp()` type
   scale, hairline rules instead of boxes and shadows. Mobile-first; the table of
   contents (post pages and the research index) is a collapsible `<details>` on

@@ -48,8 +48,15 @@ const fullTitle = title === site.title ? title : `${title} — ${site.title}`;
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex, follow" />}
 
-<link rel="icon" href="/favicon.png" type="image/png" />
-<link rel="apple-touch-icon" href="/favicon.png" />
+<!-- Icons. The SVG mark is preferred and carries its own
+     `prefers-color-scheme` rule, so the tab glyph lightens on dark chrome; the
+     two PNGs are the fallback for browsers that ignore SVG favicons (Safari).
+     The touch icon is the full-bleed accent tile — iOS masks its own corner
+     radius and composites transparency badly. See scripts/build-mark-assets.mjs. -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+<link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
 <!-- Fonts: self-hosted woff2 via Astro's Fonts API. Only the regular weights
      are preloaded; italics and bolds load on demand. -->

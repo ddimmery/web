@@ -1,0 +1,36 @@
+---
+/**
+ * The personal mark ("t-flare"): two mirrored humanist D bowls sharing a
+ * flared spine. Source of truth for the geometry is
+ * `src/assets/mark/t-flare-mark.svg`; the path data below is that file's,
+ * transcribed so the mark can ship inline (no request, no layout shift) and
+ * take its colour from `currentColor`.
+ *
+ * Sized in `em` by the caller's CSS so it tracks the type it sits beside, with
+ * `width`/`height` attributes present as the intrinsic aspect ratio.
+ */
+interface Props {
+  class?: string;
+  /** Decorative by default: the wordmark beside it already names the site. */
+  title?: string;
+}
+
+const { class: className, title } = Astro.props;
+const d =
+  'M 32 6 L 40 6 C 50 6 58 17 58 32 C 58 47 50 58 40 58 L 32 58 Z M 38 12 L 40 12 C 46 14 46 24 46 32 C 46 40 46 50 40 52 L 38 52 Z';
+---
+
+<svg
+  class={className}
+  viewBox="0 0 64 64"
+  width="16"
+  height="16"
+  fill="currentColor"
+  role={title ? 'img' : undefined}
+  aria-hidden={title ? undefined : 'true'}
+  focusable="false"
+>
+  {title && <title>{title}</title>}
+  <path fill-rule="evenodd" d={d} />
+  <path fill-rule="evenodd" d={d} transform="translate(64 0) scale(-1 1)" />
+</svg>

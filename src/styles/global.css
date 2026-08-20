@@ -434,6 +434,23 @@ main {
   color: var(--accent);
 }
 
+/* The personal mark, set as a printer's mark rather than a logo: sized off the
+   wordmark's own em so it can never outgrow it, kept inline (not flex) so the
+   anchor's baseline stays the text baseline and the nav on the other end of the
+   header row still aligns. `vertical-align` centres the 64x64 box on the
+   lowercase, and the em sizing plus the SVG's intrinsic ratio mean the space is
+   reserved before paint — no shift. */
+.site-title__mark {
+  width: 1.05em;
+  height: 1.05em;
+  margin-inline-end: 0.4em;
+  vertical-align: -0.17em;
+  /* Set explicitly rather than inherited, so hovering the wordmark (which tints
+     the text accent) leaves the mark unchanged — a stamp beside the link, not
+     part of it. */
+  color: var(--accent);
+}
+
 /* Nav plus the theme control travel together: on a narrow screen the pair
    wraps below the site title as one block, and the control stays pinned to the
    end of the nav row rather than drifting onto a line of its own. */
@@ -591,6 +608,20 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-s) var(--space-m);
+}
+
+/* Same mark as the header, same treatment, one notch larger relative to the
+   smaller footer type so it reads at the same optical size. */
+.site-footer__line {
+  margin: 0;
+}
+
+.site-footer__mark {
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: 0.45em;
+  vertical-align: -0.2em;
+  color: var(--accent);
 }
 
 .site-footer a {

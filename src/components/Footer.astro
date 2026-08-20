@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Mark from './Mark.astro';
 import { site, socials } from '../lib/site';
 
 const year = new Date().getFullYear();
@@ -10,8 +11,8 @@ const footerSocials = socials.filter((s) =>
 
 <footer class="site-footer">
   <div class="wrap site-footer__inner">
-    <p style="margin:0">
-      © {year} Drew Dimmery ·{' '}
+    <p class="site-footer__line">
+      <Mark class="site-footer__mark" />© {year} Drew Dimmery ·{' '}
       <a href={site.repo} rel="noopener noreferrer">source</a>
     </p>
     <div class="footer-links">

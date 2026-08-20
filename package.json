@@ -11,6 +11,9 @@
     "preview": "astro preview",
     "check": "node scripts/subset-fonts.mjs && astro check",
     "sync-papers": "node scripts/sync-papers.mjs",
+    "brand": "npm run mark-assets && npm run social-card",
+    "mark-assets": "node scripts/build-mark-assets.mjs",
+    "social-card": "node scripts/build-social-card.mjs",
     "vendor-mathjax": "node scripts/vendor-mathjax.mjs",
     "subset-fonts": "node scripts/subset-fonts.mjs",
     "subset-fonts:audit": "node scripts/subset-fonts.mjs --audit"
