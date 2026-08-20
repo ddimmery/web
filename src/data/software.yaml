@@ -17,3 +17,17 @@
     The goal of `tidyhte` is to use a sort of “recipe” design. This should (hopefully) make it extremely easy to scale an analysis of HTE from the common single-outcome / single-moderator case to many outcomes and many moderators. The configuration of `tidyhte` should make it extremely easy to perform the same analysis across many outcomes and for a wide-array of moderators. It’s written to be fairly easy to extend to different models and to add additional diagnostics and ways to output information from a set of HTE estimates.
   website: https://ddimmery.github.io/tidyhte/
   github: https://github.com/ddimmery/tidyhte
+- title: "bwd"
+  description: |
+    `bwd` provides a reference implementation of the Balancing Walk Design for online experimental design, from [Arbour, Dimmery, Mai & Rao (ICML 2022)](https://proceedings.mlr.press/v162/arbour22a.html).  
+    When units arrive one at a time and must be assigned to treatment immediately, standard randomization can leave substantial covariate imbalance. `bwd` assigns treatment in a streaming fashion so that covariates remain balanced throughout the experiment, controlling imbalance substantially better than i.i.d. randomization while retaining the robustness of a randomized design.
+  website: https://ddimmery.github.io/balancer-package/
+  github: https://github.com/ddimmery/balancer-package
+  package: https://pypi.org/project/bwd/
+- title: "pytest-stochastic"
+  description: |
+    `pytest-stochastic` is a pytest plugin that replaces ad-hoc stochastic tests with tests backed by concentration inequalities.  
+    Instead of hand-picking a sample count and tolerance and hoping the test isn't flaky, you declare the statistical assumptions and an acceptable failure probability; the plugin automatically selects an appropriate concentration bound (Hoeffding, Bernstein, sub-Gaussian and others) and computes the sample size required to meet it. It includes decorators for mean and distributional tests, a tune mode for empirically profiling variance, and automatic seed management for reproducibility. See [the announcement post](/posts/pytest-stochastic/) for the motivation.
+  website: https://ddimmery.github.io/pytest-stochastic/
+  github: https://github.com/ddimmery/pytest-stochastic
+  package: https://pypi.org/project/pytest-stochastic/
