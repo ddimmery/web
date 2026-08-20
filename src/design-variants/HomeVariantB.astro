@@ -1,0 +1,124 @@
+---
+/* =========================================================================
+   HOME VARIANT B — "editorial masthead"
+
+   A newspaper front page. The name is a banner across the whole shell, the
+   portrait sits *inside* a wide masthead row next to a large standfirst and a
+   socials/secondary column, and both recents feeds run below as single
+   full-width ruled lists (date · title · venue) rather than two columns.
+   Loudest of the three; uses every pixel of width.
+
+   To activate: change the `Home` import in src/pages/index.astro to this file.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import HomeBio from '../components/HomeBio.astro';
+import SocialRow from '../components/SocialRow.astro';
+import { formatDate, postUrl } from '../lib/posts';
+import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import headshot from '../assets/headshot.webp';
+import type { HomeProps } from './home-props';
+import '../styles/home-variants.css';
+
+const { posts, papers } = Astro.props as HomeProps;
+---
+
+<div class="wrap">
+  <header class="mast">
+    <h1 class="mast__name">Drew Dimmery</h1>
+    <div class="mast__tagline">
+      <span>Methods in causal inference, data science and social science</span>
+      <span class="mast__kicker">Hertie School · Data Science Lab</span>
+    </div>
+
+    <div class="mast__row">
+      <Image
+        class="mast__portrait"
+        src={headshot}
+        widths={[240, 288, 400, 600]}
+        sizes="(min-width: 68rem) 18rem, (min-width: 52rem) 15rem, min(100vw - 2.3rem, 18rem)"
+        width={600}
+        height={800}
+        loading="eager"
+        decoding="sync"
+        fetchpriority="high"
+        alt="Drew Dimmery"
+      />
+      <div class="mast__lede">
+        <HomeBio short />
+      </div>
+      <div class="mast__aside">
+        <p>
+          My research focuses on the intersection of machine learning and causal
+          inference — experimental design, and applying the machinery of machine
+          learning to observational causal inference.
+        </p>
+        <SocialRow />
+      </div>
+    </div>
+  </header>
+
+  {
+    posts.length > 0 && (
+      <section class="mast-section">
+        <div class="mast-section__head">
+          <h2 class="eyebrow">Recent posts</h2>
+          <a class="more-link" href="/blog/">
+            All posts
+          </a>
+        </div>
+        <ul class="wide-list">
+          {posts.map((post) => (
+            <li>
+              <p class="wide-list__meta">
+                <time datetime={post.data.date.toISOString()}>
+                  {formatDate(post.data.date)}
+                </time>
+              </p>
+              <h3 class="wide-list__title">
+                <a href={postUrl(post)}>{post.data.title}</a>
+              </h3>
+              <p class="wide-list__note">{post.data.categories.join(' · ')}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    papers.length > 0 && (
+      <section class="mast-section">
+        <div class="mast-section__head">
+          <h2 class="eyebrow">Recent papers</h2>
+          <a class="more-link" href="/research/">
+            All research
+          </a>
+        </div>
+        <ul class="wide-list">
+          {papers.map((paper) => {
+            const url = bestUrl(paper);
+            return (
+              <li>
+                <p class="wide-list__meta">{yearOf(paper)}</p>
+                <h3 class="wide-list__title">
+                  {url ? <a href={url}>{paper.title}</a> : paper.title}
+                </h3>
+                <p class="wide-list__note">
+                  {authorSegments(paper.authors, { max: 3 }).map((part) =>
+                    part.me ? <strong>{part.text}</strong> : part.text,
+                  )}
+                  {paper.venue && (
+                    <span>
+                      {' · '}
+                      <em>{paper.venue}</em>
+                    </span>
+                  )}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )
+  }
+</div>

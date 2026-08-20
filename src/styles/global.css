@@ -7,7 +7,8 @@
    (Optima-derived) for headings and navigation, Domitian (Palatino-derived)
    for running text, Monaspace Argon for code. One accent — the Hertie red
    #ba0020 — used sparingly, mostly on links and hairline details.
-   Light mode is warm paper, dark mode is warm ink; never pure #fff / #000.
+   Grounds are neutral: a barely-off white in light mode, a neutral near-black
+   in dark. No warm cast in either direction; never pure #fff / #000.
    No framework, no client JS.
    ========================================================================= */
 
@@ -22,22 +23,24 @@
   --font-body-stack: var(--font-body);
   --font-mono-stack: var(--font-mono);
 
-  /* Warm paper. */
-  --paper: #faf7f1;
-  --paper-raised: #f3eee4;
-  --paper-sunken: #efe9dd;
-  --ink: #211d19;
-  --ink-soft: #453e37;
-  --ink-muted: #6d6459;
-  --rule: #ded5c5;
-  --rule-strong: #c8bda9;
+  /* Neutral paper. A hair off white, with only the faintest cool cast so the
+     grounds never read pink next to the red accent. Every foreground below
+     clears 4.5:1 on --paper, --paper-raised and --code-surface. */
+  --paper: #fcfcfd;
+  --paper-raised: #f1f2f4;
+  --paper-sunken: #e9eaed;
+  --ink: #1b1c1e;
+  --ink-soft: #3e4145;
+  --ink-muted: #5f6368;
+  --rule: #e1e3e6;
+  --rule-strong: #c4c7cc;
 
   --accent: #ba0020;
   --accent-hover: #8d0018;
-  --accent-wash: rgba(186, 0, 32, 0.08);
+  --accent-wash: rgba(186, 0, 32, 0.07);
 
-  --selection: rgba(186, 0, 32, 0.16);
-  --shadow: rgba(33, 29, 25, 0.08);
+  --selection: rgba(186, 0, 32, 0.15);
+  --shadow: rgba(20, 22, 24, 0.08);
 
   /* Fluid type scale (1.20 ratio at small sizes, 1.25 at large). */
   --step--2: clamp(0.74rem, 0.72rem + 0.1vw, 0.79rem);
@@ -49,7 +52,15 @@
   --step-4: clamp(2.03rem, 1.68rem + 1.55vw, 2.81rem);
 
   /* Rhythm */
-  --measure: 68ch;
+  --measure: 75ch;
+  /* Same target width in rem, for elements whose own font is not the body font
+     (headings, rules) where a `ch` would measure something much wider. */
+  --measure-cap: 44rem;
+  --shell: 80rem;
+  /* Widest sensible column for a *list* page (CV rows, publications): wide
+     enough to use the shell, narrow enough that right-aligned dates do not
+     leave a lawn in the middle of every row. */
+  --shell-column: 68rem;
   --gutter: clamp(1.15rem, 4vw, 2.5rem);
   --flow: 1.1em;
   --space-xs: 0.35rem;
@@ -66,14 +77,14 @@
 /* ---------- tokens: dark ------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #191713;
-    --paper-raised: #221f1a;
-    --paper-sunken: #14120f;
-    --ink: #ece5d9;
-    --ink-soft: #d3cabc;
-    --ink-muted: #9c9284;
-    --rule: #34302a;
-    --rule-strong: #4b453d;
+    --paper: #131416;
+    --paper-raised: #1c1d20;
+    --paper-sunken: #0e0f10;
+    --ink: #e9eaec;
+    --ink-soft: #cfd2d6;
+    --ink-muted: #969ba0;
+    --rule: #2d2f33;
+    --rule-strong: #454951;
 
     --accent: #f2596d;
     --accent-hover: #ff8092;
@@ -213,7 +224,7 @@ small {
 /* ---------- layout ------------------------------------------------------- */
 .wrap {
   width: 100%;
-  max-width: 74rem;
+  max-width: var(--shell);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -223,12 +234,47 @@ small {
 }
 
 /* Pages that are a *list* — CV rows, the publication list — put their dates and
-   venues on the right edge of the column. At the full 74rem shell width that
-   leaves a lawn of empty space in the middle of every row, so those pages run
-   in a narrower column. The shell keeps its full width so the left edge still
-   lines up with the masthead; only the blocks inside it are narrowed. */
+   venues on the right edge of the column. At the full shell width that leaves a
+   lawn of empty space in the middle of every row, so those pages run in a
+   slightly narrower column. The shell keeps its full width so the left edge
+   still lines up with the masthead; only the blocks inside it are narrowed. */
 .wrap--column > * {
-  max-width: 56rem;
+  max-width: var(--shell-column);
+}
+
+/* Pages that are wall-to-wall running text (software) have no reason to be
+   wider than the measure — including the page title's rule, which otherwise
+   overhangs the text by hundreds of pixels. The cap is in rem, not `ch`:
+   inside a display-size heading a `ch` is several times a body `ch`, so
+   `var(--measure)` would be no cap at all there. */
+.wrap--prose > * {
+  max-width: var(--measure-cap);
+}
+
+/* ---------- page shell with a sticky outline sidebar --------------------- */
+/* Used by /research/ (and available to any long index page): content column
+   plus a sticky outline that sits *beside* the content rather than squeezing
+   it. Single column until there is room for both. */
+.page-shell {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 70rem) {
+  .page-shell {
+    grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+    gap: var(--space-xl);
+    align-items: start;
+  }
+}
+
+/* A page with an outline sidebar runs in a plain `.wrap`: the sidebar already
+   takes the surplus width, so the cap belongs on the content column, not on
+   the shell (which would narrow the content twice over). */
+.page-shell__main {
+  min-width: 0;
+  max-width: var(--shell-column);
 }
 
 main {
@@ -349,20 +395,58 @@ main {
   font-weight: 700;
 }
 
+/* Nav links carry an accent rule that grows out from the centre on hover. The
+   current page keeps it drawn permanently; hovering it deepens the colour
+   rather than re-animating something already there. */
 .site-nav a {
+  position: relative;
   color: var(--ink-muted);
   text-decoration: none;
-  padding-block: 0.15rem;
-  border-bottom: 2px solid transparent;
+  padding-block: 0.15rem 0.3rem;
+  transition: color 150ms ease-out;
 }
 
-.site-nav a:hover {
+.site-nav a::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  scale: 0 1;
+  transform-origin: center;
+  transition: scale 180ms ease-out, background-color 150ms ease-out;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
   color: var(--ink);
+}
+
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after,
+.site-nav a[aria-current='page']::after {
+  scale: 1 1;
 }
 
 .site-nav a[aria-current='page'] {
   color: var(--ink);
-  border-bottom-color: var(--accent);
+}
+
+.site-nav a[aria-current='page']::after {
+  background: color-mix(in srgb, var(--accent) 65%, transparent);
+}
+
+.site-nav a[aria-current='page']:hover::after,
+.site-nav a[aria-current='page']:focus-visible::after {
+  background: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav a,
+  .site-nav a::after {
+    transition: none;
+  }
 }
 
 /* ---------- footer ------------------------------------------------------ */
@@ -466,14 +550,28 @@ main {
 .pills {
   display: flex;
   flex-wrap: wrap;
+  /* Every pill on a row shares one baseline. Without this the pills inherit the
+     surrounding line box and a taller first item drags the rest down a few
+     pixels — the misalignment that used to show in post headers. */
+  align-items: center;
   gap: 0.35rem;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
+/* Pills are their own layout; nothing about the list context they sit in (a
+   post header inside .prose, a card body) may add list indentation or
+   between-item leading to them. */
+.pills > li {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
 .pill {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 0.1em 0.6em;
   font-family: var(--font-heading-stack);
   font-size: var(--step--2);

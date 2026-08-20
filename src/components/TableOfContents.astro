@@ -1,26 +1,42 @@
 ---
 import type { MarkdownHeading } from 'astro';
 
+export interface TocItem {
+  slug: string;
+  text: string;
+  children?: TocItem[];
+}
+
 interface Props {
-  headings: MarkdownHeading[];
+  /** Rendered-markdown headings; nested automatically. Ignored if `items` is set. */
+  headings?: MarkdownHeading[];
+  /** A pre-built outline, for pages whose structure is not markdown headings. */
+  items?: TocItem[];
   /** `sidebar` on wide screens, `mobile` renders a collapsible <details>. */
   variant: 'sidebar' | 'mobile';
   maxDepth?: number;
+  /** Heading shown above the list. */
+  label?: string;
+  /** Extra class, e.g. `toc--outline` for section/year outlines. */
+  class?: string;
 }
 
-const { headings, variant, maxDepth = 3 } = Astro.props;
-
-interface Node extends MarkdownHeading {
-  children: Node[];
-}
+const {
+  headings = [],
+  items,
+  variant,
+  maxDepth = 3,
+  label = 'Contents',
+  class: extraClass,
+} = Astro.props;
 
 /** Nest h2/h3 (…up to maxDepth) into a tree, ignoring the h1 page title. */
-function nest(items: MarkdownHeading[]): Node[] {
-  const root: Node[] = [];
-  const stack: Node[] = [];
-  for (const heading of items) {
+function nest(source: MarkdownHeading[]): TocItem[] {
+  const root: Array<TocItem & { depth: number; children: TocItem[] }> = [];
+  const stack: Array<TocItem & { depth: number; children: TocItem[] }> = [];
+  for (const heading of source) {
     if (heading.depth < 2 || heading.depth > maxDepth) continue;
-    const node: Node = { ...heading, children: [] };
+    const node = { ...heading, children: [] as TocItem[] };
     while (stack.length > 0 && stack[stack.length - 1]!.depth >= node.depth) {
       stack.pop();
     }
@@ -34,19 +50,22 @@ function nest(items: MarkdownHeading[]): Node[] {
   return root;
 }
 
-const tree = nest(headings);
+const tree = items ?? nest(headings);
+/** A one-item outline is not worth the furniture. */
+const show = tree.length > 1;
+const classes = ['toc', `toc--${variant}`, extraClass].filter(Boolean).join(' ');
 ---
 
 {
-  tree.length > 1 &&
+  show &&
     (variant === 'mobile' ? (
-      <details class="toc toc--mobile">
-        <summary class="toc__label">Contents</summary>
+      <details class={classes}>
+        <summary class="toc__label">{label}</summary>
         <ol>
           {tree.map((node) => (
             <li>
               <a href={`#${node.slug}`}>{node.text}</a>
-              {node.children.length > 0 && (
+              {node.children && node.children.length > 0 && (
                 <ol>
                   {node.children.map((child) => (
                     <li>
@@ -60,13 +79,13 @@ const tree = nest(headings);
         </ol>
       </details>
     ) : (
-      <nav class="toc toc--sidebar" aria-label="Table of contents">
-        <span class="toc__label">Contents</span>
+      <nav class={classes} aria-label={label}>
+        <span class="toc__label">{label}</span>
         <ol>
           {tree.map((node) => (
             <li>
               <a href={`#${node.slug}`}>{node.text}</a>
-              {node.children.length > 0 && (
+              {node.children && node.children.length > 0 && (
                 <ol>
                   {node.children.map((child) => (
                     <li>

@@ -1,0 +1,37 @@
+---
+/**
+ * The landing-page biography. Shared by every home-page layout variant so the
+ * copy lives in exactly one place; each variant supplies its own wrapper and
+ * measure.
+ */
+interface Props {
+  /** Drop the longer research paragraph (used by the tighter layouts). */
+  short?: boolean;
+}
+
+const { short = false } = Astro.props;
+---
+
+<p>
+  I am the <a
+    href="https://www.hertie-school.org/en/research/faculty-and-researchers/profile/person/dimmery"
+    >Professor of Data Science for the Common Good</a
+  > at the <a href="https://www.hertie-school.org/en/">Hertie School</a>'s <a
+    href="https://www.hertie-school.org/en/datasciencelab">Data Science Lab</a
+  >.
+</p>
+<p>
+  I previously worked on the Adaptive Experimentation team at Facebook Core Data Science
+  in New York, and at the Research Network Data Science at the University of Vienna.
+</p>
+{
+  !short && (
+    <p>
+      My research focuses on the intersection of machine learning and causal inference. I
+      work a lot on experimental design and I think hard about how experimentation can be
+      better and more efficient. I'm also interested in better applying the machinery of
+      machine learning to observational causal inference. I'm most interested in
+      methodological research useful for the study of social phenomena.
+    </p>
+  )
+}

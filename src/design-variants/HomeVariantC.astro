@@ -1,0 +1,121 @@
+---
+/* =========================================================================
+   HOME VARIANT C — "side-rail identity"
+
+   A sticky identity rail on the left — portrait, name, tagline, socials —
+   with the page content flowing past it on the right: a large italic opening
+   line, the bio set in two columns at wide sizes, then the two recents feeds
+   side by side. Magazine-style; the identity stays on screen as you scroll.
+
+   To activate: change the `Home` import in src/pages/index.astro to this file.
+   ========================================================================= */
+import { Image } from 'astro:assets';
+import HomeBio from '../components/HomeBio.astro';
+import SocialRow from '../components/SocialRow.astro';
+import { formatDate, postUrl } from '../lib/posts';
+import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import headshot from '../assets/headshot.webp';
+import type { HomeProps } from './home-props';
+import '../styles/home-variants.css';
+
+const { posts, papers } = Astro.props as HomeProps;
+---
+
+<div class="wrap">
+  <div class="rail-page">
+    <aside class="rail">
+      <Image
+        class="rail__portrait"
+        src={headshot}
+        widths={[200, 272, 320, 480, 600]}
+        sizes="(min-width: 76rem) 20rem, (min-width: 60rem) 19rem, 8rem"
+        width={600}
+        height={800}
+        loading="eager"
+        decoding="sync"
+        fetchpriority="high"
+        alt="Drew Dimmery"
+      />
+      <div>
+        <h1 class="rail__name">Drew Dimmery</h1>
+        <p class="rail__tagline">
+          Methods in causal inference, data science and social science
+        </p>
+        <SocialRow class="rail__socials" />
+      </div>
+    </aside>
+
+    <div class="rail-main">
+      <div>
+        <p class="rail-lede">
+          Causal inference, machine learning, and the design of better
+          experiments.
+        </p>
+        <div class="rail-bio">
+          <HomeBio />
+        </div>
+      </div>
+
+      <div class="rail-recents">
+        {
+          posts.length > 0 && (
+            <section>
+              <div class="rule-heading">
+                <h2 class="eyebrow">Recent posts</h2>
+              </div>
+              <ul class="teaser-list">
+                {posts.map((post) => (
+                  <li>
+                    <p class="teaser__title">
+                      <a href={postUrl(post)}>{post.data.title}</a>
+                    </p>
+                    <p class="teaser__meta">
+                      <time datetime={post.data.date.toISOString()}>
+                        {formatDate(post.data.date)}
+                      </time>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <a class="more-link" href="/blog/">
+                All posts
+              </a>
+            </section>
+          )
+        }
+
+        {
+          papers.length > 0 && (
+            <section>
+              <div class="rule-heading">
+                <h2 class="eyebrow">Recent papers</h2>
+              </div>
+              <ul class="teaser-list">
+                {papers.map((paper) => {
+                  const url = bestUrl(paper);
+                  return (
+                    <li>
+                      <p class="teaser__title">
+                        {url ? <a href={url}>{paper.title}</a> : paper.title}
+                      </p>
+                      <p class="teaser__meta">
+                        {authorSegments(paper.authors, { max: 3 }).map((part) =>
+                          part.me ? <strong>{part.text}</strong> : part.text,
+                        )}
+                        {' · '}
+                        {yearOf(paper)}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+              <a class="more-link" href="/research/">
+                All research
+              </a>
+            </section>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>

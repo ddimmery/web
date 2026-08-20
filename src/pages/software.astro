@@ -29,7 +29,9 @@ const software = await Promise.all(
   title="Software"
   description="Open-source R packages and tools by Drew Dimmery: rdd, regweight and tidyhte."
 >
-  <div class="wrap">
+  {/* Software entries are running text, so the whole page runs at the prose
+      measure — title rule included. */}
+  <div class="wrap wrap--prose">
     <h1 class="page-title">Software</h1>
 
     {

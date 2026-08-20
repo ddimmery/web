@@ -1,6 +1,5 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import CategoryPills from '../../components/CategoryPills.astro';
@@ -53,17 +52,25 @@ const { Content, headings } = await render(post);
 >
   <div class="wrap">
     <div class="post-shell">
-      <article class="prose">
+      {/* The header and the collapsible contents are page furniture, not
+          running text, so they sit *outside* `.prose`: inside it they picked up
+          markdown list styling (the indent and between-item leading that threw
+          the category pills out of alignment). `.prose` now wraps only the
+          rendered markdown. */}
+      <article class="post-article">
         <header class="post-header">
           <h1 class="post-header__title">{title}</h1>
           <div class="post-header__meta">
-            <time datetime={date.toISOString()}>{formatDate(date)}</time>
-            {updated && (
-              <span>
-                Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
-              </span>
-            )}
-            {draft && <span style="color:var(--accent)">Draft</span>}
+            <span class="post-header__dateline">
+              <time datetime={date.toISOString()}>{formatDate(date)}</time>
+              {updated && (
+                <Fragment>
+                  {' · '}Updated{' '}
+                  <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+                </Fragment>
+              )}
+              {draft && <Fragment>{' · '}<span style="color:var(--accent)">Draft</span></Fragment>}
+            </span>
             <CategoryPills categories={categories} />
           </div>
           {
@@ -73,30 +80,11 @@ const { Content, headings } = await render(post);
           }
         </header>
 
-        {
-          image && (
-            <figure class="post-cover">
-              {/* The cover is the LCP element. It renders at the prose
-                  measure (68ch, ~700px at most), so a lone 1200px source was
-                  3x oversized on a phone. `sizes` is the measure clamped by
-                  the viewport minus the page gutter. */}
-              <Image
-                src={image}
-                widths={[400, 700, 1200]}
-                sizes="(min-width: 48rem) 700px, calc(100vw - 2.3rem)"
-                width={1200}
-                loading="eager"
-                decoding="sync"
-                fetchpriority="high"
-                alt=""
-              />
-            </figure>
-          )
-        }
-
         <TableOfContents headings={headings} variant="mobile" />
 
-        <Content />
+        <div class="prose">
+          <Content />
+        </div>
       </article>
 
       <TableOfContents headings={headings} variant="sidebar" />

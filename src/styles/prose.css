@@ -38,6 +38,17 @@
   padding-left: 1.4rem;
 }
 
+/* Page furniture that happens to sit inside a .prose subtree keeps its own
+   layout: these lists are not running text and must not pick up markdown list
+   indentation or between-item leading. */
+.prose :where(.pills, .plain-list, .tag-list, .btn-row) {
+  padding-left: 0;
+}
+
+.prose .pills > li + li {
+  margin-top: 0;
+}
+
 .prose :where(li) + :where(li) {
   margin-top: 0.3em;
 }

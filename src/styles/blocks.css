@@ -15,7 +15,11 @@
 
 @media (min-width: 46rem) {
   .hero {
-    grid-template-columns: minmax(0, 1fr) 11.5rem;
+    /* The portrait column scales with the viewport and tops out at 20rem —
+       320px, close to the 600px source's sensible 2x ceiling. */
+    grid-template-columns: minmax(0, 1fr) clamp(13rem, 22vw, 20rem);
+    gap: var(--space-m) var(--space-xl);
+    align-items: center;
   }
 }
 
@@ -30,19 +34,27 @@
   font-style: italic;
   color: var(--ink-muted);
   margin: 0 0 var(--space-m);
+  padding-bottom: var(--space-s);
+  border-bottom: 2px solid var(--accent);
+  /* The rule is a short accent mark under the tagline, not a full-width
+     divider — it sits under the text and stops. */
+  width: fit-content;
+  max-width: 100%;
 }
 
 .hero__bio {
   max-width: var(--measure);
 }
 
-.hero__bio > * + * {
+.hero__prose > * + * {
   margin-top: 0.85em;
 }
 
 .hero__portrait {
   order: -1;
-  width: 9.5rem;
+  width: 11rem;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
   border-radius: var(--radius);
   border: 1px solid var(--rule-strong);
 }
@@ -82,6 +94,9 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  /* Cards are a thumbnail plus a paragraph of description; past this the
+     description line length stops being readable. */
+  max-width: var(--shell-column);
 }
 
 .post-list > li + li {
@@ -99,7 +114,7 @@
 
 @media (min-width: 40rem) {
   .card--with-thumb {
-    grid-template-columns: 12.5rem minmax(0, 1fr);
+    grid-template-columns: 14rem minmax(0, 1fr);
   }
 }
 
@@ -277,12 +292,25 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-@media (min-width: 68rem) {
+@media (min-width: 70rem) {
   .post-shell {
-    grid-template-columns: minmax(0, var(--measure)) minmax(12rem, 15rem);
+    grid-template-columns: minmax(0, var(--measure)) minmax(13rem, 16rem);
     gap: var(--space-xl);
     justify-content: center;
   }
+
+  /* Posts with too few headings render no sidebar at all; without this the
+     empty second track stays reserved and shoves the article off-centre. */
+  .post-shell:not(:has(> .toc--sidebar)) {
+    grid-template-columns: minmax(0, var(--measure));
+  }
+}
+
+/* The article column: header and contents are furniture around the prose, so
+   the measure lives here rather than only on `.prose`. */
+.post-article {
+  min-width: 0;
+  max-width: var(--measure);
 }
 
 .post-header {
@@ -294,17 +322,24 @@
   margin-bottom: 0.3em;
 }
 
+/* Dateline and category pills on one line. `align-items: center` centres the
+   pill row against the dateline; the pills themselves are baselined by the
+   `.pills` rules in global.css, so a wrapped second row stays tidy. */
 .post-header__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
+  gap: 0.45rem 1rem;
   font-family: var(--font-heading-stack);
   font-size: var(--step--1);
   color: var(--ink-muted);
   font-variant-numeric: oldstyle-nums;
   padding-bottom: var(--space-s);
   border-bottom: 1px solid var(--rule);
+}
+
+.post-header__dateline {
+  white-space: nowrap;
 }
 
 .post-header__description {
@@ -321,17 +356,9 @@
   font-style: normal;
 }
 
-.post-cover {
-  margin: var(--space-m) 0 var(--space-l);
-}
-
-.post-cover img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius);
-  border: 1px solid var(--rule);
-}
+/* The `image` frontmatter field is still used for listing thumbnails and
+   og:image, but the post page itself no longer opens with a hero cover — the
+   title and standfirst carry it. Hence no `.post-cover` rules. */
 
 /* ---------- table of contents ------------------------------------------- */
 .toc {
@@ -399,7 +426,7 @@
   display: none;
 }
 
-@media (min-width: 68rem) {
+@media (min-width: 70rem) {
   .toc--mobile {
     display: none;
   }
@@ -418,6 +445,42 @@
   .toc--sidebar .toc__label {
     display: block;
     margin-bottom: 0.6rem;
+  }
+}
+
+/* Outline sidebars on index pages (research) are two real levels — section,
+   then year — so the levels need visibly different weight, and the label needs
+   to stop competing with the first section. */
+.toc--outline > ol > li > a {
+  font-family: var(--font-heading-stack);
+  font-weight: 700;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.toc--outline > ol > li > a:hover {
+  color: var(--accent);
+}
+
+.toc--outline > ol > li + li {
+  margin-top: 1.1em;
+}
+
+.toc--outline ol ol {
+  margin-top: 0.3em;
+  font-variant-numeric: oldstyle-nums;
+  color: var(--ink-muted);
+}
+
+.toc--outline ol ol li + li {
+  margin-top: 0.15em;
+}
+
+@media (min-width: 70rem) {
+  .toc--outline.toc--sidebar .toc__label {
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--rule);
   }
 }
 

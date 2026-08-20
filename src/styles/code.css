@@ -7,19 +7,18 @@
    ========================================================================= */
 
 /* Shiki's own backgrounds are pure #fff (light) and a cool blue-grey (dark),
-   both of which sit badly on this site's warm paper. Only the *token* colours
-   are taken from the themes; the surface comes from the site palette. */
+   neither of which matches this site's grounds. Only the *token* colours are
+   taken from the themes; the surface comes from the site palette. */
 :root {
-  /* Nudged two steps lighter than the page's paper tone (#f4efe4) purely for
-     contrast: it is what lifts the dimmest token in
-     github-light-high-contrast (the comment grey #66707b) from 4.39:1 to
-     4.55:1, i.e. over the WCAG AA threshold. */
-  --code-surface: #f7f3ea;
+  /* Sits between --paper (#fcfcfd) and --paper-raised (#f1f2f4): light enough
+     that the dimmest token in github-light-high-contrast (the comment grey
+     #66707b) clears WCAG AA at 4.70:1, dark enough to read as a surface. */
+  --code-surface: #f6f7f9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --code-surface: #23201a;
+    --code-surface: #1a1b1e;
   }
 }
 

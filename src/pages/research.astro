@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import LinkButton from '../components/LinkButton.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 import {
   authorSegments,
   bestUrl,
@@ -15,6 +16,21 @@ const papers = entries.map((entry) => entry.data);
 
 const published = groupByYear(papers.filter(isPublished));
 const working = groupByYear(papers.filter((paper) => !isPublished(paper)));
+
+const sections = [
+  { id: 'published', heading: 'Published', groups: published },
+  { id: 'working-papers', heading: 'Working Papers / Non-archival', groups: working },
+].filter((section) => section.groups.length > 0);
+
+/** Sidebar outline: the two sections, each with its year groups beneath. */
+const outline = sections.map((section) => ({
+  slug: section.id,
+  text: section.heading,
+  children: section.groups.map((group) => ({
+    slug: `${section.id}-${group.year}`,
+    text: String(group.year),
+  })),
+}));
 
 function buttons(paper: PaperData) {
   const list: Array<{ href: string; icon: 'pdf' | 'github' | 'database' | 'archive'; label: string }> =
@@ -33,72 +49,87 @@ function buttons(paper: PaperData) {
   title="Research"
   description="Publications and working papers by Drew Dimmery on causal inference, machine learning and experimental design."
 >
-  <div class="wrap wrap--column">
+  {/* Plain `.wrap`, not `.wrap--column`: the outline sidebar takes the surplus
+      width, and `.page-shell__main` caps the list column instead. */}
+  <div class="wrap">
     <h1 class="page-title">Research</h1>
 
-    {
-      [
-        { id: 'published', heading: 'Published', groups: published },
-        { id: 'working-papers', heading: 'Working Papers / Non-archival', groups: working },
-      ].map((section) =>
-        section.groups.length === 0 ? null : (
-          <section class="section" id={section.id} style="margin-top:var(--space-l)">
-            <div class="rule-heading">
-              <h2 class="eyebrow">{section.heading}</h2>
-            </div>
-            {section.groups.map((group) => (
-              <div class="year-group">
-                <h3 class="year-group__heading" id={`${section.id}-${group.year}`}>
-                  {group.year}
-                </h3>
-                <ul class="paper-list">
-                  {group.papers.map((paper) => {
-                    const url = bestUrl(paper);
-                    return (
-                      <li>
-                        <h4 class="paper__title">
-                          {url ? (
-                            <a href={url} rel="noopener noreferrer">
-                              {paper.title}
-                            </a>
-                          ) : (
-                            paper.title
-                          )}
-                        </h4>
-                        <p class="paper__meta">
-                          {authorSegments(paper.authors).map((part) =>
-                            part.me ? <strong>{part.text}</strong> : part.text,
-                          )}
-                          {' ('}
-                          {group.year}
-                          {')'}
-                          {paper.venue && (
-                            <Fragment>
-                              {' · '}
-                              <span class="paper__venue">{paper.venue}</span>
-                            </Fragment>
-                          )}
-                        </p>
-                        {buttons(paper).length > 0 && (
-                          <div class="btn-row">
-                            {buttons(paper).map((button) => (
-                              <LinkButton
-                                href={button.href}
-                                icon={button.icon}
-                                label={button.label}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
-          </section>
-        ),
-      )
-    }
+    <div class="page-shell">
+      <div class="page-shell__main">
+        <TableOfContents
+          items={outline}
+          variant="mobile"
+          label="On this page"
+          class="toc--outline"
+        />
+
+        {
+          sections.map((section) => (
+            <section class="section" id={section.id} style="margin-top:var(--space-l)">
+                <div class="rule-heading">
+                  <h2 class="eyebrow">{section.heading}</h2>
+                </div>
+                {section.groups.map((group) => (
+                  <div class="year-group">
+                    <h3 class="year-group__heading" id={`${section.id}-${group.year}`}>
+                      {group.year}
+                    </h3>
+                    <ul class="paper-list">
+                      {group.papers.map((paper) => {
+                        const url = bestUrl(paper);
+                        return (
+                          <li>
+                            <h4 class="paper__title">
+                              {url ? (
+                                <a href={url} rel="noopener noreferrer">
+                                  {paper.title}
+                                </a>
+                              ) : (
+                                paper.title
+                              )}
+                            </h4>
+                            <p class="paper__meta">
+                              {authorSegments(paper.authors).map((part) =>
+                                part.me ? <strong>{part.text}</strong> : part.text,
+                              )}
+                              {' ('}
+                              {group.year}
+                              {')'}
+                              {paper.venue && (
+                                <Fragment>
+                                  {' · '}
+                                  <span class="paper__venue">{paper.venue}</span>
+                                </Fragment>
+                              )}
+                            </p>
+                            {buttons(paper).length > 0 && (
+                              <div class="btn-row">
+                                {buttons(paper).map((button) => (
+                                  <LinkButton
+                                    href={button.href}
+                                    icon={button.icon}
+                                    label={button.label}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+            </section>
+          ))
+        }
+      </div>
+
+      <TableOfContents
+        items={outline}
+        variant="sidebar"
+        label="On this page"
+        class="toc--outline"
+      />
+    </div>
   </div>
 </Base>
