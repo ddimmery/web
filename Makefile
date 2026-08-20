@@ -29,12 +29,22 @@ preview:
 ## check: Type-check and validate content (astro check)
 .PHONY: check
 check:
-	npx astro check
+	npm run check
+
+## fonts: Regenerate the content-driven woff2 subsets (runs inside make build)
+.PHONY: fonts
+fonts:
+	npm run subset-fonts
+
+## fonts-audit: Check the built HTML for characters missing from the subsets
+.PHONY: fonts-audit
+fonts-audit:
+	npm run subset-fonts:audit
 
 ## clean: Remove build output and Astro caches
 .PHONY: clean
 clean:
-	rm -rf dist .astro node_modules/.astro
+	rm -rf dist .astro node_modules/.astro src/assets/fonts/generated
 
 ## papers: Sync papers.yaml with Semantic Scholar (new papers land visible: false)
 .PHONY: papers

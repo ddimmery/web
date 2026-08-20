@@ -15,3 +15,6 @@ public/mathjax/
 *.log
 .vercel
 .netlify
+
+# generated at build time by scripts/subset-fonts.mjs (content-driven font subsets)
+src/assets/fonts/generated/

@@ -26,10 +26,13 @@ npm run dev      # http://localhost:4321
 | `npm run check`       | `astro check` — type-checks `.astro`, `.ts` and frontmatter.    |
 | `npm run sync-papers` | Pull new publications from Semantic Scholar (see below).        |
 | `npm run vendor-mathjax`| Regenerate `public/mathjax/mathjax.css` (runs on build).      |
+| `npm run subset-fonts`| Regenerate the woff2 subsets (runs on build — see [Fonts](#fonts)). |
+| `npm run subset-fonts:audit`| Check built HTML for characters missing from the subsets.  |
 
 A `Makefile` wraps the common actions — run `make` (or `make help`) to list them:
 `make dev`, `make build`, `make preview`, `make check`, `make clean`,
-`make papers` (Semantic Scholar sync), `make categories` (tag tally), and
+`make papers` (Semantic Scholar sync), `make categories` (tag tally),
+`make fonts` / `make fonts-audit` (font subsets), and
 `make new-post SLUG=my-post-slug` to scaffold a draft post.
 
 ## Project layout
@@ -41,7 +44,8 @@ src/
   content/blog/<slug>/    one directory per post: index.mdx + its images
   data/papers.yaml        publications (machine-appended, hand-curated)
   data/software.yaml      software list
-  assets/fonts/*.woff2    Domitian, URW Classico, Monaspace Argon
+  assets/fonts/*.woff2    Domitian, URW Classico, Monaspace Argon (pristine originals)
+  assets/fonts/generated/ build-time content-driven subsets (gitignored)
   assets/headshot.webp
   components/             Icon, buttons, cards, TOC, head, header, footer
   layouts/Base.astro      <html> shell: head, skip link, header, footer
@@ -49,7 +53,7 @@ src/
   pages/                  routes (see below)
   styles/                 global.css (+ blocks.css), prose.css, code.css
 public/                   favicon, social card, robots.txt, _headers, _redirects
-scripts/                  sync-papers.mjs, vendor-mathjax.mjs,
+scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
                           rehype-mathjax-euler.mjs, lib/mathjax-euler.mjs
 ```
 
@@ -178,6 +182,94 @@ updating, re-run the source, replace the image, and commit both.
 
 ---
 
+## Fonts
+
+Nine self-hosted woff2 faces are registered with Astro's Fonts API in
+`astro.config.mjs`: Domitian (body, 4 faces), URW Classico (headings, 4 faces)
+and the Monaspace Argon variable font (code). Unsubset they are ~615 kB and are
+by far the heaviest thing on the site.
+
+**`scripts/subset-fonts.mjs` subsets them from the site's own content on every
+build.** Nothing about the character set is hardcoded, so the subset follows the
+content: add a post with an unusual character, or let `make papers` pull in a new
+author name, and the next build keeps the glyphs it needs without anyone editing
+a list.
+
+How it works:
+
+1. **Scan.** Every file under `src/` (and `scripts/lib/`) that can contribute
+   rendered text — `.md`, `.mdx`, `.yaml`, `.astro`, `.ts`, `.js`, `.json`,
+   `.css` — is read and every character in it collected. The scan is
+   deliberately over-inclusive (markup and code characters come along too);
+   those are ASCII, which is kept unconditionally anyway. Escape sequences are
+   decoded as well, because `sync-papers` writes accented author names into
+   `papers.yaml` as `"Pablo Barber\xE1"` — a raw character scan would miss every
+   accent the research page renders.
+2. **Safety floor.** On top of the scan, a fixed set is *always* kept, because
+   content changes between builds and a missing glyph is a visible bug while an
+   unused one costs a few hundred bytes: printable ASCII, Latin-1, Latin
+   Extended-A/B/Additional, combining marks, typographic punctuation (curly
+   quotes, dashes, ellipsis, † ‡ § ¶ •, guillemets), arrows including the `↩`
+   the footnote pipeline injects, sub/superscripts, a few maths operators, and
+   light box-drawing for tree output in code blocks.
+3. **Subset.** Each face is rewritten with [`subset-font`](https://github.com/papandreou/subset-font)
+   (HarfBuzz compiled to wasm). Layout features are all preserved — `liga`,
+   `kern`, `onum`, `frac`, `calt` and friends survive, so ligatures still form
+   and `font-variant-numeric: oldstyle-nums` still gets its oldstyle figures —
+   and HarfBuzz's layout closure keeps the ligature and mark glyphs those
+   features reach even though no codepoint maps to them. The Monaspace variable
+   font is **not** instanced: its `wght`/`wdth`/`slnt` axes come through intact,
+   which the `weight: '200 800'` variant in `astro.config.mjs` depends on.
+4. **Write.** Subsets land in `src/assets/fonts/generated/` (gitignored); the
+   Fonts API is pointed at that directory. `src/assets/fonts/*.woff2` are the
+   pristine upstream binaries and are never modified. The script runs from the
+   `dev`, `build` and `check` npm scripts before Astro starts, so the files
+   always exist and always match the current content.
+5. **Audit.** After `astro build`, `subset-fonts.mjs --audit` re-scans the
+   *built* HTML and fails the build if any character in it is missing from the
+   subset set. This is the backstop for characters no source file contains
+   because a build plugin invented them. If it fires, add the codepoint to
+   `SHARED_FLOOR` / `TEXT_FLOOR` in the script — adding a range a face does not
+   contain is free.
+
+The prose faces and the code face get slightly different sets. Everything the
+content actually contains goes into every face; the speculative accent floor
+(Latin Extended-A and friends) is skipped for Monaspace, where it costs 24 kB
+instead of 7 kB because every glyph in a variable font carries `gvar` deltas,
+and where author names never render. Faces are classified by filename prefix
+(`MONO_FACE_PREFIXES`) and anything unrecognised falls back to the generous
+prose set, so adding a face can only ever cost bytes, never correctness.
+
+Output is deterministic: the character set is sorted before subsetting and
+HarfBuzz is deterministic, so the same content produces byte-identical woff2
+files and CI builds are reproducible.
+
+Each run prints a report:
+
+```
+subset-fonts: scanned 48 source files -> 118 characters in content; keeping 1040 in prose faces and 281 in code faces
+  face                             set   original     subset    saved
+  Domitian-Roman.woff2            text    65.7 kB    30.0 kB      54%
+  MonaspaceArgon-Variable.woff2   mono   140.0 kB    90.2 kB      36%
+  ...
+  total                                  615.5 kB   333.4 kB      46%
+```
+
+A face that cannot be subset — or that comes back not smaller, not woff2, or
+implausibly small — fails the build with a non-zero exit rather than shipping a
+broken font.
+
+**Turning it off.** `SUBSET_FONTS=0` makes the script copy the full originals
+into `src/assets/fonts/generated/` instead of subsetting, so the build still
+works and ships complete faces:
+
+```sh
+SUBSET_FONTS=0 npm run build
+```
+
+Use that to bisect a suspected shaping problem. The `--audit` step is skipped in
+that mode.
+
 ## Publications
 
 `src/data/papers.yaml` is the source of truth for `/research/`. It is a map of
@@ -255,7 +347,8 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
   free, all self-hosted as woff2 through Astro's Fonts API with `font-display:
   swap` and preloading of the two faces used above the fold. Nine faces total,
   including the URW Classico bold-italic the old site shipped but never
-  registered.
+  registered. Every face is subset to the characters the site's own content
+  needs, on every build — see [Fonts](#fonts).
 - **Colour.** Warm paper in light mode, warm ink in dark mode (never pure white or
   black), with the Hertie red `#ba0020` as a single accent — lightened to
   `#f2596d` in dark mode for contrast. Light and dark are pure CSS custom
@@ -266,5 +359,8 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
   a collapsible `<details>` on narrow screens and a sticky sidebar past 68rem.
 - **Performance.** No client JS besides the GA snippet. Per-route CSS (prose and
   code styles only load on pages that need them), the MathJax stylesheet only on
-  posts with `math: true`, all images processed by sharp with explicit dimensions,
-  and no external requests other than Google Analytics.
+  posts with `math: true`, content-driven font subsets (~615 kB → ~333 kB), all
+  images processed by sharp with explicit dimensions, and no external requests
+  other than Google Analytics. Only two faces are preloaded; the other seven are
+  fetched by the browser only if a page's text actually needs them, so `/` and
+  `/research/` never download the code font at all.

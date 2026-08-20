@@ -6,7 +6,14 @@ import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeMathjaxEuler from './scripts/rehype-mathjax-euler.mjs';
 
-const fontsDir = './src/assets/fonts';
+// The Fonts API is pointed at the *generated* subsets, not the pristine
+// originals next to them. scripts/subset-fonts.mjs derives the character set
+// from the site's own content and rewrites every face into this directory
+// before `astro build` / `astro dev` runs (see package.json scripts), so the
+// files always exist and always match the current content. The directory is
+// gitignored; src/assets/fonts/*.woff2 are the untouched upstream binaries.
+// `SUBSET_FONTS=0` makes the script copy the originals over instead.
+const fontsDir = './src/assets/fonts/generated';
 
 export default defineConfig({
   site: 'https://ddimmery.com',
