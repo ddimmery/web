@@ -26,6 +26,11 @@ npm run dev      # http://localhost:4321
 | `npm run sync-papers` | Pull new publications from Semantic Scholar (see below).        |
 | `npm run vendor-katex`| Re-copy the KaTeX CSS/fonts into `public/katex/` (runs on build).|
 
+A `Makefile` wraps the common actions — run `make` (or `make help`) to list them:
+`make dev`, `make build`, `make preview`, `make check`, `make clean`,
+`make papers` (Semantic Scholar sync), `make categories` (tag tally), and
+`make new-post SLUG=my-post-slug` to scaffold a draft post.
+
 ## Project layout
 
 ```
