@@ -531,11 +531,14 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  padding: 0.22em 0.65em;
+  /* line-height 1 keeps the label's line box snug around its ink, so flex
+     centering centers what the eye sees; the vertical padding replaces the
+     leading the line box no longer carries. */
+  padding: 0.5em 0.65em;
   font-family: var(--font-heading-stack);
   font-size: var(--step--1);
   font-weight: 700;
-  line-height: 1.5;
+  line-height: 1;
   letter-spacing: 0.02em;
   color: var(--ink-soft);
   background: transparent;
@@ -554,10 +557,14 @@ main {
 
 .btn svg {
   flex: none;
-  /* Flex centering aligns the boxes, but URW Classico's glyphs sit high in
-     their line box, so a geometrically centered icon reads low next to the
-     label. Nudge up to the text's optical center. */
-  transform: translateY(-0.23em);
+  /* Tuned by pixel-measuring rendered ink (flat and descender labels): the
+     icon sits almost exactly at the box's visual center on its own; the label,
+     whose glyphs ride high in the em box, is pulled down to meet it. */
+  transform: translateY(-0.02em);
+}
+
+.btn span {
+  transform: translateY(0.21em);
 }
 
 /* ---------- category pills ---------------------------------------------- */
