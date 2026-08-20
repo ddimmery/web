@@ -2,8 +2,13 @@
    Shiki code blocks. Astro is configured with two themes and
    `defaultColor: false`, so Shiki emits `--shiki-light` / `--shiki-dark`
    custom properties on every token instead of committing to one palette.
-   Swapping the two here means syntax colors follow the OS color scheme
-   with zero JavaScript.
+   Swapping the two here means syntax colors follow the color scheme with no
+   per-token JavaScript.
+
+   The switch mirrors the token architecture in global.css: light is the base
+   rule, dark is applied twice — under `prefers-color-scheme: dark` guarded by
+   `:not([data-theme='light'])`, and again under `[data-theme='dark']` so the
+   header toggle wins in both directions.
    ========================================================================= */
 
 /* Shiki's own backgrounds are pure #fff (light) and a cool blue-gray (dark),
@@ -17,9 +22,13 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --code-surface: #1a1b1e;
   }
+}
+
+:root[data-theme='dark'] {
+  --code-surface: #1a1b1e;
 }
 
 pre.astro-code,
@@ -31,13 +40,21 @@ pre.astro-code span {
 }
 
 @media (prefers-color-scheme: dark) {
-  pre.astro-code,
-  pre.astro-code span {
+  :root:not([data-theme='light']) pre.astro-code,
+  :root:not([data-theme='light']) pre.astro-code span {
     color: var(--shiki-dark);
     font-style: var(--shiki-dark-font-style);
     font-weight: var(--shiki-dark-font-weight);
     text-decoration: var(--shiki-dark-text-decoration);
   }
+}
+
+:root[data-theme='dark'] pre.astro-code,
+:root[data-theme='dark'] pre.astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
 }
 
 pre.astro-code {

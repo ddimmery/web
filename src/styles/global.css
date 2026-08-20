@@ -9,7 +9,16 @@
    #ba0020 — used sparingly, mostly on links and hairline details.
    Grounds are neutral: a barely-off white in light mode, a neutral near-black
    in dark. No warm cast in either direction; never pure #fff / #000.
-   No framework, no client JS.
+   No framework, no client JS beyond the scroll-spy and the theme toggle.
+
+   Theming
+   -------
+   Light is the base layer: every color token has a value on bare `:root`, so
+   no color is ever defined *only* inside a media query. Dark arrives twice —
+   once under `prefers-color-scheme: dark` (guarded by
+   `:not([data-theme='light'])` so an explicit light choice wins over the OS)
+   and once under `[data-theme='dark']` (so an explicit dark choice wins over a
+   light OS). The two dark blocks are adjacent and must stay in sync.
    ========================================================================= */
 
 @import './blocks.css';
@@ -68,12 +77,15 @@
 
   --radius: 3px;
 
+  /* No explicit choice: follow the OS, and let form controls / scrollbars do
+     the same. The two overrides below pin it when a choice has been made. */
   color-scheme: light dark;
 }
 
 /* ---------- tokens: dark ------------------------------------------------- */
+/* (a) OS prefers dark and the visitor has not forced light. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --paper: #131416;
     --paper-raised: #1c1d20;
     --paper-sunken: #0e0f10;
@@ -90,6 +102,34 @@
     --selection: rgba(242, 89, 109, 0.24);
     --shadow: rgba(0, 0, 0, 0.5);
   }
+}
+
+/* (b) The visitor forced dark — same values, and last in source order so it
+   also wins on a light-preferring OS. Keep in sync with (a) above. */
+:root[data-theme='dark'] {
+  --paper: #131416;
+  --paper-raised: #1c1d20;
+  --paper-sunken: #0e0f10;
+  --ink: #e9eaec;
+  --ink-soft: #cfd2d6;
+  --ink-muted: #969ba0;
+  --rule: #2d2f33;
+  --rule-strong: #454951;
+
+  --accent: #f2596d;
+  --accent-hover: #ff8092;
+  --accent-wash: rgba(242, 89, 109, 0.12);
+
+  --selection: rgba(242, 89, 109, 0.24);
+  --shadow: rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+/* Forced light needs no color overrides — the light values on `:root` are
+   never replaced, because (a) is guarded against it. Only the UA hint. */
+:root[data-theme='light'] {
+  color-scheme: light;
 }
 
 /* ---------- base --------------------------------------------------------- */
@@ -394,6 +434,15 @@ main {
   color: var(--accent);
 }
 
+/* Nav plus the theme control travel together: on a narrow screen the pair
+   wraps below the site title as one block, and the control stays pinned to the
+   end of the nav row rather than drifting onto a line of its own. */
+.site-header__end {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem 1.15rem;
+}
+
 .site-nav {
   display: flex;
   flex-wrap: wrap;
@@ -455,6 +504,75 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .site-nav a,
   .site-nav a::after {
+    transition: none;
+  }
+}
+
+/* ---------- theme control ----------------------------------------------- */
+/* Deliberately quiet: no border, no label, muted ink, sized to the nav's cap
+   height so it reads as chrome next to the links rather than as a feature.
+   `hidden` (set in the markup, cleared by the inline script) keeps it out of
+   no-JS renders entirely — `display: none` from the attribute wins because
+   nothing here sets `display`. */
+.theme-toggle {
+  appearance: none;
+  position: relative;
+  margin: 0;
+  padding: 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  line-height: 0;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: color 150ms ease-out;
+  /* Optical: the nav row is baseline-aligned, and a 15px glyph on a text
+     baseline sits a touch high. */
+  transform: translateY(0.14em);
+}
+
+/* The glyph is deliberately small; the touch target should not be. This grows
+   the hit area to ~44px square without moving anything in the nav row. */
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -0.6rem;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* One glyph at a time: the half-filled circle for system-following, a sun or a
+   moon once a choice has been forced. `data-mode` is written by the script. */
+.theme-toggle__icon {
+  display: none;
+}
+
+/* The half-circle is also the state before the script has written `data-mode`,
+   which matches the default label in the markup. */
+.theme-toggle__icon--system {
+  display: block;
+}
+
+.theme-toggle[data-mode='light'] .theme-toggle__icon--system,
+.theme-toggle[data-mode='dark'] .theme-toggle__icon--system {
+  display: none;
+}
+
+.theme-toggle[data-mode='light'] .theme-toggle__icon--light,
+.theme-toggle[data-mode='dark'] .theme-toggle__icon--dark {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
     transition: none;
   }
 }

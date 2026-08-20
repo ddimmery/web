@@ -1,5 +1,7 @@
 ---
+import Icon from './Icon.astro';
 import { nav, site } from '../lib/site';
+import { themeToggle } from '../lib/theme';
 
 const path = Astro.url.pathname;
 
@@ -14,14 +16,32 @@ function isCurrent(href: string): boolean {
 <header class="site-header">
   <div class="wrap site-header__inner">
     <a class="site-title" href="/">{site.title}</a>
-    <nav class="site-nav" aria-label="Main">
-      {
-        nav.map((item) => (
-          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-            {item.label}
-          </a>
-        ))
-      }
-    </nav>
+    <div class="site-header__end">
+      <nav class="site-nav" aria-label="Main">
+        {
+          nav.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+      {/* Cycles system -> light -> dark. Ships `hidden`; the script below
+          reveals it, so a no-JS visitor is never offered a dead control. The
+          initial label is a fallback the script overwrites at once. */}
+      <button
+        id="theme-toggle"
+        class="theme-toggle"
+        type="button"
+        hidden
+        aria-label="Theme: system. Switch to light."
+        title="Theme: system"
+      >
+        <Icon name="themeSystem" size={15} class="theme-toggle__icon theme-toggle__icon--system" />
+        <Icon name="themeLight" size={15} class="theme-toggle__icon theme-toggle__icon--light" />
+        <Icon name="themeDark" size={15} class="theme-toggle__icon theme-toggle__icon--dark" />
+      </button>
+      <script is:inline set:html={themeToggle} />
+    </div>
   </div>
 </header>

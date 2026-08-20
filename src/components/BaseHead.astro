@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { site } from '../lib/site';
+import { themeInit } from '../lib/theme';
 import '../styles/global.css';
 
 interface Props {
@@ -35,6 +36,12 @@ const fullTitle = title === site.title ? title : `${title} — ${site.title}`;
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Theme stamp. Inline, parser-blocking and first on purpose: it runs before
+     the stylesheet paints anything, so a visitor who forced a theme against
+     their OS preference sees no flash of the other ground. Absence of the
+     `theme` key means "follow the OS", which needs no stamp at all. -->
+<script is:inline set:html={themeInit} />
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />

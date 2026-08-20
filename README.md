@@ -156,8 +156,8 @@ the MathJax version in `package.json`.
 ### Code
 
 Fenced code blocks are highlighted at build time by Shiki using two themes
-(`github-light` / `github-dark-dimmed`) wired to `prefers-color-scheme`, with
-line wrapping on. Nothing to configure per post.
+(`github-light` / `github-dark-dimmed`) wired to the active color scheme (see
+[Theme](#theme)), with line wrapping on. Nothing to configure per post.
 
 ### Footnotes
 
@@ -340,6 +340,41 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
 
 ---
 
+## Theme
+
+The site follows the visitor's OS color scheme by default, and the small control
+at the end of the header nav cycles **system → light → dark**. Three moving
+parts:
+
+1. **Tokens** (`src/styles/global.css`, `src/styles/code.css`). Light values sit
+   unconditionally on `:root`, so no color is ever defined *only* inside a media
+   query. Dark values are applied twice — under
+   `@media (prefers-color-scheme: dark)` guarded as
+   `:root:not([data-theme='light'])`, and again under `:root[data-theme='dark']`,
+   which comes later in source order. The result: the OS wins when nothing is
+   stored, and the explicit choice wins in *both* directions. `color-scheme` is
+   `light dark` by default and pinned by the two attribute selectors. The two
+   dark blocks are adjacent and must stay in sync. Shiki's
+   `--shiki-light` / `--shiki-dark` token switching in `code.css` follows the
+   same shape, as does MathJax's own stylesheet — `scripts/vendor-mathjax.mjs`
+   rewrites its `prefers-color-scheme` blocks on the way out.
+2. **The pre-paint stamp** (`src/lib/theme.ts` → `BaseHead.astro`). ~136 bytes
+   inline at the very top of `<head>`, parser-blocking on purpose: it reads
+   `localStorage['theme']` and stamps `data-theme` on `<html>` before the first
+   paint, so forcing a theme against the OS preference causes no flash. An
+   absent key means "follow the OS" and needs no stamp.
+3. **The control** (`Header.astro` + `themeToggle` in `src/lib/theme.ts`, ~640
+   bytes inline). Ships with the `hidden` attribute and is revealed by its own
+   script, so no-JS visitors never see a dead control. `data-mode` on the button
+   selects one of three inline SVGs — a half-filled circle for system-following,
+   a sun, a moon — so a forced choice is distinguishable from following the OS.
+   The accessible name states the current mode and what the next click does.
+
+Storage contract: `localStorage['theme']` is `'light'`, `'dark'`, or absent.
+Nothing else reads or writes it.
+
+---
+
 ## Design notes
 
 - **Type.** URW Classico (Optima-derived) for headings and navigation, Domitian
@@ -351,14 +386,16 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
   needs, on every build — see [Fonts](#fonts).
 - **Color.** Neutral grounds — a barely-off white in light mode, a neutral
   near-black in dark, no warm cast either way (never pure white or black) — with the Hertie red `#ba0020` as a single accent — lightened to
-  `#f2596d` in dark mode for contrast. Light and dark are pure CSS custom
-  properties behind `prefers-color-scheme`; there is no theme toggle and no
-  JavaScript.
+  `#f2596d` in dark mode for contrast. Light and dark are CSS custom properties
+  and follow `prefers-color-scheme` by default; a quiet header control can force
+  either one. See [Theme](#theme).
 - **Layout.** An 80rem page shell and a measure of ~75ch, a fluid `clamp()` type
   scale, hairline rules instead of boxes and shadows. Mobile-first; the table of
   contents (post pages and the research index) is a collapsible `<details>` on
   narrow screens and a sticky left-hand sidebar past 70rem.
-- **Performance.** No client JS besides the GA snippet. Per-route CSS (prose and
+- **Performance.** Under 1 kB of first-party JS, all inline (the theme stamp and
+  toggle, ~0.8 kB, plus the sidebar scroll-spy on pages that have an outline);
+  the GA snippet is the only external script. Per-route CSS (prose and
   code styles only load on pages that need them), the MathJax stylesheet only on
   posts with `math: true`, content-driven font subsets (~615 kB → ~333 kB), all
   images processed by sharp with explicit dimensions, and no external requests

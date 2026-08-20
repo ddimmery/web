@@ -19,7 +19,86 @@ import { mathjaxStyles } from './lib/mathjax-euler.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'public', 'mathjax');
 
-const css = await mathjaxStyles();
+const css = themeGuard(await mathjaxStyles());
+
+/**
+ * Make MathJax's own `prefers-color-scheme: dark` blocks obey the site's theme
+ * toggle instead of the OS alone.
+ *
+ * The site keeps light values as the unconditional base layer and applies dark
+ * twice: inside the media query guarded by `:not([data-theme="light"])` (so a
+ * forced light choice survives a dark OS) and again under `[data-theme="dark"]`
+ * (so a forced dark choice survives a light OS). See src/styles/global.css.
+ *
+ * This rewrites MathJax's stylesheet into the same shape. The rules involved
+ * only style interactive MathJax furniture (tooltips, collapsed subtrees, the
+ * speech-rule highlighter) which this build never emits, but leaving a bare
+ * `prefers-color-scheme` here would be one place the theme could desync.
+ *
+ * @param {string} sheet
+ * @returns {string}
+ */
+function themeGuard(sheet) {
+  const marker = '@media (prefers-color-scheme: dark)';
+  let output = '';
+  let rest = sheet;
+
+  for (;;) {
+    const at = rest.indexOf(marker);
+    if (at === -1) return output + rest;
+
+    const open = rest.indexOf('{', at);
+    const end = matchBrace(rest, open);
+    if (open === -1 || end === -1) return output + rest;
+
+    const prelude = rest.slice(at, open); // keeps MathJax's trailing comment
+    const body = rest.slice(open + 1, end);
+
+    output +=
+      rest.slice(0, at) +
+      `${prelude}{${prefixSelectors(body, ':root:not([data-theme="light"])')}}` +
+      `\n${prefixSelectors(body, ':root[data-theme="dark"]').trim()}\n`;
+    rest = rest.slice(end + 1);
+  }
+}
+
+/** Index of the `}` closing the `{` at `open`. */
+function matchBrace(text, open) {
+  let depth = 0;
+  for (let i = open; i < text.length; i += 1) {
+    if (text[i] === '{') depth += 1;
+    else if (text[i] === '}') {
+      depth -= 1;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+/** Prepend `scope` to every selector in a (flat) list of style rules. */
+function prefixSelectors(body, scope) {
+  let out = '';
+  let rest = body;
+
+  for (;;) {
+    const open = rest.indexOf('{');
+    if (open === -1) return out + rest;
+    const end = matchBrace(rest, open);
+    if (end === -1) return out + rest;
+
+    const selector = rest
+      .slice(0, open)
+      .split(',')
+      .map((part) => {
+        const trimmed = part.trim();
+        return trimmed ? `${scope} ${trimmed}` : part;
+      })
+      .join(', ');
+
+    out += `\n${selector} {${rest.slice(open + 1, end)}}\n`;
+    rest = rest.slice(end + 1);
+  }
+}
 
 // MathJax colors links inside formulae bright blue; defer to the site palette.
 //
