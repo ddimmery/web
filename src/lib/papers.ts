@@ -15,6 +15,18 @@ function cleanName(name: string): string {
     .trim();
 }
 
+/**
+ * Titles come from `src/data/papers.yaml`, which is machine-written: long
+ * titles arrive as folded scalars, so the on-disk text carries newlines and
+ * run-on indentation. YAML folding normally turns those into single spaces, but
+ * nothing guarantees it for every scalar style the sync script emits, and a
+ * stray newline inside a title is invisible until it reaches the page. Collapse
+ * all internal whitespace here, at the one place titles are read.
+ */
+export function paperTitle(paper: PaperData): string {
+  return paper.title.replace(/\s+/g, ' ').trim();
+}
+
 export interface AuthorSegmentOptions {
   /** Truncate to this many names, followed by "et al." (used on teasers). */
   max?: number;

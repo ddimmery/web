@@ -50,7 +50,9 @@ const { Content, headings } = await render(post);
   math={math}
   noindex={draft}
 >
-  <div class="wrap">
+  {/* `dense`: post pages read one step below the landing page — see the
+      density block in global.css. */}
+  <div class="wrap dense">
     <div class="post-shell">
       {/* The header and the collapsible contents are page furniture, not
           running text, so they sit *outside* `.prose`: inside it they picked up

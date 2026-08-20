@@ -4,3 +4,7 @@
 /feed        /blog.xml   301
 /rss.xml     /blog.xml   301
 /blog/blog.xml /blog.xml 301
+
+# The About page was folded into the landing page; keep old links alive.
+/about   /   301
+/about/  /   301

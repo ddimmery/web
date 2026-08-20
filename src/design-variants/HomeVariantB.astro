@@ -14,7 +14,7 @@ import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
-import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
 import headshot from '../assets/headshot.webp';
 import type { HomeProps } from './home-props';
 import '../styles/home-variants.css';
@@ -101,7 +101,7 @@ const { posts, papers } = Astro.props as HomeProps;
               <li>
                 <p class="wide-list__meta">{yearOf(paper)}</p>
                 <h3 class="wide-list__title">
-                  {url ? <a href={url}>{paper.title}</a> : paper.title}
+                  {url ? <a href={url}>{paperTitle(paper)}</a> : paperTitle(paper)}
                 </h3>
                 <p class="wide-list__note">
                   {authorSegments(paper.authors, { max: 3 }).map((part) =>

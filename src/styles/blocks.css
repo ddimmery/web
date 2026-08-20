@@ -238,12 +238,20 @@
   border-top: 1px solid var(--rule);
 }
 
+/* Paper titles are headings, so they inherit `text-wrap: balance` from the
+   global h1–h6 rule — and balancing is wrong for them. A title a few words too
+   long for one line gets split into two near-equal halves, which reads as an
+   arbitrary break in the middle of the sentence ("… on Facebook and Instagram
+   in / 2020: Concentrated exposure …") with the right half of the column left
+   empty. These are running sentences, not display lines: fill the first line
+   and let the remainder wrap. */
 .paper__title {
   font-family: var(--font-heading-stack);
   font-weight: 700;
   font-size: var(--step-0);
   line-height: 1.3;
   margin: 0;
+  text-wrap: pretty;
 }
 
 .paper__title a {

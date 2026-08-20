@@ -8,6 +8,13 @@
   max-width: var(--measure);
 }
 
+/* Rendered markdown that is *not* long-form reading — the software page's
+   package blurbs — fills its column instead of stopping at the measure, so the
+   text lines up with the title rules above it. */
+.prose--full {
+  max-width: none;
+}
+
 .prose > * + * {
   margin-top: var(--flow);
 }
@@ -41,7 +48,7 @@
 /* Page furniture that happens to sit inside a .prose subtree keeps its own
    layout: these lists are not running text and must not pick up markdown list
    indentation or between-item leading. */
-.prose :where(.pills, .plain-list, .tag-list, .btn-row) {
+.prose :where(.pills, .plain-list, .btn-row) {
   padding-left: 0;
 }
 

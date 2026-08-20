@@ -274,19 +274,12 @@
   height: 2.1rem;
 }
 
-/* The content column: an opening statement, then the two recents blocks. */
+/* The content column: the biography, then the two recents blocks. The bio is
+   ordinary single-column prose running the width of the frame (capped at the
+   site measure so the line length stays readable) — the identity, tagline and
+   portrait all live in the rail, so the main frame opens on running text. */
 .rail-main > * + * {
   margin-top: var(--space-xl);
-}
-
-.rail-lede {
-  font-size: var(--step-2);
-  line-height: 1.3;
-  font-style: italic;
-  color: var(--ink);
-  max-width: 34ch;
-  margin: 0 0 var(--space-m);
-  text-wrap: balance;
 }
 
 .rail-bio {
@@ -297,18 +290,11 @@
   margin-top: 0.85em;
 }
 
-/* Two columns of running text at wide sizes — the magazine move. */
-@media (min-width: 76rem) {
-  .rail-bio {
-    max-width: none;
-    columns: 2;
-    column-gap: var(--space-xl);
-    column-rule: 1px solid var(--rule);
-  }
-
-  .rail-bio > * + * {
-    margin-top: 0.85em;
-  }
+/* The opening paragraph carries the page: a size up from the rest of the bio. */
+.rail-bio > p:first-child {
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--ink);
 }
 
 .rail-recents {

@@ -15,7 +15,7 @@ import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
-import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
 import headshot from '../assets/headshot.webp';
 import type { HomeProps } from './home-props';
 import '../styles/home-variant-d.css';
@@ -108,7 +108,7 @@ const { posts, papers } = Astro.props as HomeProps;
                 return (
                   <li>
                     <p class="teaser__title">
-                      {url ? <a href={url}>{paper.title}</a> : paper.title}
+                      {url ? <a href={url}>{paperTitle(paper)}</a> : paperTitle(paper)}
                     </p>
                     <p class="teaser__meta">
                       {authorSegments(paper.authors, { max: 3 }).map((part) =>

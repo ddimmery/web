@@ -8,6 +8,7 @@ import {
   bestUrl,
   groupByYear,
   isPublished,
+  paperTitle,
   type PaperData,
 } from '../lib/papers';
 
@@ -82,10 +83,10 @@ function buttons(paper: PaperData) {
                             <h4 class="paper__title">
                               {url ? (
                                 <a href={url} rel="noopener noreferrer">
-                                  {paper.title}
+                                  {paperTitle(paper)}
                                 </a>
                               ) : (
-                                paper.title
+                                paperTitle(paper)
                               )}
                             </h4>
                             <p class="paper__meta">

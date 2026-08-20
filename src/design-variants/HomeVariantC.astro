@@ -3,9 +3,9 @@
    HOME VARIANT C — "side-rail identity"
 
    A sticky identity rail on the left — portrait, name, tagline, socials —
-   with the page content flowing past it on the right: a large italic opening
-   line, the bio set in two columns at wide sizes, then the two recents feeds
-   side by side. Magazine-style; the identity stays on screen as you scroll.
+   with the page content flowing past it on the right: the biography as normal
+   full-width prose, then the two recents feeds side by side. Magazine-style;
+   the identity stays on screen as you scroll.
 
    To activate: change the `Home` import in src/pages/index.astro to this file.
    ========================================================================= */
@@ -13,7 +13,7 @@ import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
-import { authorSegments, bestUrl, yearOf } from '../lib/papers';
+import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
 import headshot from '../assets/headshot.webp';
 import type { HomeProps } from './home-props';
 import '../styles/home-variants.css';
@@ -46,14 +46,8 @@ const { posts, papers } = Astro.props as HomeProps;
     </aside>
 
     <div class="rail-main">
-      <div>
-        <p class="rail-lede">
-          Causal inference, machine learning, and the design of better
-          experiments.
-        </p>
-        <div class="rail-bio">
-          <HomeBio />
-        </div>
+      <div class="rail-bio">
+        <HomeBio />
       </div>
 
       <div class="rail-recents">
@@ -96,7 +90,7 @@ const { posts, papers } = Astro.props as HomeProps;
                   return (
                     <li>
                       <p class="teaser__title">
-                        {url ? <a href={url}>{paper.title}</a> : paper.title}
+                        {url ? <a href={url}>{paperTitle(paper)}</a> : paperTitle(paper)}
                       </p>
                       <p class="teaser__meta">
                         {authorSegments(paper.authors, { max: 3 }).map((part) =>

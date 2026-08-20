@@ -62,7 +62,7 @@ scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
 | URL                       | Source                                |
 | ------------------------- | ------------------------------------- |
 | `/`                       | `src/pages/index.astro`               |
-| `/about/`                 | `src/pages/about.astro`               |
+| `/about/`                 | removed — redirected to `/` in `public/_redirects` |
 | `/research/`              | `src/pages/research.astro`            |
 | `/software/`              | `src/pages/software.astro`            |
 | `/blog/`                  | `src/pages/blog/index.astro`          |

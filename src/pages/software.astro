@@ -29,9 +29,10 @@ const software = await Promise.all(
   title="Software"
   description="Open-source R packages and tools by Drew Dimmery: rdd, regweight and tidyhte."
 >
-  {/* Software entries are running text, so the whole page runs at the prose
-      measure — title rule included. */}
-  <div class="wrap wrap--prose">
+  {/* Software entries are short reference blurbs rather than long-form essays,
+      so the page uses the full content column (the same 68rem cap as the blog
+      listing) and runs at the denser reading size. */}
+  <div class="wrap wrap--column dense">
     <h1 class="page-title">Software</h1>
 
     {
@@ -40,7 +41,11 @@ const software = await Promise.all(
           <h2 class="software-entry__title">
             <code>{item.title}</code>
           </h2>
-          <div class="prose" style="margin-top:var(--space-s)" set:html={item.html} />
+          <div
+            class="prose prose--full"
+            style="margin-top:var(--space-s)"
+            set:html={item.html}
+          />
           <div class="btn-row">
             {item.website && (
               <LinkButton href={item.website} icon="info" label="Website" />

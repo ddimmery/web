@@ -53,11 +53,8 @@
 
   /* Rhythm */
   --measure: 75ch;
-  /* Same target width in rem, for elements whose own font is not the body font
-     (headings, rules) where a `ch` would measure something much wider. */
-  --measure-cap: 44rem;
   --shell: 80rem;
-  /* Widest sensible column for a *list* page (CV rows, publications): wide
+  /* Widest sensible column for a *list* page (software, publications): wide
      enough to use the shell, narrow enough that right-aligned dates do not
      leave a lawn in the middle of every row. */
   --shell-column: 68rem;
@@ -233,22 +230,32 @@ small {
   max-width: var(--measure);
 }
 
-/* Pages that are a *list* — CV rows, the publication list — put their dates and
-   venues on the right edge of the column. At the full shell width that leaves a
-   lawn of empty space in the middle of every row, so those pages run in a
-   slightly narrower column. The shell keeps its full width so the left edge
+/* Pages that are a *list* — the blog listing, the software entries — put their
+   dates and venues on the right edge of the column. At the full shell width
+   that leaves a lawn of empty space in the middle of every row, so those pages
+   run in a slightly narrower column. The shell keeps its full width so the left edge
    still lines up with the masthead; only the blocks inside it are narrowed. */
 .wrap--column > * {
   max-width: var(--shell-column);
 }
 
-/* Pages that are wall-to-wall running text (software) have no reason to be
-   wider than the measure — including the page title's rule, which otherwise
-   overhangs the text by hundreds of pixels. The cap is in rem, not `ch`:
-   inside a display-size heading a `ch` is several times a body `ch`, so
-   `var(--measure)` would be no cap at all there. */
-.wrap--prose > * {
-  max-width: var(--measure-cap);
+/* ---------- reading density --------------------------------------------- */
+/* Index and reading pages — software, the blog listing, post pages — run one
+   step below the landing page's body size, with leading and flow tightened in
+   proportion so more content fits on screen. Only the body steps move: the
+   display sizes (--step-1 and up) are untouched, so headings, ledes and card
+   titles keep the same scale. */
+.dense {
+  --step--2: clamp(0.71rem, 0.7rem + 0.08vw, 0.75rem);
+  --step--1: clamp(0.83rem, 0.81rem + 0.1vw, 0.88rem);
+  --step-0: clamp(0.97rem, 0.95rem + 0.14vw, 1.05rem);
+  /* `ch` shrinks with the smaller body size, so holding the measure at 75ch
+     would narrow the column in pixels as well; a couple of characters more
+     keeps the physical column close to the rest of the site. */
+  --measure: 78ch;
+  --flow: 1em;
+  font-size: var(--step-0);
+  line-height: 1.58;
 }
 
 /* ---------- page shell with a sticky outline sidebar --------------------- */
@@ -263,8 +270,12 @@ small {
 
 @media (min-width: 70rem) {
   .page-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
-    gap: var(--space-xl);
+    /* A tighter outline column and gap than the post sidebar uses: the paper
+       titles beside it are long single sentences, and the ~60px this returns to
+       the content column is the difference between a title setting on one line
+       and breaking for its last two words. */
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 14rem);
+    gap: var(--space-xl) var(--space-l);
     align-items: start;
   }
 }
@@ -618,96 +629,9 @@ a.pill:hover {
   margin-bottom: 0.35rem;
 }
 
-/* ---------- two-column CV rows (about page) ----------------------------- */
-.cv-entry + .cv-entry {
-  margin-top: var(--space-m);
-}
-
-.cv-entry__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.15rem 1rem;
-  border-bottom: 1px solid var(--rule);
-  padding-bottom: 0.2rem;
-}
-
-.cv-entry__title {
-  font-family: var(--font-heading-stack);
-  font-weight: 700;
-  font-size: var(--step-0);
-  line-height: 1.25;
-}
-
-.cv-entry__meta {
-  font-size: var(--step--1);
-  line-height: 1.35;
-  color: var(--ink-muted);
-  font-variant-numeric: oldstyle-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.cv-entry__role {
-  font-style: italic;
-  color: var(--ink-soft);
-  margin-top: 0.25rem;
-}
-
-.cv-entry__notes {
-  margin: 0.4rem 0 0;
-  padding-left: 1.15rem;
-  font-size: var(--step--1);
-  color: var(--ink-soft);
-}
-
-.cv-entry__notes li + li {
-  margin-top: 0.2rem;
-}
-
-/* Compact variant used for teaching lists: single line, dates right. */
-.cv-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.1rem 1rem;
-  padding-block: 0.35rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.cv-line__meta {
-  font-size: var(--step--1);
-  color: var(--ink-muted);
-  white-space: nowrap;
-}
-
 /* ---------- generic lists ----------------------------------------------- */
 .plain-list {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.75rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-family: var(--font-heading-stack);
-  font-size: var(--step--1);
-  color: var(--ink-soft);
-}
-
-.tag-list li::after {
-  content: '·';
-  margin-left: 0.75rem;
-  color: var(--rule-strong);
-}
-
-.tag-list li:last-child::after {
-  content: none;
 }
