@@ -332,6 +332,29 @@
   letter-spacing: -0.01em;
 }
 
+/* ---------- teaching ---------------------------------------------------- */
+/* Sibling of the software list: same rule between entries, same display size
+   for the entry heading. Course titles are prose rather than package names, so
+   they take the heading face instead of the mono one. */
+.teaching-entry + .teaching-entry {
+  margin-top: var(--space-l);
+  padding-top: var(--space-l);
+  border-top: 1px solid var(--rule);
+}
+
+.teaching-entry__title {
+  font-size: var(--step-2);
+  margin: 0;
+}
+
+/* Code · programme · semesters, in the same muted small line the paper list
+   uses for its author/venue metadata. */
+.teaching-entry__meta {
+  margin: 0.2rem 0 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
 /* ---------- post page --------------------------------------------------- */
 .post-shell {
   display: grid;

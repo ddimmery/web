@@ -1,0 +1,67 @@
+# Courses taught at the Hertie School. Unlike software.yaml, file order *is*
+# display order: the two required MSc DSPP core courses come first, then the
+# electives with the newest first.
+- title: "Machine Learning"
+  code: "GRAD-C24"
+  program: "Required course, MSc in Data Science for Public Policy"
+  semesters:
+    - "Spring 2024"
+    - "Spring 2026"
+  github: https://github.com/hertie-ml-26
+  description: |
+    This course provides an introduction to the world of machine learning. By the end of this course students will have a sound understanding of the key concepts of machine learning, the ability to analyze data using some of its main methods, and a solid foundation for more advanced or more specialized study. The course covers standard topics in supervised and unsupervised learning, including the most common learning algorithms for regression, classification and clustering, but also touches on advanced topics in machine learning particularly important for public policy, such as uncertainty quantification. Students will learn the fundamental concepts underlying machine learning algorithms as well as the practical use of machine learning algorithms using open-source frameworks.
+
+    **Learning objectives.** Students will:
+
+    - Learn theoretical concepts which undergird how and why machine learning works
+    - Learn how to use a variety of ML tools
+    - Gain experience with model-building, model-iteration and model-evaluation processes
+- title: "Data Structures & Algorithms"
+  code: "GRAD-C9"
+  program: "Required course, MSc in Data Science for Public Policy"
+  semesters:
+    - "Spring 2024"
+    - "Spring 2026"
+  github: https://github.com/hertie-dsa-26
+  description: |
+    This course begins with an introduction to fundamental programming concepts and presents important concepts in data structures and algorithms. Students will learn how to design and how to analyze efficient algorithms as well as how to write efficient code using established software engineering practices and paradigms. This combination of the theoretical and the practical will position students well to have confidence in undertaking substantial software engineering projects.
+
+    **Learning objectives.** Students will:
+
+    - Learn about the fundamental building blocks of modern computation
+    - Understand how to build meaningful software
+    - Develop a theoretical understanding of the development and analysis of algorithms
+- title: "AI Evaluations"
+  code: "GRAD-E1508"
+  program: "Elective"
+  semesters:
+    - "Fall 2026"
+  github: https://github.com/hertie-aie-26
+  description: |
+    This course teaches students to design, pre-register, execute and describe rigorous evaluations of AI systems, drawing on the methodology of experimentation and measurement theory from the social sciences. AI systems are tools humans use to accomplish tasks; evaluating them is therefore fundamentally a question about joint human-AI performance on real tasks, not about the abstract model capabilities that static benchmarks measure. The course is structured around team projects carried through the full arc of design and execution: roughly the first two-thirds of the term is spent designing and pre-registering an evaluation, and the last third is spent running it, dealing with the inevitable surprises, and writing it up. Teams choose between two design archetypes (a human-subjects experiment with some form of AI as the intervention, or a model-only evaluation grounded in a real human task) and pursue a question of their own choosing. Teams are provided resources for accessing AI APIs and real human subjects. Students leave with one executed evaluation written up as a short technical report and a working understanding of the methodological landscape of AI evaluation.
+
+    **Learning objectives.** Students will:
+
+    - Understand why AI evaluation is fundamentally a measurement challenge, and be able to apply social-science measurement frameworks (construct validity, operationalization) to AI systems
+    - Be able to design, pre-register, and execute an experiment to evaluate whether an AI system supports humans in accomplishing a specific task
+    - Be able to critically read and assess existing AI benchmarks, leaderboards, audit reports, and evaluation studies in both academic and industry contexts
+    - Have hands-on experience with at least one open-source evaluation framework, and with running evaluations against both open and closed-weight models
+    - Understand the common threats to validity in AI evaluation (benchmark contamination, prompt sensitivity, elicitation effort, model drift, over-reliance) and how to defend against them
+    - Know how to report evaluation results honestly, including what went wrong, what had to be changed from the pre-analysis plan, and what the results do and don't support
+- title: "Causal Machine Learning"
+  code: "GRAD-E1487"
+  program: "Elective"
+  semesters:
+    - "Fall 2025"
+    - "Fall 2026"
+  github: https://github.com/hertie-cml-26
+  description: |
+    This course is an introduction and survey of Causal Machine Learning. It examines a wide variety of these approaches and how they can be used in the course of doing causal research in the social sciences. It presumes an existing knowledge of both causal inference and of machine learning. We will read a selection of papers introducing and implementing techniques and research designs, with applications to the social and health sciences and public policy. We will discuss what these new methods are able to offer, and where they may have limitations. The course will be oriented around class discussion and student presentations on the readings. Students will further gain the ability to critically evaluate methodologies through the use of Monte Carlo simulations.
+
+    **Learning objectives.** Students will:
+
+    - Learn to use simulations to understand the mechanics of a method/estimator
+    - Understand how to use machine learning methods for causal questions in the social sciences
+    - Become proficient in applying these methods to problems
+
+    The course is oriented around class discussion and student presentations, so students are expected to take an active role.

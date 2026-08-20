@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import Base from '../layouts/Base.astro';
+import LinkButton from '../components/LinkButton.astro';
+import '../styles/prose.css';
+import '../styles/code.css';
+
+// teaching.yaml descriptions are markdown; render them at build time with the
+// same unified pipeline the rest of the site uses.
+const markdown = await createMarkdownProcessor({ gfm: true, smartypants: true });
+
+const entries = await getCollection('teaching');
+// File order is display order here — required core courses first, then the
+// electives newest-first — so `order` is only used to restore the YAML
+// sequence that getCollection() does not promise to preserve. Unlike
+// software.yaml, the descriptions are written as real markdown (blank lines
+// between paragraphs, bulleted learning objectives), so they are handed to the
+// processor untouched.
+const teaching = await Promise.all(
+  entries
+    .map((entry) => entry.data)
+    .sort((a, b) => a.order - b.order)
+    .map(async (course) => ({
+      ...course,
+      html: (await markdown.render(course.description)).code,
+    })),
+);
+---
+
+<Base
+  title="Teaching"
+  description="Courses taught by Drew Dimmery at the Hertie School: machine learning, data structures and algorithms, causal machine learning and AI evaluations."
+>
+  {/* Same treatment as the software page: course blurbs are reference copy
+      rather than long-form essays, so the page uses the full content column
+      (the 68rem cap) at the denser reading size. */}
+  <div class="wrap wrap--column dense">
+    <h1 class="page-title">Teaching</h1>
+
+    {
+      teaching.map((course) => (
+        <section class="teaching-entry" id={course.code}>
+          <h2 class="teaching-entry__title">{course.title}</h2>
+          <p class="teaching-entry__meta">
+            <code>{course.code}</code>
+            {' · '}
+            {course.program}
+            {course.semesters.length > 0 && (
+              <Fragment>
+                {' · '}
+                {course.semesters.join(', ')}
+              </Fragment>
+            )}
+          </p>
+          <div
+            class="prose prose--full"
+            style="margin-top:var(--space-s)"
+            set:html={course.html}
+          />
+          <div class="btn-row">
+            {course.website && (
+              <LinkButton href={course.website} icon="info" label="Website" />
+            )}
+            {course.github && (
+              <LinkButton href={course.github} icon="github" label="Course materials" />
+            )}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>

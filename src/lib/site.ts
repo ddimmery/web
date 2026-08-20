@@ -16,6 +16,7 @@ export const site = {
 export const nav: Array<{ href: string; label: string }> = [
   { href: '/', label: 'Home' },
   { href: '/research/', label: 'Research' },
+  { href: '/teaching/', label: 'Teaching' },
   { href: '/software/', label: 'Software' },
   { href: '/blog/', label: 'Blog' },
 ];

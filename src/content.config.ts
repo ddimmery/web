@@ -79,4 +79,37 @@ const software = defineCollection({
   }),
 });
 
-export const collections = { blog, papers, software };
+/**
+ * Teaching. Same shape as `software`: a hand-maintained *list* in
+ * `src/data/teaching.yaml`, given an `id` from the title and an `order` from
+ * its position so the file's order can be honoured on the page. Unlike
+ * software, file order *is* display order (see the note in the YAML).
+ */
+const teaching = defineCollection({
+  loader: file('./src/data/teaching.yaml', {
+    parser: (text) => {
+      const list = parseYaml(text) as Array<Record<string, unknown>>;
+      return list.map((entry, index) => ({
+        ...entry,
+        id: String(entry.title ?? index),
+        order: index,
+      }));
+    },
+  }),
+  schema: z.object({
+    order: z.number(),
+    title: z.string(),
+    /** Hertie course code, e.g. "GRAD-C24". */
+    code: z.string(),
+    /** Programme note, e.g. "Elective" or "Required course, MSc in …". */
+    program: z.string(),
+    /** Semesters the course has run / will run, in chronological order. */
+    semesters: z.array(z.string()).default([]),
+    /** Markdown. Rendered at build time. */
+    description: z.string(),
+    github: z.string().optional(),
+    website: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, papers, software, teaching };

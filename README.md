@@ -42,10 +42,11 @@ card, see [Design notes](#design-notes)), and
 ```
 astro.config.mjs          site config: markdown processor, Shiki, Fonts API
 src/
-  content.config.ts       collection schemas (blog, papers, software)
+  content.config.ts       collection schemas (blog, papers, software, teaching)
   content/blog/<slug>/    one directory per post: index.mdx + its images
   data/papers.yaml        publications (machine-appended, hand-curated)
   data/software.yaml      software list
+  data/teaching.yaml      courses taught (Hertie School)
   assets/fonts/*.woff2    Domitian, URW Classico, Monaspace Argon (pristine originals)
   assets/fonts/generated/ build-time content-driven subsets (gitignored)
   assets/headshot.webp
@@ -70,6 +71,7 @@ scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
 | `/`                       | `src/pages/index.astro`               |
 | `/about/`                 | removed — redirected to `/` in `public/_redirects` |
 | `/research/`              | `src/pages/research.astro`            |
+| `/teaching/`              | `src/pages/teaching.astro`            |
 | `/software/`              | `src/pages/software.astro`            |
 | `/blog/`, `/blog/2/` …    | `src/pages/blog/[...page].astro` (10 posts/page) |
 | `/blog/category/<cat>/`   | `src/pages/blog/category/[category].astro` |
@@ -321,6 +323,14 @@ rate limit. The script retries on 429s either way.
 `src/data/software.yaml` is a hand-maintained list. `description` is markdown and
 is rendered at build time. The page shows entries newest-first, i.e. the reverse
 of file order — append new packages to the bottom of the file.
+
+## Teaching
+
+`src/data/teaching.yaml` is a hand-maintained list of courses. Each entry carries
+a `title`, `code` (e.g. `GRAD-C24`), `program` note, a list of `semesters`, a
+`github` link to the course materials and a markdown `description` rendered at
+build time. Here — unlike software — **file order is display order**: the
+required MSc DSPP core courses come first, then the electives newest-first.
 
 ---
 
