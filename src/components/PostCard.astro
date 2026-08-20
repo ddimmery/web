@@ -27,8 +27,9 @@ const href = postUrl(post);
         <Image
           class="card__thumb"
           src={image}
-          width={400}
-          height={250}
+          width={160}
+          height={100}
+          densities={[1, 2]}
           loading={eager ? 'eager' : 'lazy'}
           decoding={eager ? 'sync' : 'async'}
           fetchpriority={eager ? 'high' : undefined}

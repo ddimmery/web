@@ -102,6 +102,10 @@
   border-top: 1px solid var(--rule);
 }
 
+/* Cards read text-first at every width. The cover art is a splash of colour,
+   never the headline: a small thumbnail sits beside the text — tucked to the
+   right of the title on narrow screens, in a slim left column on wide ones —
+   and it never becomes a full-bleed banner above the copy. */
 .card {
   display: grid;
   gap: 0.5rem var(--space-m);
@@ -109,20 +113,58 @@
   align-items: start;
 }
 
+/* Narrow screens: the thumb floats top-right so the title, date and
+   description wrap past it instead of being squeezed into a stub column.
+   Text density wins; the picture is a small inset. */
+.card--with-thumb {
+  display: block;
+}
+
+.card--with-thumb::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.card--with-thumb > a {
+  float: right;
+  width: 5.25rem;
+  margin: 0.3rem 0 0.5rem var(--space-s);
+}
+
 @media (min-width: 40rem) {
   .card--with-thumb {
-    grid-template-columns: 14rem minmax(0, 1fr);
+    display: grid;
+    grid-template-columns: 9.5rem minmax(0, 1fr);
+    column-gap: var(--space-m);
+  }
+
+  .card--with-thumb > a {
+    float: none;
+    width: auto;
+    margin: 0;
+    grid-area: 1 / 1;
+  }
+
+  .card--with-thumb > .card__body {
+    grid-area: 1 / 2;
   }
 }
 
 .card__thumb {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: var(--radius);
   border: 1px solid var(--rule);
   background: var(--paper-raised);
+}
+
+@media (min-width: 40rem) {
+  .card__thumb {
+    aspect-ratio: 16 / 10;
+  }
 }
 
 .card__body > * + * {
