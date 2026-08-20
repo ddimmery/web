@@ -96,7 +96,13 @@ const SHARED_FLOOR = [
   [0x2030, 0x2044], // per-mille, primes, single guillemets, fraction slash
   [0x2060, 0x2060], // word joiner
   [0x2122, 0x2122], // trademark
-  [0x2190, 0x2193], // arrows in prose and UI affordances
+  // Arrows in prose and UI affordances. The range runs to 0x2199 so it also
+  // covers ↗ (U+2197), the external-link marker in src/styles/prose.css. That
+  // one arrives only as a CSS `content` string, which the *source* scan does
+  // pick up (`.css` is in TEXT_EXTENSIONS and the file lives under src/) — but
+  // it is named here explicitly so the floor, not an incidental scan of a
+  // stylesheet, is what guarantees the glyph. All nine faces carry it.
+  [0x2190, 0x2199],
   [0x21a9, 0x21a9], // the footnote back-reference the markdown pipeline injects
   [0x2212, 0x2212], // minus sign
   [0x2248, 0x2248], // almost equal

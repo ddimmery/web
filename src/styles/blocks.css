@@ -197,6 +197,9 @@
 .card__description {
   color: var(--ink-soft);
   font-size: var(--step-0);
+  /* Two- and three-line teasers are exactly where a one-word last line shows;
+     `pretty` is worth the extra line-breaking pass here. */
+  text-wrap: pretty;
 }
 
 /* Compact teaser list used on the landing page. */
@@ -231,6 +234,7 @@
 .teaser__meta {
   font-size: var(--step--1);
   color: var(--ink-muted);
+  text-wrap: pretty;
 }
 
 .more-link {
@@ -246,6 +250,133 @@
 
 .more-link::after {
   content: ' →';
+}
+
+/* ---------- row hover & stretched links --------------------------------- */
+/* Three list shapes on the site are really rows of one thing each: the blog
+   listing cards, the landing page's teasers, and the research paper list. All
+   three get the same two affordances.
+
+   1. A faint accent wash on hover, painted by a `::before` with negative insets
+      rather than by a background plus padding on the row itself. The wash bleeds
+      a little past the text — which is what makes it read as a row rather than
+      as a highlighted paragraph — while changing no box in the layout: hovering
+      cannot shift anything, because nothing about the flow moves. The row is
+      `position: relative; z-index: 0` so it becomes a stacking context and the
+      `z-index: -1` wash lands behind the row's own content instead of over it.
+      Absolutely-positioned children resolve against the *padding* box, so a
+      row's own padding is already inside the wash and its border rule is not.
+
+   2. The whole row is the click target, via the stretched-link pattern: an empty
+      absolutely-positioned `::after` on the title anchor filling the same box.
+      Anything else in the row that must stay clickable — the category pills, a
+      link inside a card description, the paper's PDF/code buttons — is lifted
+      above it with `z-index: 1`. Only the *title* anchor is stretched, so the
+      row's destination is unambiguous, and a row with no link (an unpublished
+      paper) gets no overlay at all — hence the `:has()` guard on the wash, which
+      keeps rows that go nowhere from advertising that they do.
+
+   Keyboard users are unaffected: the overlay is a pseudo-element, so it adds no
+   tab stop and the real anchor still takes focus and shows its own ring. */
+.post-list > li,
+.teaser-list > li,
+.paper-list > li {
+  position: relative;
+  z-index: 0;
+}
+
+.post-list > li::before,
+.post-list > li .card__title a::after,
+.teaser-list > li::before,
+.teaser-list > li .teaser__title a::after,
+.paper-list > li::before,
+.paper-list > li .paper__title a::after {
+  content: '';
+  position: absolute;
+  /* The inline bleed is what gives the wash its shape; it is the same on every
+     list so all three read as the same gesture. */
+  inset-inline: calc(var(--space-s) * -1);
+}
+
+.post-list > li::before,
+.teaser-list > li::before,
+.paper-list > li::before {
+  z-index: -1;
+  border-radius: var(--radius);
+  /* `--paper-raised`, not `--accent-wash`: the site's grounds are deliberately
+     neutral and the palette note in global.css is explicit that they must never
+     read pink beside the red accent — and a 7% red wash across a whole row does
+     exactly that. The row lifts off the paper; the accent stays on the title. */
+  background: var(--paper-raised);
+  opacity: 0;
+  transition: opacity 130ms ease-out;
+  pointer-events: none;
+}
+
+/* Block extent, per list. `.paper-list` rows carry symmetric `padding-block`, so
+   their padding box already is the row: inset 0. The card and teaser lists
+   separate rows with a top border plus an equal margin and padding, which puts
+   twice that space between two rows' text and the rule in the middle of it; each
+   wash therefore takes half of it on each side, so the washes stop a hairline
+   short of the rule instead of colliding with it. */
+.paper-list > li::before,
+.paper-list > li .paper__title a::after {
+  inset-block: 0;
+}
+
+.post-list > li::before,
+.post-list > li .card__title a::after {
+  inset-block: calc(var(--space-m) * -0.5);
+}
+
+.post-list > li + li::before,
+.post-list > li + li .card__title a::after {
+  inset-block-start: calc(var(--space-m) * 0.5);
+}
+
+.teaser-list > li::before,
+.teaser-list > li .teaser__title a::after {
+  inset-block: -0.425rem;
+}
+
+.teaser-list > li + li::before,
+.teaser-list > li + li .teaser__title a::after {
+  inset-block-start: 0.425rem;
+}
+
+.post-list > li:has(.card__title a):hover::before,
+.teaser-list > li:has(.teaser__title a):hover::before,
+.paper-list > li:has(.paper__title a):hover::before {
+  opacity: 1;
+}
+
+/* Hovering anywhere in the row tints the title, so the row and its link agree
+   about what is being pointed at. */
+.post-list > li:hover .card__title a,
+.teaser-list > li:hover .teaser__title a,
+.paper-list > li:hover .paper__title a {
+  color: var(--accent);
+}
+
+/* Everything else in the row that is its own destination sits above the
+   overlay. Note that these are the *links*, not their containers: `.pills` and
+   `.btn-row` are full-width flex rows, so lifting the container would put its
+   empty right-hand half over the overlay and swallow clicks that should have
+   gone to the row. */
+.post-list > li .pills a,
+.post-list > li .card__description a,
+.paper-list > li .btn-row .btn,
+.paper-list > li .paper__meta a {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-list > li::before,
+  .teaser-list > li::before,
+  .paper-list > li::before {
+    transition: none;
+  }
 }
 
 /* ---------- research / papers ------------------------------------------- */
@@ -308,6 +439,8 @@
   margin: 0.2rem 0 0;
   font-size: var(--step--1);
   color: var(--ink-soft);
+  /* An author list is the longest unbroken run of short words on the site. */
+  text-wrap: pretty;
 }
 
 .paper__meta strong {
@@ -353,6 +486,7 @@
   margin: 0.2rem 0 0;
   font-size: var(--step--1);
   color: var(--ink-soft);
+  text-wrap: pretty;
 }
 
 /* ---------- post page --------------------------------------------------- */
@@ -417,6 +551,7 @@
   line-height: 1.45;
   color: var(--ink-soft);
   font-style: italic;
+  text-wrap: pretty;
 }
 
 /* The mono face has no italic, so an italicised code span would be a synthetic

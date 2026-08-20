@@ -15,6 +15,7 @@ import {
   postUrl,
   type Post,
 } from '../../lib/posts';
+import { blogPostingJsonLd } from '../../lib/jsonld';
 import '../../styles/prose.css';
 import '../../styles/code.css';
 
@@ -44,6 +45,16 @@ const { Content, headings } = await render(post);
    and whether the scroll-spy script ships at all. */
 const showToc = hasOutline(headings);
 
+const jsonLd = blogPostingJsonLd({
+  title,
+  description: description && plainText(description),
+  url: postUrl(post),
+  datePublished: date,
+  dateModified: updated,
+  image: image?.src,
+  categories,
+});
+
 
 ---
 
@@ -56,6 +67,7 @@ const showToc = hasOutline(headings);
   modifiedTime={updated}
   math={math}
   noindex={draft}
+  jsonLd={jsonLd}
 >
   {/* `dense`: post pages read one step below the landing page — see the
       density block in global.css. */}

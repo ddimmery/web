@@ -45,5 +45,10 @@ export const GET: APIRoute = async (context) => {
     trailingSlash: true,
     items,
     customData: '<language>en-us</language>',
+    // Browser-side XSL transform so a visitor who clicks the feed link sees a
+    // readable page instead of raw XML (or, in Chromium, a download prompt).
+    // The file is served from public/ and is never fetched by feed readers, so
+    // subscribers pay nothing for it. See public/feed.xsl.
+    stylesheet: '/feed.xsl',
   });
 };

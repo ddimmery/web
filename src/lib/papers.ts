@@ -27,6 +27,16 @@ export function paperTitle(paper: PaperData): string {
   return paper.title.replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * The plain list of author names, cleaned, with the `me` placeholder resolved.
+ * `authorSegments` below exists to punctuate a *sentence*; this is the same data
+ * without the commas and "and", for consumers that want names — currently the
+ * `ScholarlyArticle` markup in src/lib/jsonld.ts.
+ */
+export function authorNames(authors: string[]): string[] {
+  return authors.map((author) => (author === 'me' ? 'Drew Dimmery' : cleanName(author)));
+}
+
 export interface AuthorSegmentOptions {
   /** Truncate to this many names, followed by "et al." (used on teasers). */
   max?: number;

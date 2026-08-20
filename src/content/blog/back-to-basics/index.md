@@ -1,7 +1,7 @@
 ---
 title: "Back to Basics"
 description: |
-  Platforms reduce complexity by constraining possibility, but its easier than ever to build one's own systems. Those who can should forge their own path, paving the way for a more convivial web.
+  Platforms reduce complexity by constraining possibility, but its easier than ever to build one’s own systems. Those who can should forge their own path, paving the way for a more convivial web.
 date: "2025-10-27"
 categories:
   - technology

@@ -1,7 +1,7 @@
 ---
 title: "Causal ML (the class)"
 description: |
-  Notes on teaching causal machine learning at Hertie---the course philosophy, the syllabus, and my continuing effort to find synthesis between the design-based paradigm and CML.
+  Notes on teaching causal machine learning at Hertie—the course philosophy, the syllabus, and my continuing effort to find synthesis between the design-based paradigm and CML.
 date: "2026-02-16"
 categories:
   - methodology

@@ -47,7 +47,7 @@ To demonstrate how I've set things up to populate the website from data about my
 
 <dl>
 <dt><code>papers.yaml</code></dt>
-<dd>a data file in YAML with standardized information on each publication. I chose YAML because it's fairly easy to write correctly formatted YAML by hand (and I'll be updating)</dd>
+<dd>a data file in YAML with standardized information on each publication. I chose YAML because it’s fairly easy to write correctly formatted YAML by hand (and I’ll be updating)</dd>
 <dt><code>research.qmd</code></dt>
 <dd>The page which takes the data in <code>papers.yaml</code> and turns it into nicely formatted Markdown / HTML. This is setup as a Jupyter-backed <code>qmd</code> file (essentially a Jupyter notebook).</dd>
 </dl>

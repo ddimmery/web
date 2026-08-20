@@ -1,6 +1,6 @@
 ---
 title: "Using SoftBlock to Design an Experiment"
-description: "In this demo, I'm going to walk through an example experimental design using methods from our [recent paper on Balanced Design](https://arxiv.org/abs/2010.11332)."
+description: "In this demo, I’m going to walk through an example experimental design using methods from our [recent paper on Balanced Design](https://arxiv.org/abs/2010.11332)."
 date: "2022-05-10"
 categories:
   - experiments

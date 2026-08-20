@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import { getPosts } from '../lib/posts';
 import { yearOf } from '../lib/papers';
 import { site } from '../lib/site';
+import { personJsonLd } from '../lib/jsonld';
 
 /* ── HOME LAYOUT VARIANT ────────────────────────────────────────────────────
    Six interchangeable layouts live in `src/design-variants/` (outside
@@ -38,6 +39,6 @@ const papers = (await getCollection('papers', ({ data }) => data.visible))
   .slice(0, 4);
 ---
 
-<Base title={site.title} description={site.description}>
+<Base title={site.title} description={site.description} jsonLd={personJsonLd()}>
   <Home posts={posts} papers={papers} />
 </Base>

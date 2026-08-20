@@ -15,6 +15,30 @@
   max-width: none;
 }
 
+/* ---------- rag & breaking ----------------------------------------------- */
+/* Running text only — never headings, which carry `text-wrap: balance` from the
+   global h1–h6 rule (and `pretty` on the few that want it, e.g. `.paper__title`).
+   `pretty` costs nothing where it is unsupported and, where it is, spends a
+   little extra line-breaking work to avoid short last lines and stacked
+   hyphens. */
+.prose :where(p, li, dd, dt, blockquote, figcaption, td, th) {
+  text-wrap: pretty;
+}
+
+/* Hyphenation, narrow screens only. At the full measure the rag is fine and
+   hyphens are just noise; below ~40rem a single long word ("heterogeneous",
+   "counterfactual", a URL-ish identifier) opens a hole the width of the column.
+   Requires a language on the root element — see `<html lang="en">` in
+   src/layouts/Base.astro — or engines have no dictionary to break with.
+   Deliberately not applied to `pre`, `code` or tables' numeric cells. */
+@media (max-width: 39.99rem) {
+  .prose :where(p, li, dd, blockquote, figcaption) {
+    hyphens: auto;
+    /* Never hyphenate off a two-letter stub at either end. */
+    hyphenate-limit-chars: 7 3 3;
+  }
+}
+
 .prose > * + * {
   margin-top: var(--flow);
 }
@@ -182,6 +206,51 @@
 
 .prose a > code {
   color: inherit;
+}
+
+/* ---------- external-link marker ---------------------------------------- */
+/* A quiet ↗ after links that leave the site, in POST PROSE ONLY. Scoped to
+   `.prose` on purpose: the footer, the social row, the paper buttons, the cards
+   and the nav are all furniture whose destination is obvious from context, and
+   peppering them with arrows would turn a hairline design into a rash.
+   Exclusions inside .prose:
+     * `[href*='//ddimmery.com']` — absolute links back to this site (a few
+       posts link each other by full URL); these are not external.
+     * `.btn` / `.pill` — furniture that can legitimately sit inside .prose
+       (see the `.prose :where(.pills, …)` rule above).
+     * `:has(img)` — a link wrapping only artwork has no text to hang a mark on.
+   Glyph: the literal character U+2197, not an SVG mask. It inherits colour and
+   the current face for free, adds no data URI to the inlined stylesheet, and
+   all nine self-hosted faces carry the codepoint — which is also pinned into
+   the subset safety floor in scripts/subset-fonts.mjs, since a CSS `content`
+   string never reaches the built HTML the font audit reads.
+   No line-height effect: the mark is set smaller than the surrounding text, so
+   even raised it stays well inside the 1.58 line box. */
+.prose a[href^='http']:not([href*='//ddimmery.com'], .btn, .pill, :has(img))::after {
+  content: '↗';
+  /* Atomic inline box, and that is the whole reason: `text-decoration` cannot be
+     switched off on an inline descendant of an underlined element — it is
+     propagated, not inherited — but it does not enter an atomic inline-level
+     box. Without this the link's underline runs on under the arrow and reads as
+     a stray tick. */
+  display: inline-block;
+  font-size: 0.7em;
+  /* Fixed rather than inherited: at 0.7em an inherited 1.58 would be the one
+     thing here able to grow the line box. */
+  line-height: 1;
+  vertical-align: 0.22em;
+  margin-inline-start: 0.12em;
+  color: var(--ink-muted);
+  font-style: normal;
+}
+
+/* The arrow travels with the link on hover rather than staying grey and looking
+   detached. The exclusion list is repeated rather than shortened: a `:not()` list
+   contributes the specificity of its heaviest argument, so a bare
+   `a[href^='http']:hover::after` would lose to the rule above and never apply. */
+.prose
+  a[href^='http']:not([href*='//ddimmery.com'], .btn, .pill, :has(img)):is(:hover, :focus-visible)::after {
+  color: var(--accent-hover);
 }
 
 /* ---------- footnotes ---------------------------------------------------- */

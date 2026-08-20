@@ -1,6 +1,6 @@
 ---
 title: "Stop looking for the next Twitter"
-description: "BlueSky doesn't solve any of Twitter's real problems, nor will any other microblog"
+description: "BlueSky doesn’t solve any of Twitter’s real problems, nor will any other microblog"
 date: "2023-10-03"
 categories:
   - social-media

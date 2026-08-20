@@ -1,5 +1,5 @@
 ---
-title: "What's the point of RCTs?"
+title: "What’s the point of RCTs?"
 description: "An ontological perspective on the value of experimentation"
 date: "2025-02-13"
 categories:

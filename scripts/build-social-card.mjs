@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 /**
- * Default social card generation (public/social-card.jpg, 1200x630).
+ * Social card generation (public/social-card*.jpg, 1200x630 each).
+ *
+ * Five cards from one template: the site-wide default (the name and the
+ * tagline) plus one per section — research, teaching, software, blog — which
+ * swap the name line for the section's own title, keeping the same mark, the
+ * same rule, the same domain in the corner. They are all the same design; only
+ * the two lines of type change, which is why they share a template rather than
+ * living in five files that would drift.
  *
  * The card is typographic, in the site's own design language: neutral paper
  * ground, the name in URW Classico bold, the tagline in Domitian italic, and
@@ -49,9 +56,54 @@ const ACCENT = '#ba0020';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-const NAME = 'Drew Dimmery';
-const TAGLINE = 'Social science methods';
 const DOMAIN = 'ddimmery.com';
+
+/**
+ * The cards. `title` is the large line; `tagline` the italic line under the
+ * rule; `eyebrow` the small letterspaced line above the title, which the
+ * section cards use to keep the owner's name on a card whose headline is a
+ * section name. The default card has no eyebrow — its headline *is* the name.
+ *
+ * `size` is the title's font size in px, set per card rather than fitted: these
+ * strings never change without someone editing this file, so a measured value
+ * beats a heuristic that could clip a descender.
+ */
+const CARDS = [
+  {
+    file: 'social-card.jpg',
+    title: 'Drew Dimmery',
+    size: 118,
+    tagline: 'Social science methods',
+  },
+  {
+    file: 'social-card-research.jpg',
+    eyebrow: 'Drew Dimmery',
+    title: 'Research',
+    size: 132,
+    tagline: 'Causal inference and experimental design',
+  },
+  {
+    file: 'social-card-teaching.jpg',
+    eyebrow: 'Drew Dimmery',
+    title: 'Teaching',
+    size: 132,
+    tagline: 'Courses at the Hertie School',
+  },
+  {
+    file: 'social-card-software.jpg',
+    eyebrow: 'Drew Dimmery',
+    title: 'Software',
+    size: 132,
+    tagline: 'Open-source tools for applied methodology',
+  },
+  {
+    file: 'social-card-blog.jpg',
+    eyebrow: 'Drew Dimmery',
+    title: 'Blog',
+    size: 132,
+    tagline: 'Notes on methods and experimentation',
+  },
+];
 
 /** Inline a woff2 as a data URI so the render never depends on the filesystem. */
 const face = async (family, file, weight, style) =>
@@ -68,11 +120,24 @@ const markBody = markSrc
   .replace(/<\/svg>\s*$/, '')
   .trim();
 
-const html = `<!doctype html><meta charset="utf-8">
+/**
+ * Escape the four characters that could break out of a text node. The card
+ * strings are authored right here in this file, so this is belt and braces —
+ * but a tagline gaining an ampersand should not silently produce an entity.
+ */
+const escapeHtml = (text) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** The shared face declarations: read and base64'd once, reused by every card. */
+const faces = [
+  await face('Classico', 'URWClassico-Bol.woff2', 700, 'normal'),
+  await face('Classico', 'URWClassico-Reg.woff2', 400, 'normal'),
+  await face('Domitian', 'Domitian-Italic.woff2', 400, 'italic'),
+].join('\n  ');
+
+const cardHtml = (card) => `<!doctype html><meta charset="utf-8">
 <style>
-  ${await face('Classico', 'URWClassico-Bol.woff2', 700, 'normal')}
-  ${await face('Classico', 'URWClassico-Reg.woff2', 400, 'normal')}
-  ${await face('Domitian', 'Domitian-Italic.woff2', 400, 'italic')}
+  ${faces}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: ${WIDTH}px; height: ${HEIGHT}px; }
@@ -104,10 +169,23 @@ const html = `<!doctype html><meta charset="utf-8">
     margin: 0 0 40px calc(-96px * 6 / 64);
     color: ${ACCENT};
   }
+  /* Section cards only: the owner's name, in the same letterspaced uppercase
+     the site uses for its eyebrows, so a card headlined "Research" still says
+     whose research it is. It replaces part of the mark's lower margin rather
+     than adding to it, so the block stays optically centred either way. */
+  .eyebrow {
+    font-family: 'Classico', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ${INK_MUTED};
+    margin: -18px 0 22px;
+  }
   h1 {
     font-family: 'Classico', sans-serif;
     font-weight: 700;
-    font-size: 118px;
+    font-size: ${card.size}px;
     line-height: 1;
     letter-spacing: -0.02em;
   }
@@ -123,6 +201,9 @@ const html = `<!doctype html><meta charset="utf-8">
     font-size: 44px;
     line-height: 1.2;
     color: ${INK_MUTED};
+    /* The section taglines are longer than the default card's; hold them off
+       the domain in the corner. */
+    max-width: 830px;
   }
   .domain {
     position: absolute;
@@ -138,29 +219,35 @@ const html = `<!doctype html><meta charset="utf-8">
 </style>
 <div class="edge"></div>
 <svg class="mark" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">${markBody}</svg>
-<h1>${NAME}</h1>
+${card.eyebrow ? `<p class="eyebrow">${escapeHtml(card.eyebrow)}</p>` : ''}
+<h1>${escapeHtml(card.title)}</h1>
 <div class="rule"></div>
-<p class="tagline">${TAGLINE}</p>
+<p class="tagline">${escapeHtml(card.tagline)}</p>
 <div class="domain">${DOMAIN}</div>
 `;
 
+// One browser and one page for all five cards: the fonts are inlined in every
+// document, so nothing is shared between renders except the process.
 const browser = await chromium.launch();
 const page = await browser.newPage({
   viewport: { width: WIDTH, height: HEIGHT },
   deviceScaleFactor: 2,
 });
-await page.setContent(html, { waitUntil: 'load' });
-await page.evaluate(() => document.fonts.ready);
-const png = await page.screenshot({ type: 'png' });
+
+for (const card of CARDS) {
+  await page.setContent(cardHtml(card), { waitUntil: 'load' });
+  await page.evaluate(() => document.fonts.ready);
+  const png = await page.screenshot({ type: 'png' });
+
+  // 2x shot down to exactly 1200x630 — supersampling the type rather than
+  // rasterising it once at final size.
+  const jpg = await sharp(png)
+    .resize(WIDTH, HEIGHT, { kernel: 'lanczos3' })
+    .jpeg({ quality: 88, chromaSubsampling: '4:4:4', mozjpeg: true })
+    .toBuffer();
+
+  await writeFile(join(root, 'public', card.file), jpg);
+  console.log(`${card.file} written: ${WIDTH}x${HEIGHT}, ${(jpg.length / 1024).toFixed(1)} kB`);
+}
+
 await browser.close();
-
-// 2x shot down to exactly 1200x630 — supersampling the type rather than
-// rasterising it once at final size.
-const jpg = await sharp(png)
-  .resize(WIDTH, HEIGHT, { kernel: 'lanczos3' })
-  .jpeg({ quality: 88, chromaSubsampling: '4:4:4', mozjpeg: true })
-  .toBuffer();
-
-const out = join(root, 'public', 'social-card.jpg');
-await writeFile(out, jpg);
-console.log(`social-card.jpg written: ${WIDTH}x${HEIGHT}, ${(jpg.length / 1024).toFixed(1)} kB`);

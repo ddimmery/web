@@ -162,6 +162,14 @@ body {
   font-size: var(--step-0);
   line-height: 1.65;
   font-kerning: normal;
+  /* Belt and braces. `liga` and `calt` are on by default in every engine, but
+     `text-rendering: optimizeLegibility` and a few UA/extension stylesheets have
+     historically flipped them; naming them makes the intent explicit and
+     survives that. Discretionary ligatures stay off — Domitian's `dlig` carries
+     the decorative ct/st pairs, which are wrong for running text — and the
+     `code, kbd, samp, pre` rule below still switches all of it off in the mono
+     face, where ligated punctuation would misread. */
+  font-variant-ligatures: common-ligatures contextual;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -403,6 +411,9 @@ main {
   font-size: var(--step-1);
   line-height: 1.5;
   color: var(--ink-soft);
+  /* A lede is a display-sized paragraph: balancing it would be wrong (it is a
+     running sentence), but a stranded last word at this size is very visible. */
+  text-wrap: pretty;
 }
 
 /* ---------- header ------------------------------------------------------ */

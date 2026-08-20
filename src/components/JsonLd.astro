@@ -1,0 +1,29 @@
+---
+/**
+ * One `<script type="application/ld+json">` tag.
+ *
+ * The only structured data on the site. Three pages carry one each — a `Person`
+ * on the landing page, a `BlogPosting` on every post, an `ItemList` of
+ * `ScholarlyArticle` on /research/ — built by the helpers in `src/lib/jsonld.ts`
+ * and passed down through `Base` → `BaseHead`.
+ *
+ * Serialisation notes:
+ *   * `undefined` members disappear during `JSON.stringify`, so the builders can
+ *     hand over optional fields (a cover image, a modified date) unconditionally
+ *     instead of assembling objects conditionally.
+ *   * `<` is escaped to `<`. `set:html` writes the string raw, and a `<` in
+ *     any string value — a stray `</script>` in a title — would otherwise end the
+ *     element early. The escape is legal JSON and legal JavaScript, so parsers
+ *     and validators see the original text.
+ *   * No pretty-printing: the payload is machine-read, and the whitespace would
+ *     be the larger half of it.
+ */
+interface Props {
+  data: Record<string, unknown>;
+}
+
+const { data } = Astro.props;
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

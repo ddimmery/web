@@ -2,7 +2,7 @@
 title: "Monitoring Sound Levels"
 description: |
     Sometimes you have to learn basic principles of
-    sound engineering in order to prove that you're a good
+    sound engineering in order to prove that you’re a good
     neighbor.
 date: "2022-05-18"
 categories:

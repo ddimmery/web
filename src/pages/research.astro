@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import LinkButton from '../components/LinkButton.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { scrollSpy } from '../lib/scroll-spy';
+import { researchJsonLd } from '../lib/jsonld';
 import {
   authorSegments,
   bestUrl,
@@ -50,6 +51,8 @@ function buttons(paper: PaperData) {
 <Base
   title="Research"
   description="Publications and working papers by Drew Dimmery on causal inference, machine learning and experimental design."
+  image="/social-card-research.jpg"
+  jsonLd={researchJsonLd(papers)}
 >
   {/* Plain `.wrap`, not `.wrap--column`: the outline sidebar takes the surplus
       width, and `.page-shell__main` caps the list column instead. */}

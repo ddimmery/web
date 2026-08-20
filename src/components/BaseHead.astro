@@ -1,5 +1,6 @@
 ---
 import { Font } from 'astro:assets';
+import JsonLd from './JsonLd.astro';
 import { site } from '../lib/site';
 import { themeInit } from '../lib/theme';
 import '../styles/global.css';
@@ -16,6 +17,8 @@ interface Props {
   /** Load the self-hosted MathJax stylesheet (posts with `math: true` only). */
   math?: boolean;
   noindex?: boolean;
+  /** schema.org payload for this page — see src/lib/jsonld.ts. */
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
@@ -27,6 +30,7 @@ const {
   modifiedTime,
   math = false,
   noindex = false,
+  jsonLd,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
@@ -90,6 +94,8 @@ const fullTitle = title === site.title ? title : `${title} — ${site.title}`;
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImage} />
+
+{jsonLd && <JsonLd data={jsonLd} />}
 
 <link rel="alternate" type="application/rss+xml" title={site.title} href={new URL(site.feed, site.url)} />
 <link rel="sitemap" href="/sitemap-index.xml" />
