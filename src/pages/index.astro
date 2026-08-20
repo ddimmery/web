@@ -87,7 +87,7 @@ const papers = (await getCollection('papers', ({ data }) => data.visible))
         papers.length > 0 && (
           <section>
             <div class="rule-heading">
-              <h2 class="eyebrow">Selected papers</h2>
+              <h2 class="eyebrow">Recent papers</h2>
             </div>
             <ul class="teaser-list">
               {papers.map((paper) => {
