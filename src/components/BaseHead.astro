@@ -12,7 +12,7 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: Date;
   modifiedTime?: Date;
-  /** Load the self-hosted KaTeX stylesheet (posts with `math: true` only). */
+  /** Load the self-hosted MathJax stylesheet (posts with `math: true` only). */
   math?: boolean;
   noindex?: boolean;
 }
@@ -53,8 +53,8 @@ const fullTitle = title === site.title ? title : `${title} — ${site.title}`;
 {
   math && (
     <Fragment>
-      <link rel="preload" href="/katex/katex.min.css" as="style" />
-      <link rel="stylesheet" href="/katex/katex.min.css" />
+      <link rel="preload" href="/mathjax/mathjax.css" as="style" />
+      <link rel="stylesheet" href="/mathjax/mathjax.css" />
     </Fragment>
   )
 }

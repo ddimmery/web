@@ -263,21 +263,25 @@
   border: 0;
 }
 
-/* ---------- KaTeX ------------------------------------------------------- */
-/* The KaTeX stylesheet itself is only loaded on posts with `math: true`;
-   these are just fit-and-finish tweaks that are harmless without it. */
-.prose .katex {
-  font-size: 1.04em;
+/* ---------- MathJax ----------------------------------------------------- */
+/* Math is rendered at build time to inline SVG in Neo-Euler (see
+   scripts/lib/mathjax-euler.mjs). The MathJax container stylesheet is loaded
+   only on posts with `math: true`; these are fit-and-finish tweaks that are
+   harmless without it. */
+.prose mjx-container {
+  /* Euler runs a touch small next to Domitian's generous x-height. */
+  font-size: 1.06em;
 }
 
 /* Inline formulae are short here (a couple of logos and words set in math);
    letting them break mid-expression tears glyphs apart across lines. */
-.prose :not(.katex-display) > .katex {
+.prose mjx-container:not([display]) {
   white-space: nowrap;
 }
 
-.prose .katex-display {
+.prose mjx-container[display] {
   overflow-x: auto;
   overflow-y: hidden;
   padding-block: 0.35rem;
 }
+

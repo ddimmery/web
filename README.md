@@ -2,7 +2,8 @@
 
 The personal website of Drew Dimmery, built with [Astro](https://astro.build).
 Static output, zero client-side JavaScript (except the Google Analytics snippet),
-self-hosted fonts, build-time math and syntax highlighting.
+self-hosted fonts, build-time math (MathJax v4 / Neo-Euler) and syntax
+highlighting.
 
 This replaces the previous Quarto site.
 
@@ -24,7 +25,7 @@ npm run dev      # http://localhost:4321
 | `npm run preview`     | Serve the built `dist/` locally.                               |
 | `npm run check`       | `astro check` — type-checks `.astro`, `.ts` and frontmatter.    |
 | `npm run sync-papers` | Pull new publications from Semantic Scholar (see below).        |
-| `npm run vendor-katex`| Re-copy the KaTeX CSS/fonts into `public/katex/` (runs on build).|
+| `npm run vendor-mathjax`| Regenerate `public/mathjax/mathjax.css` (runs on build).      |
 
 A `Makefile` wraps the common actions — run `make` (or `make help`) to list them:
 `make dev`, `make build`, `make preview`, `make check`, `make clean`,
@@ -48,7 +49,8 @@ src/
   pages/                  routes (see below)
   styles/                 global.css (+ blocks.css), prose.css, code.css
 public/                   favicon, social card, robots.txt, _headers, _redirects
-scripts/                  sync-papers.mjs, vendor-katex.mjs
+scripts/                  sync-papers.mjs, vendor-mathjax.mjs,
+                          rehype-mathjax-euler.mjs, lib/mathjax-euler.mjs
 ```
 
 ### Routes
@@ -89,7 +91,7 @@ categories: # optional; each becomes a pill and a /blog/category/<cat>/ page
   - technology
   - website
 image: ./cover.png # optional; path relative to the post directory
-math: true # optional; loads the KaTeX stylesheet on this page only
+math: true # optional; loads the MathJax stylesheet on this page only
 draft: false # optional; drafts are dev-only
 ---
 ```
@@ -117,10 +119,30 @@ are lazy.
 
 ### Math
 
-`$inline$` and `$$display$$` are rendered at build time by `remark-math` +
-`rehype-katex` — no JavaScript reaches the reader. **Set `math: true`** in the
-frontmatter of any post that uses math: that is what links the (self-hosted)
-KaTeX stylesheet. Without the flag, the equations render as unstyled markup.
+`$inline$` and `$$display$$` are rendered at build time by `remark-math` plus a
+small local rehype plugin (`scripts/rehype-mathjax-euler.mjs`) that drives
+**MathJax v4 in the [Neo-Euler](https://en.wikipedia.org/wiki/AMS_Euler) font** —
+the same typeface the old Quarto site used. No JavaScript reaches the reader.
+
+Each formula is emitted as inline SVG with its glyph outlines embedded, so math
+needs no webfont and no runtime. The only asset is MathJax's ~6 kB container
+stylesheet: **set `math: true`** in the frontmatter of any post that uses math
+and that stylesheet gets linked on that page alone. Without the flag the
+equations still render, but display math loses its centring and the hidden
+MathML copy stops being hidden.
+
+How Euler is achieved (see `scripts/lib/mathjax-euler.mjs` for the details):
+MathJax's Euler support ships as a *font extension*, not a standalone font, so
+the config loads [Gyre Pagella](https://www.gust.org.pl/projects/e-foundry/tex-gyre)
+(`@mathjax/mathjax-pagella-font`) as the base and layers
+`@mathjax/mathjax-euler-font-extension` over it. Letters, digits and the big
+operators come out Neo-Euler; radicals, delimiters and arrows fall back to
+Pagella. Euler's greek, fraktur and calligraphic ranges load on demand, which is
+why the plugin's conversion is async.
+
+`scripts/vendor-mathjax.mjs` dumps the matching stylesheet to `public/mathjax/`
+(gitignored, regenerated on every `npm run build`), so it can never drift from
+the MathJax version in `package.json`.
 
 > Astro 7's default markdown processor (Sätteri) does not run remark/rehype
 > plugins. `astro.config.mjs` therefore opts into the legacy unified pipeline via
@@ -243,6 +265,6 @@ are Cloudflare Pages / Netlify conventions — if the host changes, port them.
   rules instead of boxes and shadows. Mobile-first; the post table of contents is
   a collapsible `<details>` on narrow screens and a sticky sidebar past 68rem.
 - **Performance.** No client JS besides the GA snippet. Per-route CSS (prose and
-  code styles only load on pages that need them), the KaTeX stylesheet only on
+  code styles only load on pages that need them), the MathJax stylesheet only on
   posts with `math: true`, all images processed by sharp with explicit dimensions,
   and no external requests other than Google Analytics.

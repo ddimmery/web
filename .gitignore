@@ -5,8 +5,8 @@ dist/
 # dependencies
 node_modules/
 
-# vendored at build time from the katex package (see scripts/vendor-katex.mjs)
-public/katex/
+# generated at build time from the mathjax package (see scripts/vendor-mathjax.mjs)
+public/mathjax/
 
 # env & tooling
 .env

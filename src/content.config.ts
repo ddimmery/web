@@ -24,7 +24,7 @@ const blog = defineCollection({
       /** Relative path to a colocated cover image, e.g. `./cover.png`. */
       image: image().optional(),
       draft: z.boolean().default(false),
-      /** Set true to load the (self-hosted) KaTeX stylesheet on this post only. */
+      /** Set true to load the (self-hosted) MathJax stylesheet on this post only. */
       math: z.boolean().default(false),
     }),
 });
