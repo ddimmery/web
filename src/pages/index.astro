@@ -11,13 +11,13 @@ import { site } from '../lib/site';
    home page; every variant takes the same props.
 
      HomeVariantA — refined current: bio left, large portrait right,
-                    two-column recents below a hairline.        ← active
+                    two-column recents below a hairline.
      HomeVariantB — editorial: full-width name banner, portrait in a wide
                     masthead row, recents as one wide ruled list.
      HomeVariantC — side-rail identity: sticky portrait/name/socials rail on
-                    the left, content flowing to its right.
+                    the left, content flowing to its right. ← active
    ───────────────────────────────────────────────────────────────────────── */
-import Home from '../design-variants/HomeVariantA.astro';
+import Home from '../design-variants/HomeVariantC.astro';
 
 const posts = (await getPosts()).slice(0, 5);
 
