@@ -32,25 +32,12 @@
 }
 
 .mast__tagline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.2rem var(--space-m);
-  margin-top: var(--space-s);
+  margin: var(--space-s) 0 0;
   padding-top: var(--space-s);
   border-top: 1px solid var(--rule);
   font-family: var(--font-heading-stack);
   font-size: var(--step-0);
   font-style: italic;
-  color: var(--ink-muted);
-}
-
-.mast__kicker {
-  font-style: normal;
-  font-size: var(--step--2);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--ink-muted);
 }
 
@@ -62,17 +49,22 @@
   margin-top: var(--space-m);
 }
 
+/* Top-aligned, always. The lede is the tallest thing in the row and it grows
+   with the copy; bottom- or center-aligning the portrait and the ear against it
+   strands them in the middle of their columns with a hole above. */
 @media (min-width: 52rem) {
   .mast__row {
     grid-template-columns: 15rem minmax(0, 1fr);
     gap: var(--space-l);
-    align-items: end;
+    align-items: start;
   }
 }
 
 @media (min-width: 68rem) {
   .mast__row {
-    grid-template-columns: 18rem minmax(0, 1fr) minmax(0, 0.85fr);
+    /* The ear is fixed at 21rem — just wide enough to hold the seven social
+       buttons on one row, so it never wraps a lone icon onto a second line. */
+    grid-template-columns: 18rem minmax(0, 1fr) 21rem;
   }
 }
 
@@ -86,9 +78,8 @@
 }
 
 .mast__lede {
-  font-size: var(--step-1);
-  line-height: 1.4;
-  align-self: center;
+  font-size: var(--step-0);
+  line-height: 1.45;
 }
 
 .mast__lede > * + * {
@@ -99,9 +90,29 @@
   margin-top: var(--space-s);
 }
 
-.mast__aside p {
-  color: var(--ink-soft);
+/* The masthead "ear": role, affiliations, place. Small caps-ish heading type so
+   it reads as label matter beside the running bio, not as more prose. */
+.mast__role {
+  margin: 0;
+  font-family: var(--font-heading-stack);
+  font-size: var(--step--2);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.mast__vitals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   font-size: var(--step--1);
+  color: var(--ink-muted);
+}
+
+.mast__vitals > li {
+  margin: 0;
 }
 
 /* One wide ruled list, three columns: meta, title, trailing note. */

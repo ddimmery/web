@@ -25,14 +25,7 @@ const { posts, papers } = Astro.props as HomeProps;
 <div class="wrap">
   <header class="mast">
     <h1 class="mast__name">Drew Dimmery</h1>
-    <div class="mast__tagline">
-      <span>Social science methods</span>
-      <span class="mast__kicker">
-        Professor of Data Science for the Common Good · <a
-          href="https://www.hertie-school.org/en/datasciencelab">Data Science Lab</a
-        > · <a href="https://www.hertie-school.org/en/">Hertie School</a> · Berlin, DE
-      </span>
-    </div>
+    <p class="mast__tagline">Social science methods</p>
 
     <div class="mast__row">
       <Image
@@ -50,12 +43,18 @@ const { posts, papers } = Astro.props as HomeProps;
       <div class="mast__lede">
         <HomeBio short />
       </div>
+      {/* The third column carries the vitals that a newspaper masthead would
+          put in its ear: title, affiliation, place — stacked, not run into the
+          standfirst rule — with the socials closing the block. */}
       <div class="mast__aside">
-        <p>
-          My research focuses on the intersection of machine learning and causal
-          inference — experimental design, and applying the machinery of machine
-          learning to observational causal inference.
-        </p>
+        <p class="mast__role">Professor of Data Science for the Common Good</p>
+        <ul class="mast__vitals">
+          <li>
+            <a href="https://www.hertie-school.org/en/datasciencelab">Data Science Lab</a>
+          </li>
+          <li><a href="https://www.hertie-school.org/en/">Hertie School</a></li>
+          <li>Berlin, DE</li>
+        </ul>
         <SocialRow />
       </div>
     </div>
