@@ -250,9 +250,10 @@ small {
   --step--1: clamp(0.83rem, 0.81rem + 0.1vw, 0.88rem);
   --step-0: clamp(0.97rem, 0.95rem + 0.14vw, 1.05rem);
   /* `ch` shrinks with the smaller body size, so holding the measure at 75ch
-     would narrow the column in pixels as well; a couple of characters more
-     keeps the physical column close to the rest of the site. */
-  --measure: 78ch;
+     would narrow the column in pixels as well; the extra characters keep the
+     physical column close to the rest of the site — and post pages are asked
+     to use the frame they have, so the cap sits generously wide. */
+  --measure: 105ch;
   --flow: 1em;
   font-size: var(--step-0);
   line-height: 1.58;

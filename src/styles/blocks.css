@@ -28,16 +28,13 @@
   margin-bottom: 0.15em;
 }
 
-.hero__tagline {
-  font-family: var(--font-heading-stack);
-  font-size: var(--step-0);
-  font-style: italic;
-  color: var(--ink-muted);
-  margin: 0 0 var(--space-m);
+/* The shared identity block (role, tagline, affiliation) carries its own
+   scoped type; the hero adds the short accent mark under it — a mark under the
+   text that stops, not a full-width divider. */
+.hero__identity {
+  margin: 0.1rem 0 var(--space-m);
   padding-bottom: var(--space-s);
   border-bottom: 2px solid var(--accent);
-  /* The rule is a short accent mark under the tagline, not a full-width
-     divider — it sits under the text and stops. */
   width: fit-content;
   max-width: 100%;
 }
@@ -301,16 +298,15 @@
 }
 
 @media (min-width: 70rem) {
-  .post-shell {
-    grid-template-columns: minmax(0, var(--measure)) minmax(13rem, 16rem);
+  /* Outline on the left, article filling the rest of the frame. The article
+     track is `1fr` rather than the measure so the body actually uses the
+     available width (capped by `.post-article`'s measure); posts without an
+     outline (`.post-shell--toc` absent) drop the sidebar track entirely so the
+     article is not shoved off-centre by an empty column. */
+  .post-shell--toc {
+    grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
     gap: var(--space-xl);
-    justify-content: center;
-  }
-
-  /* Posts with too few headings render no sidebar at all; without this the
-     empty second track stays reserved and shoves the article off-centre. */
-  .post-shell:not(:has(> .toc--sidebar)) {
-    grid-template-columns: minmax(0, var(--measure));
+    column-gap: var(--space-l);
   }
 }
 
@@ -450,10 +446,35 @@
     overflow-y: auto;
   }
 
+  /* On post pages the outline runs down the *left* of the article, so its
+     hairline and text flip to the right edge of the column: the entries hug
+     the article they belong to. */
+  .post-shell > .toc--sidebar {
+    text-align: right;
+    padding-left: 0;
+    padding-right: var(--space-m);
+    border-left: 0;
+    border-right: 1px solid var(--rule);
+    /* Sticky scrolling would clip the scroll-spy highlight's left edge. */
+    overflow-x: hidden;
+  }
+
+  .post-shell > .toc--sidebar ol ol {
+    padding-left: 0;
+    padding-right: 0.85rem;
+  }
+
   .toc--sidebar .toc__label {
     display: block;
     margin-bottom: 0.6rem;
   }
+}
+
+/* Scroll-spy: the entry for the section in view. Set by the inline script on
+   post pages; without JS no entry carries it and the outline reads as before. */
+.toc a[aria-current] {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 /* Outline sidebars on index pages (research) are two real levels — section,

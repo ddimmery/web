@@ -3,9 +3,13 @@
  * The landing-page biography. Shared by every home-page layout variant so the
  * copy lives in exactly one place; each variant supplies its own wrapper and
  * measure.
+ *
+ * The professorship and affiliation no longer appear here — they live in the
+ * identity rail / masthead of each variant, so this blurb opens straight on
+ * the research.
  */
 interface Props {
-  /** Drop the longer research paragraph (used by the tighter layouts). */
+  /** Drop the closing venues/PhD paragraph (used by the tighter layouts). */
   short?: boolean;
 }
 
@@ -13,25 +17,27 @@ const { short = false } = Astro.props;
 ---
 
 <p>
-  I am the <a
-    href="https://www.hertie-school.org/en/research/faculty-and-researchers/profile/person/dimmery"
-    >Professor of Data Science for the Common Good</a
-  > at the <a href="https://www.hertie-school.org/en/">Hertie School</a>'s <a
-    href="https://www.hertie-school.org/en/datasciencelab">Data Science Lab</a
-  >.
+  I work on quantitative methodology at the intersection of causal inference and machine
+  learning, with an emphasis on the design and analysis of experiments. My research
+  focuses on causal machine learning, adaptive and algorithmic experimental design, and
+  the evaluation of complex digital systems like social media platforms and AI.
 </p>
 <p>
-  I previously worked on the Adaptive Experimentation team at Facebook Core Data Science
-  in New York, and at the Research Network Data Science at the University of Vienna.
+  Before returning to academia, I spent four years as a research scientist at Facebook
+  Core Data Science in New York, developing methods for adaptive experimentation in
+  large-scale online systems. I was part of the <a href="/posts/what-was-us2020/"
+    >US 2020 Facebook and Instagram Election Study</a
+  >, a landmark collaboration between independent academics and Meta that measured the
+  effects of social media on political attitudes, beliefs and behaviour during the 2020
+  US elections.
 </p>
 {
   !short && (
     <p>
-      My research focuses on the intersection of machine learning and causal inference. I
-      work a lot on experimental design and I think hard about how experimentation can be
-      better and more efficient. I'm also interested in better applying the machinery of
-      machine learning to observational causal inference. I'm most interested in
-      methodological research useful for the study of social phenomena.
+      My research has appeared in machine learning venues including ICML, KDD and
+      AISTATS, as well as general-interest journals such as <i>Science</i>, <i>Nature</i>{' '}
+      and <i>PNAS</i>. I received my PhD in political methodology from New York
+      University.
     </p>
   )
 }

@@ -218,7 +218,9 @@
   display: grid;
   gap: var(--space-s);
   grid-template-columns: 8rem minmax(0, 1fr);
-  align-items: center;
+  /* Top-aligned so the portrait's top edge lines up with the name rather than
+     floating in the middle of the taller identity block. */
+  align-items: start;
   padding-bottom: var(--space-m);
   border-bottom: 1px solid var(--rule);
 }
@@ -256,13 +258,11 @@
   }
 }
 
-.rail__tagline {
-  font-family: var(--font-heading-stack);
-  font-size: var(--step--1);
-  font-style: italic;
-  line-height: 1.35;
-  color: var(--ink-muted);
-  margin: 0.4rem 0 0;
+/* The shared identity block (role, tagline, affiliation) carries its own
+   scoped type; the rail only sets the space around it. */
+.rail__identity {
+  margin-top: 0.55rem;
+  margin-bottom: var(--space-m);
 }
 
 .rail__socials {

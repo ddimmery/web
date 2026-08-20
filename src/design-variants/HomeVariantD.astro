@@ -13,6 +13,7 @@
    ========================================================================= */
 import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
+import HomeIdentity from '../components/HomeIdentity.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
 import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
@@ -43,18 +44,12 @@ const { posts, papers } = Astro.props as HomeProps;
       />
       <div class="d-rail__id">
         <h1 class="d-rail__name">Drew Dimmery</h1>
-        <p class="d-rail__tagline">
-          Methods in causal inference, data science and social science
-        </p>
+        <HomeIdentity class="d-rail__identity" />
       </div>
       {/* Outside the identity block so it can take a full-width row of its own
           on narrow screens, where seven icons will not fit beside the
           portrait. */}
       <SocialRow class="d-rail__socials" />
-      <p class="d-rail__note">
-        Professor of Data Science for the Common Good · Hertie School Data
-        Science Lab · Berlin
-      </p>
     </div>
   </aside>
 

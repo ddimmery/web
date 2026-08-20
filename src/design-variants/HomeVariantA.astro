@@ -9,6 +9,7 @@
    ========================================================================= */
 import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
+import HomeIdentity from '../components/HomeIdentity.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
 import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
@@ -22,9 +23,7 @@ const { posts, papers } = Astro.props as HomeProps;
   <section class="hero">
     <div class="hero__bio">
       <h1 class="hero__name">Drew Dimmery</h1>
-      <p class="hero__tagline">
-        Methods in causal inference, data science and social science
-      </p>
+      <HomeIdentity class="hero__identity" />
       <div class="hero__prose">
         <HomeBio />
       </div>

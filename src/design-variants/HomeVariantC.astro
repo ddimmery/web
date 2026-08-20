@@ -11,6 +11,7 @@
    ========================================================================= */
 import { Image } from 'astro:assets';
 import HomeBio from '../components/HomeBio.astro';
+import HomeIdentity from '../components/HomeIdentity.astro';
 import SocialRow from '../components/SocialRow.astro';
 import { formatDate, postUrl } from '../lib/posts';
 import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
@@ -38,9 +39,7 @@ const { posts, papers } = Astro.props as HomeProps;
       />
       <div>
         <h1 class="rail__name">Drew Dimmery</h1>
-        <p class="rail__tagline">
-          Methods in causal inference, data science and social science
-        </p>
+        <HomeIdentity class="rail__identity" />
         <SocialRow class="rail__socials" />
       </div>
     </aside>

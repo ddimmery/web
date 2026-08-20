@@ -102,8 +102,7 @@
   /* Everything below the full-bleed portrait is inset to the same left edge as
      the site title in the masthead above. */
   .d-rail__id,
-  .d-rail__socials,
-  .d-rail__note {
+  .d-rail__socials {
     padding-left: var(--d-bleed);
     padding-right: var(--space-m);
   }
@@ -122,14 +121,6 @@
   }
 }
 
-.d-rail__note {
-  font-size: var(--step--2);
-  line-height: 1.45;
-  color: var(--ink-muted);
-  margin: var(--space-m) 0 0;
-  grid-column: 1 / -1;
-}
-
 .d-rail__name {
   font-size: var(--step-2);
   line-height: 1.05;
@@ -142,14 +133,9 @@
   }
 }
 
-.d-rail__tagline {
-  font-family: var(--font-heading-stack);
-  font-size: var(--step--1);
-  font-style: italic;
-  line-height: 1.35;
-  color: var(--ink-muted);
-  margin: 0.45rem 0 0;
-  padding-top: 0.45rem;
+.d-rail__identity {
+  margin-top: 0.45rem;
+  padding-top: 0.55rem;
   border-top: 2px solid var(--accent);
   width: fit-content;
   max-width: 100%;

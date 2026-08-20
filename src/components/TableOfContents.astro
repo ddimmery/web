@@ -1,11 +1,8 @@
 ---
 import type { MarkdownHeading } from 'astro';
+import { nestHeadings, type TocItem } from '../lib/toc';
 
-export interface TocItem {
-  slug: string;
-  text: string;
-  children?: TocItem[];
-}
+export type { TocItem };
 
 interface Props {
   /** Rendered-markdown headings; nested automatically. Ignored if `items` is set. */
@@ -30,28 +27,8 @@ const {
   class: extraClass,
 } = Astro.props;
 
-/** Nest h2/h3 (…up to maxDepth) into a tree, ignoring the h1 page title. */
-function nest(source: MarkdownHeading[]): TocItem[] {
-  const root: Array<TocItem & { depth: number; children: TocItem[] }> = [];
-  const stack: Array<TocItem & { depth: number; children: TocItem[] }> = [];
-  for (const heading of source) {
-    if (heading.depth < 2 || heading.depth > maxDepth) continue;
-    const node = { ...heading, children: [] as TocItem[] };
-    while (stack.length > 0 && stack[stack.length - 1]!.depth >= node.depth) {
-      stack.pop();
-    }
-    if (stack.length === 0) {
-      root.push(node);
-    } else {
-      stack[stack.length - 1]!.children.push(node);
-    }
-    stack.push(node);
-  }
-  return root;
-}
-
-const tree = items ?? nest(headings);
-/** A one-item outline is not worth the furniture. */
+const tree = items ?? nestHeadings(headings, maxDepth);
+/** A one-item outline is not worth the furniture — see `hasOutline`. */
 const show = tree.length > 1;
 const classes = ['toc', `toc--${variant}`, extraClass].filter(Boolean).join(' ');
 ---
