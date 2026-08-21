@@ -1,4 +1,5 @@
 ---
+import BackToTopC from './back-to-top/BackToTopC.astro';
 import type { MarkdownHeading } from 'astro';
 import { nestHeadings, type TocItem } from '../lib/toc';
 
@@ -57,6 +58,7 @@ const classes = ['toc', `toc--${variant}`, extraClass].filter(Boolean).join(' ')
       </details>
     ) : (
       <nav class={classes} aria-label={label}>
+        <BackToTopC />
         <span class="toc__label">{label}</span>
         <ol>
           {tree.map((node) => (
