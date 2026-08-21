@@ -24,12 +24,13 @@
    `<details>` branch) is also deliberate — a "Top" link inside a collapsed
    accordion you have to open first is worse than no link.
 
-   REVEAL: where `scroll-state()` container queries are supported, the link
-   appears at the exact moment the sticky outline pins (stuck: top) and hides
-   when it unpins — the outline "starts floating" is the trigger. Browsers
-   without scroll-state but with scroll-driven animations fall back to the
-   70vh-100vh scroll-range reveal shared with the other variants.
-   Zero JavaScript either way.
+   REVEAL: where `scroll-state()` container queries are supported (Chromium),
+   pure CSS shows the link at the exact moment the sticky outline pins
+   (stuck: top) and hides it when it unpins — zero JS. Elsewhere a ~260 B
+   feature-gated script measures the same thing geometrically (nav top at its
+   sticky inset) on a rAF-throttled scroll listener and stamps [data-stuck].
+   Both paths key off the outline actually floating, never a scroll distance.
+   No JS + no scroll-state: the link stays hidden (it is an enhancement).
 
    FALLBACK (no `animation-timeline: scroll()`): always visible. Harmless
    here — it is a nav link inside a nav block, and at scroll 0 it simply points
@@ -50,6 +51,25 @@
   <span class="btt-c__arrow" aria-hidden="true">&#8593;</span>
   <span>Top</span>
 </a>
+
+<script is:inline>
+  /* Fallback stuck-detector for browsers without scroll-state container
+     queries (Safari, Firefox). ~260 B. The CSS path wins where supported. */
+  if (!CSS.supports('container-type: scroll-state')) {
+    var n = document.currentScript.previousElementSibling.closest('.toc--sidebar');
+    var a = document.querySelector('.btt-c');
+    if (n && a) {
+      var t = parseFloat(getComputedStyle(n).top) || 0, q = false;
+      var f = function () {
+        q = false;
+        if (n.getBoundingClientRect().top <= t + 1) a.setAttribute('data-stuck', '');
+        else a.removeAttribute('data-stuck');
+      };
+      addEventListener('scroll', function () { if (!q) { q = true; requestAnimationFrame(f); } }, { passive: true });
+      f();
+    }
+  }
+</script>
 
 <style>
   /* The outline's entries are right-aligned (they hug the article's left edge),
@@ -83,53 +103,31 @@
     margin-inline-end: 0.15em;
   }
 
-  /* ---- reveal: scroll-driven, zero JS ---------------------------------- */
-  /* Longhands, never the `animation` shorthand: the CSS minifier folds
-     `animation-timeline` into the shorthand, which is not a valid component of
-     it, and Chromium then drops the whole declaration — a reveal that silently
-     never reveals. Keeping `animation-name` separate leaves nothing to fold. */
-  @supports (animation-timeline: scroll()) {
-    .btt-c {
-      animation-name: btt-c-in;
-      /* Required for a scroll-driven animation: the timeline is the duration. */
-      animation-duration: auto;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: scroll(root block);
-      animation-range: 70vh 100vh;
-    }
+  /* ---- reveal: only while the outline is actually pinned ---------------- */
+  /* Hidden by default in every browser; `visibility` rather than `display` so
+     the entry keeps its box and revealing it never shifts the outline. */
+  .btt-c {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      color 120ms ease,
+      opacity 160ms ease,
+      visibility 0s 160ms;
   }
 
-  /* `visibility` rather than `display`: the entry keeps its box, so revealing
-     it never shifts the outline's entries down mid-scroll. */
-  @keyframes btt-c-in {
-    from {
-      opacity: 0;
-      visibility: hidden;
-    }
-    to {
-      opacity: 1;
-      visibility: visible;
-    }
+  .btt-c[data-stuck],
+  .btt-c:focus-visible {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      color 120ms ease,
+      opacity 160ms ease;
   }
 
-  /* ---- precise trigger: the moment the outline actually pins ------------ */
-  /* Where scroll-state container queries exist, they replace the scroll-range
-     heuristic entirely: the link appears exactly when the sticky outline
-     starts floating (stuck at its top inset) and hides again the instant the
-     outline returns to flow. The parent nav is the container (see
-     `.toc--sidebar` in blocks.css). */
+  /* Where scroll-state container queries exist (the parent nav is the
+     container — see `.toc--sidebar` in blocks.css), pure CSS tracks the
+     pinned state and the script above never runs. */
   @supports (container-type: scroll-state) {
-    .btt-c {
-      animation: none;
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        color 120ms ease,
-        opacity 160ms ease,
-        visibility 0s 160ms;
-    }
-
     @container tocbar scroll-state(stuck: top) {
       .btt-c {
         opacity: 1;
