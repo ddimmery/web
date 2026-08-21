@@ -97,3 +97,47 @@ export function plainText(text: string): string {
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/\*([^*]+)\*/g, '$1');
 }
+
+/**
+ * Remove the footnote hover previews from rendered post HTML.
+ *
+ * scripts/rehype-footnote-popovers.mjs copies each footnote's content in beside
+ * its reference marker so the site's CSS can show it on hover. That copy is
+ * invisible without the site's stylesheet — which is exactly the situation in a
+ * feed reader, where it would read as every footnote printed twice. The feed
+ * therefore strips the copies back out and keeps the marker, its link and the
+ * footnote apparatus at the end of the item.
+ *
+ * The scan is deliberately literal (find the opening tag the plugin emits, then
+ * balance `<span>` tags to its close) rather than a regex, because a popover
+ * nests spans several deep.
+ */
+export function stripFootnotePopovers(html: string): string {
+  const open = '<span class="fn-pop" aria-hidden="true">';
+  let out = '';
+  let cursor = 0;
+
+  for (;;) {
+    const start = html.indexOf(open, cursor);
+    if (start === -1) return out + html.slice(cursor);
+
+    out += html.slice(cursor, start);
+
+    // Walk forward from just inside the popover, tracking span nesting depth.
+    let depth = 1;
+    let at = start + open.length;
+    while (depth > 0 && at < html.length) {
+      const next = html.indexOf('<span', at);
+      const close = html.indexOf('</span>', at);
+      if (close === -1) return out + html.slice(start);
+      if (next !== -1 && next < close) {
+        depth += 1;
+        at = next + '<span'.length;
+      } else {
+        depth -= 1;
+        at = close + '</span>'.length;
+      }
+    }
+    cursor = at;
+  }
+}

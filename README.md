@@ -61,7 +61,8 @@ public/                   favicons + touch icon, social card, robots.txt,
                           see `make brand`)
 scripts/                  sync-papers.mjs, vendor-mathjax.mjs, subset-fonts.mjs,
                           build-mark-assets.mjs, build-social-card.mjs,
-                          rehype-mathjax-euler.mjs, lib/mathjax-euler.mjs
+                          rehype-mathjax-euler.mjs, lib/mathjax-euler.mjs,
+                          rehype-footnote-popovers.mjs
 ```
 
 ### Routes
@@ -171,6 +172,28 @@ Fenced code blocks are highlighted at build time by Shiki using two themes
 
 GFM footnotes (`[^1]`) work and are styled as a small-type apparatus at the end
 of the post with return links.
+
+Reference markers also carry a **hover preview**, so a reader can see a footnote
+without leaving their place. `scripts/rehype-footnote-popovers.mjs` copies each
+footnote's rendered content in next to its marker at build time and the CSS in
+`prose.css` reveals it on `:hover` / `:focus-visible`; there is **no JavaScript**
+involved. Details worth knowing:
+
+- The marker keeps its link. Clicking still jumps to the apparatus at the end of
+  the post, which is unchanged. The preview is additive.
+- The copy is `aria-hidden`, its links are `tabindex="-1"` and its ↩ backref is
+  dropped: screen readers use the real footnote, and the copy adds no tab stops.
+- A footnote can hold blocks (paragraphs, quotes, lists, code, math), but a
+  marker usually sits inside a `<p>`, so the copy renames non-phrasing tags to
+  `<span data-fn-tag="…">` and the stylesheet restores each one's display.
+- Positioning is CSS anchor positioning where available (which keeps the popover
+  inside the viewport near the edges of the measure) and a centred popover
+  above the marker elsewhere.
+- No preview on touch (`@media (hover: none)`): a tap is a navigation, as before.
+- The copies are duplicated markup, ~0.5 kB each: about +16 kB raw / +3 kB gzip
+  on the heaviest post (`what-was-us2020`, 30 footnotes). `/blog.xml` strips
+  them back out (`stripFootnotePopovers` in `src/lib/posts.ts`), since a feed
+  reader has no stylesheet and would otherwise show every footnote twice.
 
 ### Posts containing executed code
 

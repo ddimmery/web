@@ -331,6 +331,237 @@
   line-height: 0;
 }
 
+/* ---------- footnote previews ------------------------------------------- */
+/* scripts/rehype-footnote-popovers.mjs copies each footnote's content in next
+   to its reference marker, inside `.fn-ref > .fn-pop`, so hovering (or
+   keyboard-focusing) the marker can show it without a trip to the bottom of
+   the post. The copy is `aria-hidden` and has no tab stops; the marker keeps
+   its link, so clicking still jumps to the apparatus. All CSS, no JS. */
+.prose .fn-ref {
+  position: relative;
+}
+
+.prose .fn-pop {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 5;
+
+  /* The marker is a superscript: its glyph paints roughly half a line *above*
+     the wrapper's inline box, so `bottom: 100%` alone would drop the popover
+     on top of the digit and swallow clicks meant for the link. Lift the box
+     clear of it. (The anchor-positioned branch below gets this exactly right
+     by anchoring to the marker's own box instead.) */
+  margin-bottom: 0.6em;
+
+  /* `max-content` up to the cap keeps short footnotes from being padded out to
+     a full-width slab. 78vw is the guard for narrow-but-hoverable windows,
+     where a 24rem box centred on a marker near the edge would hang off. */
+  width: max-content;
+  max-width: min(24rem, 78vw);
+
+  /* The visual gap between marker and surface. Symmetric so it still reads
+     right when the box is flipped below the marker (see the anchor block). */
+  padding-block: 0.45rem;
+
+  /* Nothing in the popover's own padding may take a click: the marker sits
+     just underneath it and must stay clickable. Hit-testing is handed back to
+     the surface and to the explicit bridge on it. */
+  pointer-events: none;
+
+  /* The marker itself is small, bold, superscripted heading type. None of that
+     should leak into the preview, which is body copy. */
+  font-family: var(--font-body-stack);
+  font-size: var(--step--1);
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  vertical-align: baseline;
+  color: var(--ink-soft);
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 120ms ease,
+    visibility 0s linear 120ms;
+}
+
+.prose .fn-ref:hover > .fn-pop,
+.prose .fn-ref:has([data-footnote-ref]:focus-visible) > .fn-pop {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 120ms ease,
+    visibility 0s;
+}
+
+.prose .fn-pop-body {
+  display: block;
+  position: relative;
+  padding: 0.5rem 0.7rem;
+  pointer-events: auto;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 10px var(--shadow);
+}
+
+/* The hover bridges: two invisible bands, flush against the surface, spanning
+   the gap the padding leaves between it and the marker. They keep `.fn-ref`
+   hovered while the pointer crosses that gap — which is what lets you move
+   onto a link inside a footnote — without covering the marker itself, since
+   the box has already been lifted clear of the glyph. One band per side, so
+   the flipped placement is bridged too. */
+.prose .fn-pop-body::before,
+.prose .fn-pop-body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Exactly the popover's own padding: any taller and the band would reach
+     down over the marker it is supposed to leave alone. */
+  height: 0.45rem;
+}
+
+.prose .fn-pop-body::before {
+  bottom: 100%;
+}
+
+.prose .fn-pop-body::after {
+  top: 100%;
+}
+
+/* Edge clamping. The fallback above centres the popover on its marker, which
+   is safe inside a wide window (the measure tops out at 840px, so a 24rem box
+   centred on the last marker of a line still lands inside a 1440px viewport)
+   but can hang off the side when the window is only a little wider than the
+   measure. Anchor positioning fixes that properly and for free: the popover is
+   positioned against the marker itself rather than by an ancestor, so its
+   containing block is the page, `anchor-center` centres it on the marker
+   *safely* — shifting it back inside the viewport rather than overflowing —
+   and `flip-block` moves it below the marker when there is no room above.
+   `anchor-scope` is in the @supports query on purpose: without it the anchor
+   name would be document-global and every popover on the page would resolve
+   to the same marker. Browsers missing any part of the set keep the centred
+   fallback above. */
+@supports (anchor-name: --fn) and (anchor-scope: --fn) and (position-area: top) {
+  .prose .fn-ref {
+    position: static;
+    anchor-scope: --fn;
+  }
+
+  /* The anchor is the marker link's own box, not the wrapper's or the `<sup>`'s:
+     the superscript is raised out of both, and the marker box is the one the
+     popover has to clear so the link underneath stays clickable. */
+  .prose .fn-ref [data-footnote-ref] {
+    anchor-name: --fn;
+  }
+
+  .prose .fn-pop {
+    position-anchor: --fn;
+    position-area: top;
+    position-try-fallbacks: flip-block;
+    justify-self: anchor-center;
+    inset: auto;
+    /* Symmetric, so it does not pull the box off the marker when there is room;
+       when the box is shifted back inside the viewport it keeps a hairline of
+       breathing space instead of sitting flush against the edge. */
+    margin: 0 0.75rem;
+    translate: none;
+  }
+}
+
+/* A footnote can hold blocks — paragraphs, a quotation, a list, a code sample.
+   The copy sits in an inline context, so the plugin renames those tags to
+   spans and records the original in `data-fn-tag`; give each back the display
+   it needs. */
+.prose .fn-pop [data-fn-tag] {
+  display: block;
+}
+
+.prose .fn-pop [data-fn-tag] + [data-fn-tag] {
+  margin-top: 0.45em;
+}
+
+.prose .fn-pop [data-fn-tag='ul'],
+.prose .fn-pop [data-fn-tag='ol'] {
+  padding-left: 1.2em;
+}
+
+.prose .fn-pop [data-fn-tag='li'] {
+  display: list-item;
+}
+
+.prose .fn-pop [data-fn-tag='ol'] > [data-fn-tag='li'] {
+  list-style-type: decimal;
+}
+
+.prose .fn-pop [data-fn-tag='li'] + [data-fn-tag='li'] {
+  margin-top: 0.2em;
+}
+
+.prose .fn-pop [data-fn-tag='blockquote'] {
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--rule);
+  font-style: italic;
+}
+
+.prose .fn-pop [data-fn-tag='pre'] {
+  padding: 0.4rem 0.5rem;
+  overflow-x: auto;
+  font-family: var(--font-mono-stack);
+  font-size: 0.92em;
+  white-space: pre;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.prose .fn-pop [data-fn-tag='table'] {
+  display: table;
+}
+
+.prose .fn-pop [data-fn-tag='thead'] {
+  display: table-header-group;
+}
+
+.prose .fn-pop [data-fn-tag='tbody'] {
+  display: table-row-group;
+}
+
+.prose .fn-pop [data-fn-tag='tr'] {
+  display: table-row;
+}
+
+.prose .fn-pop [data-fn-tag='th'],
+.prose .fn-pop [data-fn-tag='td'] {
+  display: table-cell;
+  padding-right: 0.6em;
+}
+
+/* Display math inside a footnote would blow the popover's width out; keep it
+   scrollable rather than let it push the surface off the measure. */
+.prose .fn-pop mjx-container[display] {
+  margin: 0;
+}
+
+/* Touch: there is no hover, and a tap on the marker is a navigation. Leave the
+   preview out of the layout entirely so nothing can flash mid-tap. */
+@media (hover: none) {
+  .prose .fn-pop {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose .fn-pop,
+  .prose .fn-ref:hover > .fn-pop,
+  .prose .fn-ref:has([data-footnote-ref]:focus-visible) > .fn-pop {
+    transition: none;
+  }
+}
+
 /* Highlight the footnote (or any anchor target) you just jumped to. */
 .prose :target {
   background: var(--accent-wash);

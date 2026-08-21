@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import mdxRenderer from '@astrojs/mdx/server.js';
 import { render } from 'astro:content';
-import { getPosts, plainText, postUrl } from '../lib/posts';
+import { getPosts, plainText, postUrl, stripFootnotePopovers } from '../lib/posts';
 import { site } from '../lib/site';
 
 /**
@@ -21,7 +21,9 @@ export const GET: APIRoute = async (context) => {
       let content: string | undefined;
       try {
         const { Content } = await render(post);
-        content = await container.renderToString(Content);
+        // The hover previews are stylesheet-dependent duplicates of the
+        // footnotes; a feed reader would just show every footnote twice.
+        content = stripFootnotePopovers(await container.renderToString(Content));
       } catch {
         // A post whose body cannot be rendered standalone still belongs in the
         // feed — fall back to the summary rather than failing the build.

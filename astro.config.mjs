@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeMathjaxEuler from './scripts/rehype-mathjax-euler.mjs';
+import rehypeFootnotePopovers from './scripts/rehype-footnote-popovers.mjs';
 
 // The Fonts API is pointed at the *generated* subsets, not the pristine
 // originals next to them. scripts/subset-fonts.mjs derives the character set
@@ -50,7 +51,9 @@ export default defineConfig({
       gfm: true,
       smartypants: true,
       remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeMathjaxEuler],
+      // Order matters: the popover plugin copies footnote content next to each
+      // reference marker, so it has to run after math has been rendered to SVG.
+      rehypePlugins: [rehypeMathjaxEuler, rehypeFootnotePopovers],
     }),
     syntaxHighlight: 'shiki',
     shikiConfig: {
