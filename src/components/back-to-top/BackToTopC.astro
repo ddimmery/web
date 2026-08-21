@@ -1,0 +1,119 @@
+---
+/* =========================================================================
+   BACK TO TOP — VARIANT C · "TOC-integrated Top link"   (PARKED, not active)
+
+   No floating chrome at all. A single "↑ Top" entry pinned at the head of the
+   sticky sidebar outline, set in the outline's own register, above the
+   "Contents" label. It appears only where the sidebar appears — i.e. at
+   ≥70rem, on post pages with an outline and on /research/ — so narrow
+   viewports get nothing whatsoever. The most minimal of the four, and the only
+   one that adds no new layer to the page.
+
+   ACTIVATE — one line in `src/components/TableOfContents.astro`, as the first
+   child of the sidebar branch's `<nav class={classes}>` (i.e. immediately
+   above `<span class="toc__label">`):
+
+       <BackToTopC />
+
+   (plus the import in that file's frontmatter:
+       import BackToTopC from './back-to-top/BackToTopC.astro';)
+
+   The include site is `TableOfContents.astro` rather than `Base.astro` on
+   purpose: this variant *is* an outline entry, and the outline is the only
+   place it can live. Putting it in the sidebar branch only (not the `mobile`
+   `<details>` branch) is also deliberate — a "Top" link inside a collapsed
+   accordion you have to open first is worse than no link.
+
+   REVEAL: CSS scroll-driven animation — `animation-timeline: scroll(root
+   block)`, `animation-range: 70vh 100vh`, `both` fill. Same curve as the other
+   variants, so a pairing (see the README) reveals both halves together.
+   Zero JavaScript.
+
+   FALLBACK (no `animation-timeline: scroll()`): always visible. Harmless
+   here — it is a nav link inside a nav block, and at scroll 0 it simply points
+   at where you already are. No script: 0 bytes of JS in every browser.
+
+   SCROLL TARGET: `href="#"` (document top), not `#top`. The sidebar outline is
+   `position: sticky`, which makes it a containing block for absolutely
+   positioned descendants — so a `<span id="top">` emitted from inside it
+   cannot be pinned to the top of the page the way it is in variants A, B and
+   D. `#` resolves to the top of the document directly and needs no anchor
+   element at all, which suits the variant that is trying to add the least.
+   `html { scroll-behavior: smooth }` animates it and already yields to
+   `prefers-reduced-motion`.
+   ========================================================================= */
+---
+
+<a class="btt-c" href="#">
+  <span class="btt-c__arrow" aria-hidden="true">&#8593;</span>
+  <span>Top</span>
+</a>
+
+<style>
+  /* The outline's entries are right-aligned (they hug the article's left edge),
+     so this sits on the same right edge, above the label, separated by nothing
+     more than space — a hairline here would compete with the label's own rule
+     on the research outline. */
+  .btt-c {
+    display: block;
+    margin-bottom: 0.7rem;
+    font-family: var(--font-heading-stack);
+    font-weight: 700;
+    font-size: var(--step--2);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+
+  .btt-c:hover,
+  .btt-c:focus-visible {
+    color: var(--accent);
+  }
+
+  .btt-c__arrow {
+    /* The heading face has no arrow; borrow the body face's and drop the
+       tracking so the glyph does not float away from its word. */
+    font-family: var(--font-body-stack);
+    letter-spacing: 0;
+    margin-inline-end: 0.15em;
+  }
+
+  /* ---- reveal: scroll-driven, zero JS ---------------------------------- */
+  /* Longhands, never the `animation` shorthand: the CSS minifier folds
+     `animation-timeline` into the shorthand, which is not a valid component of
+     it, and Chromium then drops the whole declaration — a reveal that silently
+     never reveals. Keeping `animation-name` separate leaves nothing to fold. */
+  @supports (animation-timeline: scroll()) {
+    .btt-c {
+      animation-name: btt-c-in;
+      /* Required for a scroll-driven animation: the timeline is the duration. */
+      animation-duration: auto;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 70vh 100vh;
+    }
+  }
+
+  /* `visibility` rather than `display`: the entry keeps its box, so revealing
+     it never shifts the outline's entries down mid-scroll. */
+  @keyframes btt-c-in {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btt-c {
+      transition: none;
+    }
+  }
+</style>
