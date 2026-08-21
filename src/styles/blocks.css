@@ -639,6 +639,10 @@
     display: block;
     position: sticky;
     top: 2rem;
+    /* Scroll-state container so descendants (the back-to-top link) can react
+       to the exact moment the outline pins — no layout effect. */
+    container-type: scroll-state;
+    container-name: tocbar;
     align-self: start;
     padding-left: var(--space-m);
     border-left: 1px solid var(--rule);

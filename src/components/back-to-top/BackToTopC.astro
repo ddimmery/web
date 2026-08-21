@@ -24,10 +24,12 @@
    `<details>` branch) is also deliberate — a "Top" link inside a collapsed
    accordion you have to open first is worse than no link.
 
-   REVEAL: CSS scroll-driven animation — `animation-timeline: scroll(root
-   block)`, `animation-range: 70vh 100vh`, `both` fill. Same curve as the other
-   variants, so a pairing (see the README) reveals both halves together.
-   Zero JavaScript.
+   REVEAL: where `scroll-state()` container queries are supported, the link
+   appears at the exact moment the sticky outline pins (stuck: top) and hides
+   when it unpins — the outline "starts floating" is the trigger. Browsers
+   without scroll-state but with scroll-driven animations fall back to the
+   70vh-100vh scroll-range reveal shared with the other variants.
+   Zero JavaScript either way.
 
    FALLBACK (no `animation-timeline: scroll()`): always visible. Harmless
    here — it is a nav link inside a nav block, and at scroll 0 it simply points
@@ -108,6 +110,34 @@
     to {
       opacity: 1;
       visibility: visible;
+    }
+  }
+
+  /* ---- precise trigger: the moment the outline actually pins ------------ */
+  /* Where scroll-state container queries exist, they replace the scroll-range
+     heuristic entirely: the link appears exactly when the sticky outline
+     starts floating (stuck at its top inset) and hides again the instant the
+     outline returns to flow. The parent nav is the container (see
+     `.toc--sidebar` in blocks.css). */
+  @supports (container-type: scroll-state) {
+    .btt-c {
+      animation: none;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        color 120ms ease,
+        opacity 160ms ease,
+        visibility 0s 160ms;
+    }
+
+    @container tocbar scroll-state(stuck: top) {
+      .btt-c {
+        opacity: 1;
+        visibility: visible;
+        transition:
+          color 120ms ease,
+          opacity 160ms ease;
+      }
     }
   }
 

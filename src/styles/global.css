@@ -753,7 +753,11 @@ main {
 .pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.1em 0.6em;
+  /* Snug line box plus asymmetric padding: Classico's uppercase ink rides
+     high in the em box, so the extra top padding recenters the visible text
+     (pixel-measured, same treatment as .btn). */
+  line-height: 1;
+  padding: 0.51em 0.6em 0.22em;
   font-family: var(--font-heading-stack);
   font-size: var(--step--2);
   font-weight: 700;
