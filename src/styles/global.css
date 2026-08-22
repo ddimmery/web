@@ -425,10 +425,33 @@ main {
 .site-header__inner {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  /* center, not baseline: baselines move when the real face swaps in, which
+     re-seats the whole row (CLS). With the title/toggle boxes pinned below,
+     centering is font-independent and visually identical. */
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-s) var(--space-m);
   padding-block: 1.1rem;
+}
+
+/* Pin the header elements whose boxes grow when the real faces swap in for
+   the metric-override fallbacks (measured: the title's line box and the
+   theme toggle) so the header height is font-independent — kills the
+   font-swap layout shift (CLS) the live mobile audit surfaced. The nav is
+   deliberately NOT height-clamped: it wraps to two rows on narrow screens,
+   and its link boxes are already swap-stable via their own line-height. */
+.site-title {
+  height: 1.6rem;
+  line-height: 1.6rem;
+}
+
+.site-header__end {
+  align-items: center;
+  height: auto;
+}
+
+.theme-toggle {
+  height: 1.3rem;
 }
 
 .site-title {
@@ -467,7 +490,8 @@ main {
    end of the nav row rather than drifting onto a line of its own. */
 .site-header__end {
   display: flex;
-  align-items: baseline;
+  /* center, not baseline — see .site-header__inner. */
+  align-items: center;
   gap: 0.35rem 1.15rem;
 }
 
@@ -475,6 +499,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 1.15rem;
+  line-height: 1.6rem;
   font-family: var(--font-heading-stack);
   font-size: var(--step--1);
   letter-spacing: 0.04em;

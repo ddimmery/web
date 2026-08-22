@@ -799,7 +799,8 @@
 /* The unavailable direction keeps its slot so the numbers stay centered on
    every page instead of sliding left on the first and right on the last. */
 .pagination__step--off {
-  color: var(--rule-strong);
+  /* Disabled but still text: keep it readable (WCAG contrast). */
+  color: var(--ink-muted);
 }
 
 .pagination__pages {

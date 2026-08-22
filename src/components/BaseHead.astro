@@ -100,13 +100,7 @@ const fullTitle = title === site.title ? title : `${title} — ${site.title}`;
 <link rel="alternate" type="application/rss+xml" title={site.title} href={new URL(site.feed, site.url)} />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
-<!-- Google Analytics (the only script on the site). -->
-<script async src={`https://www.googletagmanager.com/gtag/js?id=${site.analyticsId}`} is:inline></script>
-<script is:inline define:vars={{ gaId: site.analyticsId }}>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    window.dataLayer.push(arguments);
-  }
-  gtag('js', new Date());
-  gtag('config', gaId);
-</script>
+<!-- Analytics: Cloudflare Web Analytics, enabled in the Pages project
+     settings (Settings -> Metrics -> Web Analytics). Cloudflare injects its
+     ~6 kB beacon at the edge, so the site ships no analytics script of its
+     own. The previous Google Analytics tag (161 kB gtag.js) was removed. -->

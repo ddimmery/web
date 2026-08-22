@@ -10,7 +10,6 @@ export const site = {
   feed: '/blog.xml',
   repo: 'https://github.com/ddimmery/web',
   newsletter: 'https://list.ddimmery.com/subscription/form',
-  analyticsId: 'G-Y7YLFF5F90',
 } as const;
 
 export const nav: Array<{ href: string; label: string }> = [

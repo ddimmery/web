@@ -1,7 +1,8 @@
 # ddimmery.com
 
 The personal website of Drew Dimmery, built with [Astro](https://astro.build).
-Static output, zero client-side JavaScript (except the Google Analytics snippet),
+Static output, zero client-side JavaScript (analytics via Cloudflare Web
+Analytics, injected at the edge — see Deploy),
 self-hosted fonts, build-time math (MathJax v4 / Neo-Euler) and syntax
 highlighting.
 
@@ -357,7 +358,12 @@ required MSc DSPP core courses come first, then the electives newest-first.
 
 ---
 
-## Deployment
+## Deploy
+
+**Analytics:** enable *Web Analytics* on the Pages project (Cloudflare
+dashboard → the project → Settings → Metrics) — Cloudflare injects its ~6 kB
+beacon at the edge, so the repo ships no analytics code. The old Google
+Analytics tag (161 kB of gtag.js per page) was removed.ment
 
 The site is a plain static bundle in `dist/`; any static host will serve it.
 The configured target is **Cloudflare Pages**:
@@ -460,6 +466,6 @@ Nothing else reads or writes it.
   code styles only load on pages that need them), the MathJax stylesheet only on
   posts with `math: true`, content-driven font subsets (~615 kB → ~333 kB), all
   images processed by sharp with explicit dimensions, and no external requests
-  other than Google Analytics. Only two faces are preloaded; the other seven are
+  at all. Only two faces are preloaded; the other seven are
   fetched by the browser only if a page's text actually needs them, so `/` and
   `/research/` never download the code font at all.

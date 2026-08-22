@@ -95,6 +95,11 @@ const affiliations: Array<{ text: string; href?: string }> = [
     color: inherit;
     text-decoration-color: var(--rule-strong);
     text-underline-offset: 0.18em;
+    /* WCAG 2.5.8 target size: pad the hit area vertically without moving
+       the text (negative margin cancels the layout effect). */
+    display: inline-block;
+    padding-block: 0.35rem;
+    margin-block: -0.35rem;
   }
 
   .identity__affiliation a:hover {
