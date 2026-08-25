@@ -302,7 +302,7 @@
 .teaser-list > li::before,
 .paper-list > li::before {
   z-index: -1;
-  border-radius: var(--radius);
+  border-radius: var(--radius-row);
   /* `--paper-raised`, not `--accent-wash`: the site's grounds are deliberately
      neutral and the palette note in global.css is explicit that they must never
      read pink beside the red accent — and a 7% red wash across a whole row does
