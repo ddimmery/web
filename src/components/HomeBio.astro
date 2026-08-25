@@ -1,19 +1,9 @@
 ---
 /**
- * The landing-page biography. Shared by every home-page layout variant so the
- * copy lives in exactly one place; each variant supplies its own wrapper and
- * measure.
- *
- * The professorship and affiliation no longer appear here — they live in the
- * identity rail / masthead of each variant, so this blurb opens straight on
- * the research.
+ * The landing-page biography. The professorship and affiliation are not here —
+ * they live in the identity rail — so this blurb opens straight on the
+ * research.
  */
-interface Props {
-  /** Drop the closing venues/PhD paragraph (used by the tighter layouts). */
-  short?: boolean;
-}
-
-const { short = false } = Astro.props;
 ---
 
 <p>
@@ -34,13 +24,3 @@ const { short = false } = Astro.props;
   >, a landmark collaboration between independent academics and Meta on the effects of
   social media during the 2020 US elections.
 </p>
-{
-  !short && (
-    <p>
-      My research has appeared in machine learning venues including ICML, KDD and
-      AISTATS, as well as general-interest journals such as <i>Science</i>, <i>Nature</i>{' '}
-      and <i>PNAS</i>. I received my PhD in political methodology from New York
-      University.
-    </p>
-  )
-}
