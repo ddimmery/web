@@ -76,6 +76,11 @@
   --space-xl: 4.5rem;
 
   --radius: 3px;
+  /* Chrome-sized corners (`--radius`) vanish on a shape the size of a list row:
+     3px across ~700x150 reads as a rectangle whose corners got chipped rather
+     than as a decision. The row hover washes get their own, larger value —
+     enough to be seen as a curve, short of the pill-shaped card look. */
+  --radius-row: 6px;
 
   /* No explicit choice: follow the OS, and let form controls / scrollbars do
      the same. The two overrides below pin it when a choice has been made. */
