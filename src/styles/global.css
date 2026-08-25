@@ -451,7 +451,7 @@ main {
 }
 
 .theme-toggle {
-  height: 1.3rem;
+  height: 1.4rem;
 }
 
 .site-title {
@@ -570,22 +570,31 @@ main {
 .theme-toggle {
   appearance: none;
   position: relative;
+  /* Flex, so the glyph is centred in the button box: the box and the glyph then
+     share one centre line, whatever the icon's size or the box's padding. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0.2rem;
   border: 0;
   background: none;
   color: var(--ink-muted);
-  line-height: 0;
   cursor: pointer;
   border-radius: var(--radius);
   transition: color 150ms ease-out;
-  /* Optical: the nav row is baseline-aligned, and a 15px glyph on a text
-     baseline sits a touch high. */
-  transform: translateY(0.14em);
+  /* Optical: the header row centres *boxes*, but the eye centres *ink*. A nav
+     link's box is its line box plus asymmetric padding (0.15rem/0.3rem for the
+     hover rule), and a line box reserves descender depth the uppercase labels
+     never use — so the row's centre line falls well below the cap-height centre
+     of the words. Lift the glyph back onto the caps. Kept as a transform so it
+     stays out of layout: the header's height, and the hit area below, are
+     unaffected. */
+  transform: translateY(-0.22rem);
 }
 
 /* The glyph is deliberately small; the touch target should not be. This grows
-   the hit area to ~44px square without moving anything in the nav row. */
+   the hit area to ~41px square without moving anything in the nav row. */
 .theme-toggle::after {
   content: '';
   position: absolute;
