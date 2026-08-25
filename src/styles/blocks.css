@@ -1,89 +1,11 @@
 /* =========================================================================
-   Page-level blocks: landing hero, post cards, paper list, TOC, post header,
-   prev/next. Imported by global.css.
+   Page-level blocks: post cards, paper list, TOC, post header, prev/next.
+   Imported by global.css.
    ========================================================================= */
-
-/* ---------- landing hero ------------------------------------------------- */
-.hero {
-  display: grid;
-  gap: var(--space-m) var(--space-l);
-  grid-template-columns: 1fr;
-  align-items: start;
-  padding-bottom: var(--space-l);
-  border-bottom: 1px solid var(--rule);
-}
-
-@media (min-width: 46rem) {
-  .hero {
-    /* The portrait column scales with the viewport and tops out at 20rem —
-       320px, close to the 600px source's sensible 2x ceiling. */
-    grid-template-columns: minmax(0, 1fr) clamp(13rem, 22vw, 20rem);
-    gap: var(--space-m) var(--space-xl);
-    align-items: center;
-  }
-}
-
-.hero__name {
-  font-size: var(--step-4);
-  margin-bottom: 0.15em;
-}
-
-/* The shared identity block (role, tagline, affiliation) carries its own
-   scoped type; the hero adds the short accent mark under it — a mark under the
-   text that stops, not a full-width divider. */
-.hero__identity {
-  margin: 0.1rem 0 var(--space-m);
-  padding-bottom: var(--space-s);
-  border-bottom: 2px solid var(--accent);
-  width: fit-content;
-  max-width: 100%;
-}
-
-.hero__bio {
-  max-width: var(--measure);
-}
-
-.hero__prose > * + * {
-  margin-top: 0.85em;
-}
-
-.hero__portrait {
-  order: -1;
-  width: 11rem;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: var(--radius);
-  border: 1px solid var(--rule-strong);
-}
-
-@media (min-width: 46rem) {
-  .hero__portrait {
-    order: 0;
-    width: 100%;
-    justify-self: end;
-  }
-}
-
-.hero__socials {
-  margin-top: var(--space-m);
-}
 
 /* ---------- generic section spacing ------------------------------------- */
 .section {
   margin-top: var(--space-xl);
-}
-
-.section--split {
-  display: grid;
-  gap: var(--space-l);
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 58rem) {
-  .section--split {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-  }
 }
 
 /* ---------- post cards --------------------------------------------------- */
@@ -741,8 +663,7 @@
   color: var(--ink);
 }
 
-.post-nav__item:last-child:nth-child(2),
-.post-nav__item--next {
+.post-nav__item:last-child:nth-child(2) {
   text-align: right;
 }
 

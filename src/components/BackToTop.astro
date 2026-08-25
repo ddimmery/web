@@ -1,28 +1,16 @@
 ---
 /* =========================================================================
-   BACK TO TOP — VARIANT C · "TOC-integrated Top link"   (PARKED, not active)
-
-   No floating chrome at all. A single "↑ Top" entry pinned at the head of the
-   sticky sidebar outline, set in the outline's own register, above the
-   "Contents" label. It appears only where the sidebar appears — i.e. at
+   BACK TO TOP — a single "↑ Top" entry pinned at the head of the sticky
+   sidebar outline, set in the outline's own register, above the "Contents"
+   label. No floating chrome: it appears only where the sidebar appears —
    ≥70rem, on post pages with an outline and on /research/ — so narrow
-   viewports get nothing whatsoever. The most minimal of the four, and the only
-   one that adds no new layer to the page.
+   viewports get nothing whatsoever, and it adds no new layer to the page.
 
-   ACTIVATE — one line in `src/components/TableOfContents.astro`, as the first
-   child of the sidebar branch's `<nav class={classes}>` (i.e. immediately
-   above `<span class="toc__label">`):
-
-       <BackToTopC />
-
-   (plus the import in that file's frontmatter:
-       import BackToTopC from './back-to-top/BackToTopC.astro';)
-
-   The include site is `TableOfContents.astro` rather than `Base.astro` on
-   purpose: this variant *is* an outline entry, and the outline is the only
-   place it can live. Putting it in the sidebar branch only (not the `mobile`
-   `<details>` branch) is also deliberate — a "Top" link inside a collapsed
-   accordion you have to open first is worse than no link.
+   Rendered by `TableOfContents.astro` rather than `Base.astro` on purpose:
+   this *is* an outline entry, and the outline is the only place it can live.
+   It goes in the sidebar branch only (not the `mobile` <details> branch) —
+   a "Top" link inside a collapsed accordion you must open first is worse
+   than no link.
 
    REVEAL: where `scroll-state()` container queries are supported (Chromium),
    pure CSS shows the link at the exact moment the sticky outline pins
@@ -32,23 +20,18 @@
    Both paths key off the outline actually floating, never a scroll distance.
    No JS + no scroll-state: the link stays hidden (it is an enhancement).
 
-   FALLBACK (no `animation-timeline: scroll()`): always visible. Harmless
-   here — it is a nav link inside a nav block, and at scroll 0 it simply points
-   at where you already are. No script: 0 bytes of JS in every browser.
-
-   SCROLL TARGET: `href="#"` (document top), not `#top`. The sidebar outline is
-   `position: sticky`, which makes it a containing block for absolutely
+   SCROLL TARGET: `href="#"` (document top), not `#top`. The sidebar outline
+   is `position: sticky`, which makes it a containing block for absolutely
    positioned descendants — so a `<span id="top">` emitted from inside it
-   cannot be pinned to the top of the page the way it is in variants A, B and
-   D. `#` resolves to the top of the document directly and needs no anchor
-   element at all, which suits the variant that is trying to add the least.
+   could not be pinned to the top of the page. `#` resolves to the top of the
+   document directly and needs no anchor element at all.
    `html { scroll-behavior: smooth }` animates it and already yields to
    `prefers-reduced-motion`.
    ========================================================================= */
 ---
 
-<a class="btt-c" href="#">
-  <span class="btt-c__arrow" aria-hidden="true">&#8593;</span>
+<a class="btt" href="#">
+  <span class="btt__arrow" aria-hidden="true">&#8593;</span>
   <span>Top</span>
 </a>
 
@@ -57,7 +40,7 @@
      queries (Safari, Firefox). ~260 B. The CSS path wins where supported. */
   if (!CSS.supports('container-type: scroll-state')) {
     var n = document.currentScript.previousElementSibling.closest('.toc--sidebar');
-    var a = document.querySelector('.btt-c');
+    var a = document.querySelector('.btt');
     if (n && a) {
       var t = parseFloat(getComputedStyle(n).top) || 0, q = false;
       var f = function () {
@@ -76,7 +59,7 @@
      so this sits on the same right edge, above the label, separated by nothing
      more than space — a hairline here would compete with the label's own rule
      on the research outline. */
-  .btt-c {
+  .btt {
     display: block;
     margin-bottom: 0.7rem;
     font-family: var(--font-heading-stack);
@@ -90,12 +73,12 @@
     transition: color 120ms ease;
   }
 
-  .btt-c:hover,
-  .btt-c:focus-visible {
+  .btt:hover,
+  .btt:focus-visible {
     color: var(--accent);
   }
 
-  .btt-c__arrow {
+  .btt__arrow {
     /* The heading face has no arrow; borrow the body face's and drop the
        tracking so the glyph does not float away from its word. */
     font-family: var(--font-body-stack);
@@ -106,7 +89,7 @@
   /* ---- reveal: only while the outline is actually pinned ---------------- */
   /* Hidden by default in every browser; `visibility` rather than `display` so
      the entry keeps its box and revealing it never shifts the outline. */
-  .btt-c {
+  .btt {
     opacity: 0;
     visibility: hidden;
     transition:
@@ -115,8 +98,8 @@
       visibility 0s 160ms;
   }
 
-  .btt-c[data-stuck],
-  .btt-c:focus-visible {
+  .btt[data-stuck],
+  .btt:focus-visible {
     opacity: 1;
     visibility: visible;
     transition:
@@ -129,7 +112,7 @@
      pinned state and the script above never runs. */
   @supports (container-type: scroll-state) {
     @container tocbar scroll-state(stuck: top) {
-      .btt-c {
+      .btt {
         opacity: 1;
         visibility: visible;
         transition:
@@ -140,7 +123,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .btt-c {
+    .btt {
       transition: none;
     }
   }

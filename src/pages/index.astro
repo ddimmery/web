@@ -1,34 +1,21 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { getPosts } from '../lib/posts';
-import { yearOf } from '../lib/papers';
+import HomeBio from '../components/HomeBio.astro';
+import HomeIdentity from '../components/HomeIdentity.astro';
+import SocialRow from '../components/SocialRow.astro';
+import { formatDate, getPosts, postUrl } from '../lib/posts';
+import { authorSegments, bestUrl, paperTitle, yearOf } from '../lib/papers';
 import { site } from '../lib/site';
 import { personJsonLd } from '../lib/jsonld';
+import headshot from '../assets/headshot.webp';
+import '../styles/home.css';
 
-/* ── HOME LAYOUT VARIANT ────────────────────────────────────────────────────
-   Six interchangeable layouts live in `src/design-variants/` (outside
-   `src/pages/`, so they create no routes). Swap the import below to change the
-   home page; every variant takes the same props (see `home-props.ts`) and
-   imports its own stylesheet, so the inactive ones ship no CSS.
-
-     HomeVariantA — refined current: bio left, large portrait right,
-                    two-column recents below a hairline.
-     HomeVariantB — editorial: full-width name banner, portrait in a wide
-                    masthead row, recents as one wide ruled list.
-     HomeVariantC — side-rail identity: sticky rail on the left carrying the
-                    portrait, name, tagline and socials; the biography and the
-                    two recents feeds flow to its right. ← active
-     HomeVariantD — full-bleed portrait rail: C pushed harder. The rail is a
-                    tinted panel running from the window edge to the footer,
-                    with the portrait bleeding across its full width.
-     HomeVariantE — typographic index: huge stacked "DREW / DIMMERY" masthead,
-                    one small portrait, recents as numbered wall-to-wall
-                    indexes with the date or venue on the right edge.
-     HomeVariantF — letterhead: centered identity block with a round portrait,
-                    a centered statement, then dense two-column lists.
-   ───────────────────────────────────────────────────────────────────────── */
-import Home from '../design-variants/HomeVariantC.astro';
+/* A sticky identity rail on the left — portrait, name, tagline, socials — with
+   the page content flowing past it on the right: the biography as full-width
+   prose, then the two recents feeds side by side. The identity stays on screen
+   as you scroll. Styles live in `src/styles/home.css`. */
 
 const posts = (await getPosts()).slice(0, 5);
 
@@ -40,5 +27,94 @@ const papers = (await getCollection('papers', ({ data }) => data.visible))
 ---
 
 <Base title={site.title} description={site.description} jsonLd={personJsonLd()}>
-  <Home posts={posts} papers={papers} />
+  <div class="wrap">
+    <div class="rail-page">
+      <aside class="rail">
+        <Image
+          class="rail__portrait"
+          src={headshot}
+          widths={[200, 272, 320, 480, 600]}
+          sizes="(min-width: 76rem) 20rem, (min-width: 60rem) 19rem, 8rem"
+          width={600}
+          height={800}
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+          alt="Drew Dimmery"
+        />
+        <div>
+          <h1 class="rail__name">Drew Dimmery</h1>
+          <HomeIdentity class="rail__identity" />
+        </div>
+        <SocialRow class="rail__socials" />
+      </aside>
+
+      <div class="rail-main">
+        <div class="rail-bio">
+          <HomeBio />
+        </div>
+
+        <div class="rail-recents">
+          {
+            posts.length > 0 && (
+              <section>
+                <div class="rule-heading">
+                  <h2 class="eyebrow">Recent posts</h2>
+                </div>
+                <ul class="teaser-list">
+                  {posts.map((post) => (
+                    <li>
+                      <p class="teaser__title">
+                        <a href={postUrl(post)}>{post.data.title}</a>
+                      </p>
+                      <p class="teaser__meta">
+                        <time datetime={post.data.date.toISOString()}>
+                          {formatDate(post.data.date)}
+                        </time>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                <a class="more-link" href="/blog/">
+                  All posts
+                </a>
+              </section>
+            )
+          }
+
+          {
+            papers.length > 0 && (
+              <section>
+                <div class="rule-heading">
+                  <h2 class="eyebrow">Recent papers</h2>
+                </div>
+                <ul class="teaser-list">
+                  {papers.map((paper) => {
+                    const url = bestUrl(paper);
+                    return (
+                      <li>
+                        <p class="teaser__title">
+                          {url ? <a href={url}>{paperTitle(paper)}</a> : paperTitle(paper)}
+                        </p>
+                        <p class="teaser__meta">
+                          {authorSegments(paper.authors, { max: 3 }).map((part) =>
+                            part.me ? <strong>{part.text}</strong> : part.text,
+                          )}
+                          {' · '}
+                          {yearOf(paper)}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <a class="more-link" href="/research/">
+                  All research
+                </a>
+              </section>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
 </Base>
