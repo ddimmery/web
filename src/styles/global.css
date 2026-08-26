@@ -469,14 +469,13 @@ main {
   text-decoration: none;
   /* Optical: the same correction the theme toggle carries at the other end of
      the row, for the same reason. The header centres *boxes*, but the eye reads
-     the row off the cap-height centres of the words — and a line box reserves
-     descender depth that the uppercase nav labels never use, so their caps sit
-     above the row's centre line. Measured, the wordmark landed 2.5px below the
-     nav's caps; this lifts it onto them, to within 0.75px across the whole
-     fluid range (the two type steps scale independently, so no single value is
-     exact everywhere — the drift is well under a device pixel). Kept as a
-     transform so it stays out of layout and the height pinned above (no CLS)
-     still holds. */
+     the row off the type, and a line box reserves descender depth the uppercase
+     nav labels never use, so their caps sit above the row's centre line.
+
+     This value seats the *mark* on that line (measured: within 0.13px at most
+     widths). The wordmark beside it needs a little more, and takes it
+     separately — see .site-title__wordmark. Kept as a transform so it stays out
+     of layout and the height pinned above (no CLS) still holds. */
   transform: translateY(-0.16rem);
 }
 
@@ -484,12 +483,39 @@ main {
   color: var(--accent);
 }
 
+/* The wordmark's own optical correction, on top of the row's.
+   `Drew Dimmery` is mostly lowercase with one descender, so its cap-height
+   centre is the wrong thing to align by: most of the word's ink sits below that
+   line, and cap-centring leaves it visibly hanging low against the small
+   uppercase nav beside it — the eye levels two runs of type by their centre of
+   mass, not by their cap heights. Measured, that centre sits ~1.6px lower than
+   the cap centre, so the text needs that much more lift than the mark.
+
+   It rides on the wordmark alone rather than on the whole title, so the mark
+   keeps the position it already had (the two must not move together), and as a
+   transform so no box changes and the pinned height still holds. `inline-block`
+   only exists to make a transform apply — the span's baseline is unchanged, so
+   the mark's `vertical-align` beside it is unaffected.
+
+   Holds to within 0.8px across the fluid range: --step-1 and --step--1 scale
+   independently, so no single value is exact everywhere, and the drift stays
+   under a device pixel. */
+.site-title__wordmark {
+  display: inline-block;
+  transform: translateY(-0.08rem);
+}
+
 /* The personal mark, set as a printer's mark rather than a logo: sized off the
    wordmark's own em so it can never outgrow it, kept inline (not flex) so the
    anchor's baseline stays the text baseline and the nav on the other end of the
    header row still aligns. `vertical-align` centres the 64x64 box on the
    lowercase, and the em sizing plus the SVG's intrinsic ratio mean the space is
-   reserved before paint — no shift. */
+   reserved before paint — no shift.
+
+   Left alone deliberately: measured, this already puts the mark on the line the
+   row is aligned by. Nudging it here would also move the wordmark, since a
+   taller inline box reseats the baseline inside the pinned line-height — so the
+   wordmark's own correction lives on the wordmark (below), not here. */
 .site-title__mark {
   width: 1.05em;
   height: 1.05em;
@@ -608,7 +634,7 @@ main {
 
   /* Slightly less lift than at the wider sizes: this row's nav padding is
      taller, which moves the box centre the wordmark is measured against.
-     Measured residual across 505-600px: within 0.15px. */
+     Measured residual across 505-600px: within 0.13px. */
   .site-title {
     transform: translateY(-0.12rem);
   }
