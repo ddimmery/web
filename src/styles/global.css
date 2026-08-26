@@ -467,10 +467,42 @@ main {
   letter-spacing: -0.01em;
   color: var(--ink);
   text-decoration: none;
+  /* Optical: the same correction the theme toggle carries at the other end of
+     the row, for the same reason. The header centres *boxes*, but the eye reads
+     the row off the type, and a line box reserves descender depth the uppercase
+     nav labels never use, so their caps sit above the row's centre line.
+
+     This value seats the *mark* on that line (measured: within 0.13px at most
+     widths). The wordmark beside it needs a little more, and takes it
+     separately — see .site-title__wordmark. Kept as a transform so it stays out
+     of layout and the height pinned above (no CLS) still holds. */
+  transform: translateY(-0.16rem);
 }
 
 .site-title:hover {
   color: var(--accent);
+}
+
+/* The wordmark's own optical correction, on top of the row's.
+   `Drew Dimmery` is mostly lowercase with one descender, so its cap-height
+   centre is the wrong thing to align by: most of the word's ink sits below that
+   line, and cap-centring leaves it visibly hanging low against the small
+   uppercase nav beside it — the eye levels two runs of type by their centre of
+   mass, not by their cap heights. Measured, that centre sits ~1.6px lower than
+   the cap centre, so the text needs that much more lift than the mark.
+
+   It rides on the wordmark alone rather than on the whole title, so the mark
+   keeps the position it already had (the two must not move together), and as a
+   transform so no box changes and the pinned height still holds. `inline-block`
+   only exists to make a transform apply — the span's baseline is unchanged, so
+   the mark's `vertical-align` beside it is unaffected.
+
+   Holds to within 0.8px across the fluid range: --step-1 and --step--1 scale
+   independently, so no single value is exact everywhere, and the drift stays
+   under a device pixel. */
+.site-title__wordmark {
+  display: inline-block;
+  transform: translateY(-0.08rem);
 }
 
 /* The personal mark, set as a printer's mark rather than a logo: sized off the
@@ -478,7 +510,12 @@ main {
    anchor's baseline stays the text baseline and the nav on the other end of the
    header row still aligns. `vertical-align` centres the 64x64 box on the
    lowercase, and the em sizing plus the SVG's intrinsic ratio mean the space is
-   reserved before paint — no shift. */
+   reserved before paint — no shift.
+
+   Left alone deliberately: measured, this already puts the mark on the line the
+   row is aligned by. Nudging it here would also move the wordmark, since a
+   taller inline box reseats the baseline inside the pinned line-height — so the
+   wordmark's own correction lives on the wordmark (below), not here. */
 .site-title__mark {
   width: 1.05em;
   height: 1.05em;
@@ -563,6 +600,128 @@ main {
   .site-nav a,
   .site-nav a::after {
     transition: none;
+  }
+}
+
+/* ---------- header: narrow screens -------------------------------------- */
+/* Two contractions, at the two widths where something actually stops fitting.
+
+   First the row goes compact. Measured: the wordmark, the four section links
+   and the theme control need ~545px of content box to share a row at the full
+   nav size, so below 600px the links drop one type step and tighten. Before
+   this, the nav and the control wrapped below the wordmark and then wrapped
+   again inside themselves — a three-row, 144px-tall masthead (against 69px on
+   the desktop) whose links were 33px tall and 6px apart, under the 44px
+   touch-target floor.
+
+   The 600px figure has to stay above the width where the full-size row breaks
+   (measured: holds at 597px, wraps at 596), so the two layouts meet with no
+   window in which either one wraps. Re-measure if a section label is ever
+   added or lengthened. */
+@media (max-width: 37.5rem) {
+  .site-header__inner {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding-block: 0.5rem;
+  }
+
+  .site-header__end {
+    flex: 0 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 0.55rem;
+  }
+
+  /* Slightly less lift than at the wider sizes: this row's nav padding is
+     taller, which moves the box centre the wordmark is measured against.
+     Measured residual across 505-600px: within 0.13px. */
+  .site-title {
+    transform: translateY(-0.12rem);
+  }
+
+  /* One line, always. `auto` is a safety valve, not a design: from 360px up the
+     four labels fit with room to spare, so nothing scrolls and no fade or
+     affordance is needed. Only below that (a 320px iPhone SE, or heavy text
+     zoom) does the row become swipeable rather than broken. The padding buys
+     back the room the global focus ring needs (2px wide at a 3px offset), so a
+     ring on the first or last link is not clipped by the scroll box on either
+     axis; the matching negative margin leaves the row's metrics and alignment
+     exactly as they would be without it. */
+  .site-nav {
+    flex-wrap: nowrap;
+    gap: 0.55rem;
+    font-size: var(--step--2);
+    letter-spacing: 0.02em;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 5px;
+    margin: -5px;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 44px tap target: the 1.6rem line box plus this padding. The 0.1rem of
+     bottom bias keeps the hover rule tucked just under the caps, as it is at
+     the wider sizes. */
+  .site-nav a {
+    flex: none;
+    padding-block: 0.55rem 0.65rem;
+  }
+
+  /* Re-seat the glyph on the caps for this row's padding — see the wider-screen
+     rule for why the box centre and the optical centre differ. */
+  .theme-toggle {
+    transform: translateY(-0.05rem);
+  }
+}
+
+/* Then, on a phone, the identity itself contracts: the mark stands in for the
+   wordmark alone. Nothing is lost — the wordmark stays in the accessibility
+   tree (so the link keeps its name and the mark stays decorative), and Home is
+   the mark, which is where a visitor reaches for it anyway.
+
+   504px, not the ~480px where the wordmark strictly stops fitting: at 481px it
+   clears the first section link by 8px, which reads as a collision rather than
+   a masthead. This is the narrowest width that leaves the pair a real gap. */
+@media (max-width: 31.5rem) {
+  /* The box is rem-sized and holds no visible text, so its height cannot move
+     when the real face swaps in for the metric-override fallback — the same
+     no-CLS guarantee the pinned wordmark had, kept without the wordmark. It is
+     also the tap target: full height, and padded on the trailing side only so
+     the glyph's leading edge stays on the gutter the wordmark started on and
+     the masthead still lines up with the content below. */
+  .site-title {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    flex: none;
+    width: auto;
+    height: 2.75rem;
+    padding-inline-end: 0.4rem;
+    /* A larger lift than the wordmark's: with no text in the box the glyph is
+       centred on the box rather than hung off the wordmark's baseline, which
+       starts it 3.75px below the nav's caps rather than 2.5px. Measured
+       residual across 320-504px: within 0.25px. */
+    transform: translateY(-0.23rem);
+  }
+
+  /* Set one notch above the wordmark-relative size it has beside the text: on
+     its own it carries the masthead, and at 1.05em it read as a leftover. */
+  .site-title__mark {
+    width: 1.65em;
+    height: 1.65em;
+    margin-inline-end: 0;
+  }
+
+  .site-title__wordmark {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 

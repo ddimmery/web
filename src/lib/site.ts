@@ -12,8 +12,11 @@ export const site = {
   newsletter: 'https://list.ddimmery.com/subscription/form',
 } as const;
 
+/* Home is deliberately absent: the mark/wordmark in the masthead is the home
+   link, which is what a visitor already expects it to be. Dropping the label
+   is what lets the whole masthead — identity, sections, theme control — hold a
+   single line on a phone. */
 export const nav: Array<{ href: string; label: string }> = [
-  { href: '/', label: 'Home' },
   { href: '/research/', label: 'Research' },
   { href: '/teaching/', label: 'Teaching' },
   { href: '/software/', label: 'Software' },
