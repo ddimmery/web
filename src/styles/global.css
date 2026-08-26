@@ -467,6 +467,17 @@ main {
   letter-spacing: -0.01em;
   color: var(--ink);
   text-decoration: none;
+  /* Optical: the same correction the theme toggle carries at the other end of
+     the row, for the same reason. The header centres *boxes*, but the eye reads
+     the row off the cap-height centres of the words — and a line box reserves
+     descender depth that the uppercase nav labels never use, so their caps sit
+     above the row's centre line. Measured, the wordmark landed 2.5px below the
+     nav's caps; this lifts it onto them, to within 0.75px across the whole
+     fluid range (the two type steps scale independently, so no single value is
+     exact everywhere — the drift is well under a device pixel). Kept as a
+     transform so it stays out of layout and the height pinned above (no CLS)
+     still holds. */
+  transform: translateY(-0.16rem);
 }
 
 .site-title:hover {
@@ -595,6 +606,13 @@ main {
     gap: 0.55rem;
   }
 
+  /* Slightly less lift than at the wider sizes: this row's nav padding is
+     taller, which moves the box centre the wordmark is measured against.
+     Measured residual across 505-600px: within 0.15px. */
+  .site-title {
+    transform: translateY(-0.12rem);
+  }
+
   /* One line, always. `auto` is a safety valve, not a design: from 360px up the
      four labels fit with room to spare, so nothing scrolls and no fade or
      affordance is needed. Only below that (a 320px iPhone SE, or heavy text
@@ -656,6 +674,11 @@ main {
     width: auto;
     height: 2.75rem;
     padding-inline-end: 0.4rem;
+    /* A larger lift than the wordmark's: with no text in the box the glyph is
+       centred on the box rather than hung off the wordmark's baseline, which
+       starts it 3.75px below the nav's caps rather than 2.5px. Measured
+       residual across 320-504px: within 0.25px. */
+    transform: translateY(-0.23rem);
   }
 
   /* Set one notch above the wordmark-relative size it has beside the text: on
