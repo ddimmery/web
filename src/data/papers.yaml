@@ -34,7 +34,7 @@ homog_policy:
   authors:
   - Molly Offer-Westort
   - me
-  year: 2025
+  year: 2026
   preprint: https://arxiv.org/abs/2101.12318
   visible: true
   ssid: 1b8d1eef0ada504b5c43da95d523283e6eca1037
@@ -371,10 +371,12 @@ ad_experimental:
   - Chad Kiewiet de Jonge
   - Talia Stroud
   - J. Tucker
-  year: 2025
+  year: 2026
   visible: true
   ssid: b8c6e8c3e3ef0ce3221cfcd4f53c54f6dcdb2988
   preprint: https://doi.org/10.2139/ssrn.5259653
+  published_url: https://doi.org/10.1038/s41562-025-02328-w
+  venue: Nature Human Behaviour
 enough:
   title: Enough?
   authors:
@@ -672,3 +674,12 @@ implied_authenticity_2026:
   ssid: ae7781e87be9ba8d1c838fc4e9913009033d9175
   published_url: https://doi.org/10.1609/icwsm.v20i1.42721
   pdf_url: https://ojs.aaai.org/index.php/ICWSM/article/download/42721/50281
+knowledge_decay:
+  title: Bounding Knowledge Decay From Agnostic Temporal Generalization
+  authors:
+  - me
+  - Kevin Munger
+  year: 2026
+  preprint: https://osf.io/preprints/osf/nm7zr_v2
+  visible: true
+  ssid: null
