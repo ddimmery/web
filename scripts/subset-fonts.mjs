@@ -273,6 +273,9 @@ async function audit(codepoints) {
     }
     for (const entry of entries) {
       const full = join(dir, entry.name);
+      // dist/files/ holds verbatim uploads from public/files/ (e.g. slide
+      // decks) that carry their own fonts; the site's subset never serves them.
+      if (entry.isDirectory() && full === join(distDir, 'files')) continue;
       if (entry.isDirectory()) await walk(full);
       else if (/\.(html|xml)$/.test(entry.name)) htmlFiles.push(full);
     }
