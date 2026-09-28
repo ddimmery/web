@@ -150,8 +150,7 @@ gen_exp:
   visible: true
   ssid: a99f3735ad8ffbfbc76e6db51235b926329b82e3
 interp_hte:
-  title: 'Distilling Heterogeneity: From Explanations of Heterogeneous Treatment Effect
-    Models to Interpretable Policies'
+  title: 'Distilling Heterogeneity: From Explanations of Heterogeneous Treatment Effect Models to Interpretable Policies'
   authors:
   - Han Wu
   - Sarah Tan
@@ -169,20 +168,19 @@ interp_hte:
   visible: true
   ssid: 05b28963a18f88d5115584e0ad1f46c118597a1b
 chronofeed:
-  title: How do social media feed algorithms affect attitudes and behavior in an election
-    campaign?
+  title: How do social media feed algorithms affect attitudes and behavior in an election campaign?
   authors:
   - Andrew Guess
   - Neil Malhotra
   - Jennifer Pan
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Hunt Alcott
   - Taylor Brown
   - Adriana Crespo-Tenorio
   - me
   - Deen Freelon
   - Matthew Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Edward Kennedy
   - Young Mie Kim
   - David Lazer
@@ -208,20 +206,19 @@ chronofeed:
   data: https://socialmediaarchive.org/search?c=US2020&cc=US2020&ln=en
   ssid: f48409576a7b05ec99dcc44429e655bcc6992bdb
 reshares:
-  title: Reshares on social media amplify political news but do not detectably affect
-    beliefs or opinions
+  title: Reshares on social media amplify political news but do not detectably affect beliefs or opinions
   authors:
   - Andrew Guess
   - Neil Malhotra
   - Jennifer Pan
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Hunt Alcott
   - Taylor Brown
   - Adriana Crespo-Tenorio
   - me
   - Deen Freelon
   - Matthew Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Edward Kennedy
   - Young Mie Kim
   - David Lazer
@@ -253,7 +250,7 @@ likeminded:
   - Jaime Settle
   - Emily Thorson
   - Magdalena Wojcieszak
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Annie Chen
   - Hunt Alcott
   - Taylor Brown
@@ -261,7 +258,7 @@ likeminded:
   - me
   - Deen Freelon
   - Matthew Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Andrew Guess
   - Edward Kennedy
   - Young Mie Kim
@@ -288,7 +285,7 @@ likeminded:
 ms_repro:
   title: Reproducibility in Management Science
   authors:
-  - "Milo\u0161 Fi\u0161ar"
+  - "Miloš Fišar"
   - Ben Greiner
   - Christoph Huber
   - Elena Katok
@@ -300,8 +297,7 @@ ms_repro:
   visible: true
   ssid: null
 deactivation:
-  title: "The Effect of Deactivating Facebook and Instagram on Users\u2019 Emotional\
-    \ State"
+  title: "The Effect of Deactivating Facebook and Instagram on Users’ Emotional State"
   authors:
   - Hunt Allcott
   - Matt Gentzkow
@@ -310,7 +306,7 @@ deactivation:
   - Adriana Crespo-Tenorio
   - me
   - Deen Freelon
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Andrew Guess
   - Y. Kim
   - David Lazer
@@ -335,22 +331,21 @@ deactivation:
   ssid: f10d1ddad38ed6e4f14daf4624244338cf88bee8
   preprint: https://doi.org/10.2139/ssrn.5224201
 ad_experimental:
-  title: The Effects of Political Advertising on Facebook and Instagram Before the
-    2020 US Election
+  title: The Effects of Political Advertising on Facebook and Instagram Before the 2020 US Election
   authors:
   - Hunt Allcott
   - Matt Gentzkow
-  - "Ro\u2019ee Levy"
+  - "Ro’ee Levy"
   - Adriana Crespo-Tenorio
   - Natasha Dumas
   - Winter Mason
   - D. Moehler
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Taylor Brown
   - Juan Carlos Cisneros
   - me
   - Deen Freelon
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Andrew Guess
   - Y. Kim
   - David Lazer
@@ -389,8 +384,7 @@ enough:
   preprint: https://arxiv.org/abs/2501.12161
   published_url: https://doi.org/10.1353/obs.2025.a956838
 subjective_visualiza_2023:
-  title: 'Subjective visualization experiences: impact of visual design and experimental
-    design'
+  title: 'Subjective visualization experiences: impact of visual design and experimental design'
   authors:
   - Laura Koesten
   - me
@@ -401,14 +395,13 @@ subjective_visualiza_2023:
   ssid: 1f44ac53af9ca5def8fd5410c0d313cd9a58e97f
   preprint: https://arxiv.org/abs/2310.13713
 likeminded_correction:
-  title: 'Author Correction: Like-minded sources on Facebook are prevalent but not
-    polarizing'
+  title: 'Author Correction: Like-minded sources on Facebook are prevalent but not polarizing'
   authors:
   - B. Nyhan
   - Jaime Settle
   - Emily A. Thorson
   - Magdalena Wojcieszak
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Annie Y Chen
   - Hunt Allcott
   - Taylor Brown
@@ -416,7 +409,7 @@ likeminded_correction:
   - me
   - Deen Freelon
   - M. Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - A. Guess
   - Edward Kennedy
   - Y. Kim
@@ -470,8 +463,7 @@ methodological_detai_None:
   visible: false
   ssid: 6f66c7c95d644cffcd3a6ba3ec05741365de2b97
 distilling_heterogen_2021:
-  title: 'Distilling Heterogeneity: From Explanations of Heterogeneous Treatment Effect
-    Models to Interpretable Policies'
+  title: 'Distilling Heterogeneity: From Explanations of Heterogeneous Treatment Effect Models to Interpretable Policies'
   authors:
   - Han Wu
   - S. Tan
@@ -508,20 +500,19 @@ enough?_2025:
   ssid: f359d3b2ffb76a328c97774b80187f64b9b240a3
   preprint: https://arxiv.org/abs/2501.12161
 the_effects_of_faceb_2024:
-  title: 'The effects of Facebook and Instagram on the 2020 election: A deactivation
-    experiment'
+  title: 'The effects of Facebook and Instagram on the 2020 election: A deactivation experiment'
   authors:
   - Hunt Allcott
   - M. Gentzkow
   - Winter Mason
   - Arjun S. Wilkins
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Taylor Brown
   - Juan Carlos Cisneros
   - Adriana Crespo-Tenorio
   - me
   - Deen Freelon
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - A. Guess
   - Y. Kim
   - David Lazer
@@ -559,13 +550,13 @@ how_deceptive_online_2026:
   - Ben Nimmo
   - Daniel Robert Thomas
   - Hunt Allcott
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - Taylor Brown
   - Adriana Crespo-Tenorio
   - me
   - Deen Freelon
   - M. Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Andrew M. Guess
   - S. Iyengar
   - David Lazer
@@ -595,7 +586,7 @@ how_deceptive_online_2026:
   - L. Vavrek
   - Vin Arceneaux
   - Neil A. Malhotra
-  - "Mateo V\xE1squez-Cort\xE9s"
+  - "Mateo Vásquez-Cortés"
   - Marie Curiel
   - Kirill Chmel
   - Eunji Kim
@@ -622,8 +613,7 @@ how_deceptive_online_2026:
   visible: false
   ssid: f9ee031107ddbf3a4dbee15cba5999ce7eb5426f
 untrustworthy_source_2026:
-  title: 'Untrustworthy sources on Facebook and Instagram in 2020: Concentrated exposure
-    but no attitudinal effects'
+  title: 'Untrustworthy sources on Facebook and Instagram in 2020: Concentrated exposure but no attitudinal effects'
   authors:
   - Olivier Bergeron-Boutin
   - Brendan Nyhan
@@ -634,11 +624,11 @@ untrustworthy_source_2026:
   - Adriana Crespo-Tenorio
   - Carlos Velasco Rivera
   - Hunt Allcott
-  - "Pablo Barber\xE1"
+  - "Pablo Barberá"
   - me
   - Deen Freelon
   - M. Gentzkow
-  - "Sandra Gonz\xE1lez-Bail\xF3n"
+  - "Sandra González-Bailón"
   - Andrew M. Guess
   - Edward Kennedy
   - Y. Kim
@@ -662,8 +652,7 @@ untrustworthy_source_2026:
   published_url: https://doi.org/10.1126/sciadv.adz6502
   pdf_url: https://doi.org/10.1126/sciadv.adz6502
 implied_authenticity_2026:
-  title: Implied Authenticity Effect? The Impact of Explicit Labels on AI-Generated
-    Content
+  title: Implied Authenticity Effect? The Impact of Explicit Labels on AI-Generated Content
   authors:
   - Fabian Pawelczyk
   - me
@@ -683,3 +672,13 @@ knowledge_decay:
   preprint: https://osf.io/preprints/osf/nm7zr_v2
   visible: true
   ssid: null
+designing_multi-arm__2021:
+  title: Designing Multi-Arm Experiments for Global Average Treatment Effects Under Partial Interference
+  authors:
+  - Molly Offer-Westort
+  - me
+  year: 2021
+  preprint: https://arxiv.org/abs/2101.12318
+  venue: null
+  visible: false
+  ssid: f292d771a8a0627899871e35b8021ff1a3fbce4e
