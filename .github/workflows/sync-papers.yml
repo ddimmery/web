@@ -4,6 +4,11 @@ name: Sync papers from Semantic Scholar
 # src/data/papers.yaml with `visible: false` and proposed as a pull request,
 # so nothing appears on the site until it has been reviewed.
 #
+# Required repo setting: Settings → Actions → General → Workflow permissions →
+# "Allow GitHub Actions to create and approve pull requests". Without it the
+# sync succeeds but the PR step fails with "GitHub Actions is not permitted to
+# create or approve pull requests".
+#
 # Optional secret: SEMANTIC_SCHOLAR_API_KEY (raises the API rate limit).
 
 on:
